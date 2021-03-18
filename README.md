@@ -1,5 +1,10 @@
 # Prevailing Winds
 
+Visualizing historic wind data.
+
+- [prep][./prep/] preparing wind data for S3 upload
+- [backend](./backend/) AWS Lambda hosted GraphQL API for getting average winds
+
 ## TODO:
 
 - tryout https://react-leaflet.js.org/ (https://leafletjs.com/examples.html)
