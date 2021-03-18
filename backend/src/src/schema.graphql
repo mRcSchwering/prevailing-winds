@@ -1,7 +1,14 @@
 type Query {
   meta: Meta!
   testJson: Int!
-  testPkl: Int!
+  testPkl: [AvgWinds]
+}
+
+type AvgWinds {
+  dir: String!
+  vel: Int!
+  velName: String!
+  count: Int!
 }
 
 """

@@ -13,16 +13,12 @@ def test_read_obj_pkl():
     bkt_obj = (
         resource.Bucket(CONTENT_BUCKET_NAME).Object("2020/1/avgwinds_40;20.pkl").get()
     )
-    pkl_obj = bkt_obj["Body"].read()
-    obj = pickle.loads(pkl_obj)
-    return len(obj)
+    return pickle.loads(bkt_obj["Body"].read())
 
 
 def test_read_obj_json():
     bkt_obj = (
         resource.Bucket(CONTENT_BUCKET_NAME).Object("2020/1/avgwinds_40;20.json").get()
     )
-    json_obj = bkt_obj["Body"].read()
-    obj = json.loads(json_obj)
-    return len(obj)
+    return json.loads(bkt_obj["Body"].read())
 
