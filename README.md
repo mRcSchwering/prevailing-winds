@@ -2,7 +2,7 @@
 
 Visualizing historic wind data.
 
-- [prep][./prep/] preparing wind data for S3 upload
+- [prep](./prep/) preparing wind data for S3 upload
 - [backend](./backend/) AWS Lambda hosted GraphQL API for getting average winds
 
 ## TODO:
