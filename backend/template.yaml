@@ -3,6 +3,11 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   GraphQL hosted in a Lambda function.
 
+Parameters:
+  ContentBucket:
+    Type: String
+    Default: prevailing-winds-data
+
 Globals:
   Function:
     Timeout: 10
@@ -34,6 +39,9 @@ Resources:
       CodeUri: src/
       Handler: graphql_post.lambda_handler
       Runtime: python3.8
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref ContentBucket
       Events:
         Gql:
           Type: Api

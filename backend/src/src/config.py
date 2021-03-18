@@ -11,6 +11,7 @@ UTC_NOW_TS = UTC_NOW.timestamp()
 
 # AWS
 AWS_REGION = "eu-central-1"
+CONTENT_BUCKET_NAME = "prevailing-winds-data"
 
 # CORS
 # Note: this sets the response headers while the CORS config

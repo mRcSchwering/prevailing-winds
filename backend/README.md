@@ -24,7 +24,7 @@ PYTHONPATH=./src uvicorn app:app --reload
 # run tests
 PYTHONPATH=./src pytest tests
 
-# redeploy to dev
+# redeploy
 sam build && sam deploy --config-file samconfig.toml
 ```
 
