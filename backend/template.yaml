@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  GraphQL hosted in a Lambda function.
+
+Globals:
+  Function:
+    Timeout: 10
+
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
+
+Resources:
+  GqlGetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: graphql_get.lambda_handler
+      Runtime: python3.8
+      Events:
+        Gql:
+          Type: Api
+          Properties:
+            Path: /graphql
+            Method: get
+            RestApiId: !Ref ApiDeployment
+
+  GqlPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: graphql_post.lambda_handler
+      Runtime: python3.8
+      Events:
+        Gql:
+          Type: Api
+          Properties:
+            Path: /graphql
+            Method: post
+            RestApiId: !Ref ApiDeployment
+
+  ApiDeployment:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: stage
+
+Outputs:
+  GqlApi:
+    Description: "API Gateway endpoint URL for the Lambda-GraphQL app"
+    Value: !Sub "https://${ApiDeployment}.execute-api.${AWS::Region}.amazonaws.com/stage/graphql/"
+  GqlGetFunction:
+    Description: "Lambda-GraphQL GET Lambda Function ARN"
+    Value: !GetAtt GqlGetFunction.Arn
+  GqlGetFunctionIamRole:
+    Description: "Implicit IAM Role created for Lambda-GraphQL GET function"
+    Value: !GetAtt GqlGetFunctionRole.Arn
+  GqlPostFunction:
+    Description: "Lambda-GraphQL POST Lambda Function ARN"
+    Value: !GetAtt GqlPostFunction.Arn
+  GqlPostFunctionIamRole:
+    Description: "Implicit IAM Role created for Lambda-GraphQL POST function"
+    Value: !GetAtt GqlPostFunctionRole.Arn

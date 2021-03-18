@@ -1,0 +1,9 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "prevailing-winds"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-ehmbzon0zay4"
+s3_prefix = "prevailing-winds"
+region = "eu-central-1"
+capabilities = "CAPABILITY_IAM"

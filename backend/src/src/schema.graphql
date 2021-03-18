@@ -1,0 +1,11 @@
+type Query {
+  meta: Meta!
+}
+
+"""
+Some backend information
+"""
+type Meta {
+  ciPipelineId: String!
+  buildDate: String!
+}

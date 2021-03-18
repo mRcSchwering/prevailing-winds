@@ -1,0 +1,3 @@
+requests
+ariadne
+boto3==1.16
