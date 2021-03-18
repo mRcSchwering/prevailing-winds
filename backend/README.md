@@ -49,6 +49,16 @@ There is an ASGI app in [app.py](./app.py) for easier GraphQL development locall
 PYTHONPATH=./src uvicorn app:app --reload
 ```
 
+Additionally, point your vscode to the env file
+for the linters to work and make your integrated terminal use it as well:
+
+```
+{
+    "python.envFile": "${workspaceFolder}/dev.env",
+    "terminal.integrated.shellArgs.linux": ["-c", "export `cat dev.env`; bash"]
+}
+```
+
 ## Tests
 
 Run pytests in [tests/](./tests/).

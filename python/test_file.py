@@ -1,7 +1,9 @@
 """
 Comparing file sizes:
-- pkl: 19M
-- json: 89M
+- all coords pkl: 19M
+- all coords json: 89M
+- single coord pkl: 350
+- single coord json: 1.6k
 """
 import pickle
 import json
@@ -26,4 +28,12 @@ for pos, val in single_file.items():
 
 with open("data/2020/1/avgwinds.json", "w") as fh:
     json.dump(json_save_single_file, fh)
+
+
+with open("data/2020/1/avgwinds_40;20.pkl", "wb") as fh:
+    pickle.dump(single_file[(40, 20)], fh)
+
+
+with open("data/2020/1/avgwinds_40;20.json", "w") as fh:
+    json.dump(json_save_single_file["40;20"], fh)
 

@@ -1,22 +1,28 @@
 """
 S3 client/resource requests
 """
-import base64
+import pickle
+import json
 import boto3
-from src.config import CONTENT_BUCKET_NAME, AWS_REGION, STACK_NAME
+from src.config import CONTENT_BUCKET_NAME, AWS_REGION
 
 resource = boto3.resource("s3", region_name=AWS_REGION)
 
 
-def put_base64_img(b64: str, img_name: str, owner_id: str) -> str:
-    """
-    Create new s3 obj from base64 encoded img
-    Returns URL to object
-    """
-    b64 = b64.replace("data:image/jpeg;base64", "")
-    obj = resource.Object(
-        CONTENT_BUCKET_NAME, f"{STACK_NAME}/{owner_id}/{img_name}.jpg"
+def test_read_obj_pkl():
+    bkt_obj = (
+        resource.Bucket(CONTENT_BUCKET_NAME).Object("2020/1/avgwinds_40;20.pkl").get()
     )
-    obj.put(Body=base64.b64decode(b64))
-    return f"https://{CONTENT_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{STACK_NAME}/{owner_id}/{img_name}.jpg"
+    pkl_obj = bkt_obj["Body"].read()
+    obj = pickle.loads(pkl_obj)
+    return len(obj)
+
+
+def test_read_obj_json():
+    bkt_obj = (
+        resource.Bucket(CONTENT_BUCKET_NAME).Object("2020/1/avgwinds_40;20.json").get()
+    )
+    json_obj = bkt_obj["Body"].read()
+    obj = json.loads(json_obj)
+    return len(obj)
 
