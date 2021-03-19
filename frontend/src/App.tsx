@@ -17,6 +17,188 @@ import {
 } from "grommet";
 import { Notification, FormClose } from "grommet-icons";
 import { useTestPkl, TestPklData } from "./queries";
+import Plot from "react-plotly.js";
+
+const sampleData = [
+  {
+    r: [
+      77.5,
+      72.5,
+      70.0,
+      45.0,
+      22.5,
+      42.5,
+      40.0,
+      62.5,
+      77.5,
+      72.5,
+      70.0,
+      45.0,
+      22.5,
+      42.5,
+      40.0,
+      62.5,
+    ],
+    theta: [
+      "N",
+      "NNE",
+      "NE",
+      "ENE",
+      "E",
+      "EES",
+      "ES",
+      "SES",
+      "S",
+      "SWS",
+      "SW",
+      "WSW",
+      "W",
+      "WNW",
+      "NW",
+      "NNW",
+    ],
+    name: "11-14 m/s",
+    marker: { color: "rgb(106,81,163)" },
+    type: "barpolar",
+  },
+  {
+    r: [
+      57.5,
+      50.0,
+      45.0,
+      35.0,
+      20.0,
+      22.5,
+      37.5,
+      55.0,
+      57.5,
+      50.0,
+      45.0,
+      35.0,
+      20.0,
+      22.5,
+      37.5,
+      55.0,
+    ],
+    theta: [
+      "N",
+      "NNE",
+      "NE",
+      "ENE",
+      "E",
+      "EES",
+      "ES",
+      "SES",
+      "S",
+      "SWS",
+      "SW",
+      "WSW",
+      "W",
+      "WNW",
+      "NW",
+      "NNW",
+    ],
+    name: "8-11 m/s",
+    marker: { color: "rgb(158,154,200)" },
+    type: "barpolar",
+  },
+  {
+    r: [
+      40.0,
+      30.0,
+      30.0,
+      35.0,
+      7.5,
+      7.5,
+      32.5,
+      40.0,
+      40.0,
+      30.0,
+      30.0,
+      35.0,
+      7.5,
+      7.5,
+      32.5,
+      40.0,
+    ],
+    theta: [
+      "N",
+      "NNE",
+      "NE",
+      "ENE",
+      "E",
+      "EES",
+      "ES",
+      "SES",
+      "S",
+      "SWS",
+      "SW",
+      "WSW",
+      "W",
+      "WNW",
+      "NW",
+      "NNW",
+    ],
+    name: "5-8 m/s",
+    marker: { color: "rgb(203,201,226)" },
+    type: "barpolar",
+  },
+  {
+    r: [
+      20.0,
+      7.5,
+      15.0,
+      22.5,
+      2.5,
+      2.5,
+      12.5,
+      22.5,
+      20.0,
+      7.5,
+      15.0,
+      22.5,
+      2.5,
+      2.5,
+      12.5,
+      22.5,
+    ],
+    theta: [
+      "N",
+      "NNE",
+      "NE",
+      "ENE",
+      "E",
+      "EES",
+      "ES",
+      "SES",
+      "S",
+      "SWS",
+      "SW",
+      "WSW",
+      "W",
+      "WNW",
+      "NW",
+      "NNW",
+    ],
+    name: "< 5 m/s",
+    marker: { color: "rgb(242,240,247)" },
+    type: "barpolar",
+  },
+];
+
+const layout = {
+  title: "Wind Speed Distribution in Laurel, NE",
+  font: { size: 16 },
+  legend: { font: { size: 16 } },
+  polar: {
+    barmode: "overlay",
+    bargap: 0,
+    radialaxis: { visible: false },
+    angularaxis: { direction: "clockwise" },
+  },
+  width: 500,
+  height: 400,
+};
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_BACKEND_URL || "http://localhost:8000/",
@@ -60,6 +242,13 @@ function AppBody(): JSX.Element {
   return (
     <Box flex align="center" justify="center">
       app body
+      <div>
+        <Plot
+          data={sampleData}
+          layout={layout}
+          options={{ legend: { display: false } }}
+        />
+      </div>
     </Box>
   );
 }
