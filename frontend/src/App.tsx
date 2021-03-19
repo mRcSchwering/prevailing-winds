@@ -16,7 +16,7 @@ import {
   Text,
 } from "grommet";
 import { Notification, FormClose } from "grommet-icons";
-import { useTestPkl } from "./queries";
+import { useTestPkl, TestPklData } from "./queries";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_BACKEND_URL || "http://localhost:8000/",
@@ -40,19 +40,42 @@ const theme = {
   },
 };
 
-const AppBar = (props: any) => (
-  <Box
-    tag="header"
-    direction="row"
-    align="center"
-    justify="between"
-    background="brand"
-    pad={{ left: "medium", right: "small", vertical: "small" }}
-    elevation="medium"
-    style={{ zIndex: 1 }}
-    {...props}
-  />
-);
+function AppBar(props: any): JSX.Element {
+  return (
+    <Box
+      tag="header"
+      direction="row"
+      align="center"
+      justify="between"
+      background="brand"
+      pad={{ left: "medium", right: "small", vertical: "small" }}
+      elevation="medium"
+      style={{ zIndex: 1 }}
+      {...props}
+    />
+  );
+}
+
+function AppBody(): JSX.Element {
+  return (
+    <Box flex align="center" justify="center">
+      app body
+    </Box>
+  );
+}
+
+function SideBarContent(props: {
+  data?: TestPklData;
+  loadData: () => void;
+}): JSX.Element {
+  return (
+    <>
+      sidebar
+      <Button primary label="get data" onClick={props.loadData} />
+      <Text>N Records: {props.data?.length}</Text>
+    </>
+  );
+}
 
 function AppContent(): JSX.Element {
   const [showSidebar, setShowSidebar] = React.useState(true);
@@ -71,9 +94,7 @@ function AppContent(): JSX.Element {
         />
       </AppBar>
       <Box direction="row" flex overflow={{ horizontal: "hidden" }}>
-        <Box flex align="center" justify="center">
-          app body
-        </Box>
+        <AppBody />
         {!showSidebar || size !== "small" ? (
           <Collapsible direction="horizontal" open={showSidebar}>
             <Box
@@ -84,9 +105,7 @@ function AppContent(): JSX.Element {
               align="center"
               justify="center"
             >
-              sidebar
-              <Button primary label="get data" onClick={() => loadTestPkl()} />
-              <Text>N Records: {data?.testPkl?.length}</Text>
+              <SideBarContent data={data} loadData={loadTestPkl} />
             </Box>
           </Collapsible>
         ) : (
@@ -104,7 +123,7 @@ function AppContent(): JSX.Element {
               />
             </Box>
             <Box fill background="light-2" align="center" justify="center">
-              sidebar
+              <SideBarContent data={data} loadData={loadTestPkl} />
             </Box>
           </Layer>
         )}

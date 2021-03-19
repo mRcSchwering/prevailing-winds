@@ -18,6 +18,8 @@ export type Scalars = {
   Float: number;
 };
 
+export type TestPklData = Maybe<Array<Maybe<AvgWinds>>>;
+
 export type Query = {
   __typename?: "Query";
   meta: Meta;
@@ -54,12 +56,12 @@ const QUERY = gql`
 export function useTestPkl(): [
   () => void,
   {
-    data?: Query;
+    data?: TestPklData;
     loading: boolean;
     error?: ApolloError;
   }
 ] {
   const [loadTestPkl, { data, loading, error }] = useLazyQuery<Query>(QUERY);
 
-  return [loadTestPkl, { data, loading, error }];
+  return [loadTestPkl, { data: data?.testPkl, loading, error }];
 }
