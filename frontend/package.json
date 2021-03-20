@@ -14,9 +14,11 @@
     "graphql": "^15.5.0",
     "grommet": "^2.16.3",
     "grommet-icons": "^4.5.0",
+    "leaflet": "^1.7.1",
     "plotly.js": "1.45.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-leaflet": "^3.1.0",
     "react-plotly.js": "^2.5.1",
     "react-scripts": "4.0.3",
     "styled-components": "^5.2.1",
@@ -46,5 +48,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.7.0"
   }
 }

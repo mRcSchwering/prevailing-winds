@@ -18,173 +18,8 @@ import {
 import { Notification, FormClose } from "grommet-icons";
 import { useTestPkl, TestPklData } from "./queries";
 import Plot from "react-plotly.js";
-
-const sampleData = [
-  {
-    r: [
-      20.0,
-      7.5,
-      15.0,
-      22.5,
-      2.5,
-      2.5,
-      12.5,
-      22.5,
-      20.0,
-      7.5,
-      15.0,
-      22.5,
-      2.5,
-      2.5,
-      12.5,
-      22.5,
-    ],
-    theta: [
-      "N",
-      "NNE",
-      "NE",
-      "ENE",
-      "E",
-      "EES",
-      "ES",
-      "SES",
-      "S",
-      "SWS",
-      "SW",
-      "WSW",
-      "W",
-      "WNW",
-      "NW",
-      "NNW",
-    ],
-    name: "< 5 m/s",
-    marker: { color: "rgb(242,240,247)" },
-    type: "barpolar",
-  },
-  {
-    r: [
-      40.0,
-      30.0,
-      30.0,
-      35.0,
-      7.5,
-      7.5,
-      32.5,
-      40.0,
-      40.0,
-      30.0,
-      30.0,
-      35.0,
-      7.5,
-      7.5,
-      32.5,
-      40.0,
-    ],
-    theta: [
-      "N",
-      "NNE",
-      "NE",
-      "ENE",
-      "E",
-      "EES",
-      "ES",
-      "SES",
-      "S",
-      "SWS",
-      "SW",
-      "WSW",
-      "W",
-      "WNW",
-      "NW",
-      "NNW",
-    ],
-    name: "5-8 m/s",
-    marker: { color: "rgb(203,201,226)" },
-    type: "barpolar",
-  },
-  {
-    r: [
-      57.5,
-      50.0,
-      45.0,
-      35.0,
-      20.0,
-      22.5,
-      37.5,
-      55.0,
-      57.5,
-      50.0,
-      45.0,
-      35.0,
-      20.0,
-      22.5,
-      37.5,
-      55.0,
-    ],
-    theta: [
-      "N",
-      "NNE",
-      "NE",
-      "ENE",
-      "E",
-      "EES",
-      "ES",
-      "SES",
-      "S",
-      "SWS",
-      "SW",
-      "WSW",
-      "W",
-      "WNW",
-      "NW",
-      "NNW",
-    ],
-    name: "8-11 m/s",
-    marker: { color: "rgb(158,154,200)" },
-    type: "barpolar",
-  },
-  {
-    r: [
-      50.0,
-      72.5,
-      70.0,
-      45.0,
-      22.5,
-      42.5,
-      40.0,
-      62.5,
-      77.5,
-      72.5,
-      70.0,
-      45.0,
-      22.5,
-      42.5,
-      40.0,
-      62.5,
-    ],
-    theta: [
-      "N",
-      "NNE",
-      "NE",
-      "ENE",
-      "E",
-      "EES",
-      "ES",
-      "SES",
-      "S",
-      "SWS",
-      "SW",
-      "WSW",
-      "W",
-      "WNW",
-      "NW",
-      "NNW",
-    ],
-    name: "11-14 m/s",
-    marker: { color: "rgb(106,81,163)" },
-    type: "barpolar",
-  },
-];
+import { sampleData } from "./sampleData";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 
 const layout = {
   title: "asd",
@@ -256,8 +91,23 @@ function AppBar(props: any): JSX.Element {
 
 function AppBody(): JSX.Element {
   return (
-    <Box flex align="center" justify="center">
-      app body
+    <Box flex justify="center">
+      <MapContainer
+        style={{ flex: 1, height: "100%" }}
+        center={[46.0, -6.0]}
+        zoom={6}
+        scrollWheelZoom={true}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+          url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
+        />
+        <Marker position={[51.505, -0.09]}>
+          <Popup>
+            A pretty CSS3 popup. <br /> Easily customizable.
+          </Popup>
+        </Marker>
+      </MapContainer>
     </Box>
   );
 }
@@ -292,7 +142,7 @@ function AppContent(): JSX.Element {
           onClick={() => setShowSidebar(!showSidebar)}
         />
       </AppBar>
-      <Box direction="row" flex overflow={{ horizontal: "hidden" }}>
+      <Box flex direction="row" overflow={{ horizontal: "hidden" }}>
         <AppBody />
         {!showSidebar || size !== "small" ? (
           <Collapsible direction="horizontal" open={showSidebar}>
