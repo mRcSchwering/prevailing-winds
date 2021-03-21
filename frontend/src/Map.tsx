@@ -28,7 +28,7 @@ const PROVIDERS = {
 function MyComponent(props: {
   onClick: (lat: number, lng: number) => void;
 }): null {
-  const map = useMapEvents({
+  useMapEvents({
     click: (e) => {
       props.onClick(e.latlng.lat, e.latlng.lng);
     },
@@ -42,9 +42,13 @@ type MarkerType = {
   text: JSX.Element;
 } | null;
 
-export default function Map(): JSX.Element {
+// TODO: I think I can't just change the provider like that
+//       https://react-leaflet.js.org/docs somewhere says that
+//       MapContainer props are evaled only on init
+export default function Map(props: {
+  provider: "stadia" | "esri";
+}): JSX.Element {
   const [marker, setMarker] = React.useState<MarkerType>(null);
-  const [provider, setProvider] = React.useState<"stadia" | "esri">("stadia");
 
   function handleSetMarker(lat: number, lng: number) {
     const latTxt = convertLatDMS(lat);
@@ -69,7 +73,7 @@ export default function Map(): JSX.Element {
       zoom={6}
       scrollWheelZoom={true}
     >
-      <TileLayer {...PROVIDERS[provider]} />
+      <TileLayer {...PROVIDERS[props.provider]} />
       <MyComponent onClick={handleSetMarker} />
       {marker && (
         <Marker position={[marker.lat, marker.lng]}>

@@ -14,42 +14,12 @@ import {
   ResponsiveContext,
   Layer,
   Text,
+  RadioButtonGroup,
 } from "grommet";
 import { Analytics, FormClose } from "grommet-icons";
 import { useTestPkl, TestPklData } from "./queries";
-import Plot from "react-plotly.js";
-import { sampleData } from "./sampleData";
 import Map from "./Map";
-
-const layout = {
-  title: "asd",
-  font: { size: 16 },
-  showlegend: true,
-  legend: {
-    x: 0.7,
-    y: -0.5,
-  },
-  polar: {
-    barmode: "stack",
-    bargap: 0,
-    radialaxis: { visible: false },
-    angularaxis: { direction: "clockwise" },
-  },
-  width: 400,
-  height: 480,
-};
-
-const config = {
-  displaylogo: false,
-  responsive: true,
-  modeBarButtonsToRemove: [
-    "zoom2d",
-    "lasso2d",
-    "zoomIn2d",
-    "zoomOut2d",
-    "select2d",
-  ],
-};
+import Chart from "./Chart";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_BACKEND_URL || "http://localhost:8000/",
@@ -89,24 +59,28 @@ function AppBar(props: any): JSX.Element {
   );
 }
 
-function AppBody(): JSX.Element {
-  return (
-    <Box flex justify="center">
-      <Map />
-    </Box>
-  );
-}
-
 function SideBarContent(props: {
   data?: TestPklData;
   loadData: () => void;
+  mapProvider: "stadia" | "esri";
+  onChangeMapProvider: (s: "stadia" | "esri") => void;
 }): JSX.Element {
+  function handleMapProviderChange(e: React.ChangeEvent<HTMLInputElement>) {
+    props.onChangeMapProvider(e.target.value as "stadia" | "esri");
+  }
+
   return (
     <>
       sidebar
       <Button primary label="get data" onClick={props.loadData} />
       <Text>N Records: {props.data?.length}</Text>
-      <Plot data={sampleData} layout={layout} config={config} />
+      <Chart />
+      <RadioButtonGroup
+        name="mapProvider"
+        value={props.mapProvider}
+        options={["stadia", "esri"]}
+        onChange={handleMapProviderChange}
+      />
     </>
   );
 }
@@ -115,6 +89,9 @@ function AppContent(): JSX.Element {
   const [showSidebar, setShowSidebar] = React.useState(true);
   const [loadTestPkl, { data }] = useTestPkl();
   const size = React.useContext(ResponsiveContext);
+  const [mapProvider, setMapProvider] = React.useState<"stadia" | "esri">(
+    "stadia"
+  );
 
   return (
     <Box fill>
@@ -130,7 +107,9 @@ function AppContent(): JSX.Element {
         )}
       </AppBar>
       <Box flex direction="row" overflow={{ horizontal: "hidden" }}>
-        <AppBody />
+        <Box flex justify="center">
+          <Map provider={mapProvider} />
+        </Box>
         {!showSidebar || size !== "small" ? (
           <Collapsible direction="horizontal" open={showSidebar}>
             <Box
@@ -141,7 +120,12 @@ function AppContent(): JSX.Element {
               align="center"
               justify="center"
             >
-              <SideBarContent data={data} loadData={loadTestPkl} />
+              <SideBarContent
+                data={data}
+                loadData={loadTestPkl}
+                mapProvider={mapProvider}
+                onChangeMapProvider={setMapProvider}
+              />
             </Box>
           </Collapsible>
         ) : (
@@ -159,7 +143,12 @@ function AppContent(): JSX.Element {
               />
             </Box>
             <Box fill background="light-2" align="center" justify="center">
-              <SideBarContent data={data} loadData={loadTestPkl} />
+              <SideBarContent
+                data={data}
+                loadData={loadTestPkl}
+                mapProvider={mapProvider}
+                onChangeMapProvider={setMapProvider}
+              />
             </Box>
           </Layer>
         )}
