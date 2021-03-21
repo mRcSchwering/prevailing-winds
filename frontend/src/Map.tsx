@@ -114,11 +114,11 @@ export default function Map(props: MapProps): JSX.Element {
       scrollWheelZoom={true}
     >
       <LayersControl position="topright">
-        <LayersControl.BaseLayer checked name="stadia">
-          <TileLayer {...PROVIDERS.stadia} />
-        </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="esri">
+        <LayersControl.BaseLayer checked name="esri">
           <TileLayer {...PROVIDERS.esri} />
+        </LayersControl.BaseLayer>
+        <LayersControl.BaseLayer name="stadia">
+          <TileLayer {...PROVIDERS.stadia} />
         </LayersControl.BaseLayer>
         <LayersControl.Overlay name="OpenSeaMap">
           <TileLayer {...PROVIDERS.openSeaMap} />
