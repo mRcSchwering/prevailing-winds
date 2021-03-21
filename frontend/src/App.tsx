@@ -15,11 +15,11 @@ import {
   Layer,
   Text,
 } from "grommet";
-import { Notification, FormClose } from "grommet-icons";
+import { Analytics, FormClose } from "grommet-icons";
 import { useTestPkl, TestPklData } from "./queries";
 import Plot from "react-plotly.js";
 import { sampleData } from "./sampleData";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import Map from "./Map";
 
 const layout = {
   title: "asd",
@@ -92,22 +92,7 @@ function AppBar(props: any): JSX.Element {
 function AppBody(): JSX.Element {
   return (
     <Box flex justify="center">
-      <MapContainer
-        style={{ flex: 1, height: "100%" }}
-        center={[46.0, -6.0]}
-        zoom={6}
-        scrollWheelZoom={true}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
-          url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
-        />
-        <Marker position={[51.505, -0.09]}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
-      </MapContainer>
+      <Map />
     </Box>
   );
 }
@@ -137,10 +122,12 @@ function AppContent(): JSX.Element {
         <Heading level="3" margin="none">
           My App
         </Heading>
-        <Button
-          icon={<Notification />}
-          onClick={() => setShowSidebar(!showSidebar)}
-        />
+        {size === "small" && (
+          <Button
+            icon={<Analytics />}
+            onClick={() => setShowSidebar(!showSidebar)}
+          />
+        )}
       </AppBar>
       <Box flex direction="row" overflow={{ horizontal: "hidden" }}>
         <AppBody />
