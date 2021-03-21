@@ -3,7 +3,7 @@ import Plot from "react-plotly.js";
 import { sampleData } from "./sampleData";
 
 const layout = {
-  title: "asd",
+  title: "not yet in use",
   font: { size: 16 },
   showlegend: true,
   legend: {

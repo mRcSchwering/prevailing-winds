@@ -5,7 +5,9 @@ import {
   TileLayer,
   Marker,
   Popup,
+  LayersControl,
 } from "react-leaflet";
+import Leaflet from "leaflet";
 import { convertLatDMS, convertLngDMS } from "./util";
 
 // from https://leaflet-extras.github.io/leaflet-providers/preview/
@@ -23,15 +25,18 @@ const PROVIDERS = {
     url: "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",
     maxZoom: 20,
   },
+  openSeaMap: {
+    attribution:
+      'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors',
+    url: "https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png",
+  },
 };
 
-function MyComponent(props: {
-  onClick: (lat: number, lng: number) => void;
-}): null {
+export const INIT_ZOOM = 6;
+
+function ZoomEndEvent(props: { trigger: () => void }): null {
   useMapEvents({
-    click: (e) => {
-      props.onClick(e.latlng.lat, e.latlng.lng);
-    },
+    zoomend: () => props.trigger(),
   });
   return null;
 }
@@ -42,12 +47,11 @@ type MarkerType = {
   text: JSX.Element;
 } | null;
 
-// TODO: I think I can't just change the provider like that
-//       https://react-leaflet.js.org/docs somewhere says that
-//       MapContainer props are evaled only on init
-export default function Map(props: {
-  provider: "stadia" | "esri";
-}): JSX.Element {
+type LocationMarkerProps = {
+  onClick: (lat: number, lng: number) => void;
+};
+
+function LocationMarker(props: LocationMarkerProps): JSX.Element | null {
   const [marker, setMarker] = React.useState<MarkerType>(null);
 
   function handleSetMarker(lat: number, lng: number) {
@@ -66,20 +70,62 @@ export default function Map(props: {
     });
   }
 
+  useMapEvents({
+    click: (e) => {
+      handleSetMarker(e.latlng.lat, e.latlng.lng);
+      if (props.onClick) {
+        props.onClick(e.latlng.lat, e.latlng.lng);
+      }
+    },
+  });
+
+  return marker ? (
+    <Marker position={[marker.lat, marker.lng]}>
+      <Popup>{marker.text}</Popup>
+    </Marker>
+  ) : null;
+}
+
+type MapProps = {
+  onClick?: (lat: number, lng: number) => void;
+  onZoomEnd?: (lvl: number) => void;
+};
+
+export default function Map(props: MapProps): JSX.Element {
+  const [map, setMap] = React.useState<Leaflet.Map | null>(null);
+
+  function handleSetMarker(lat: number, lng: number) {
+    if (props.onClick) props.onClick(lat, lng);
+  }
+
+  function handleOnZoomEnd() {
+    if (map) {
+      const lvl = map.getZoom();
+      if (props.onZoomEnd) props.onZoomEnd(lvl);
+    }
+  }
+
   return (
     <MapContainer
       style={{ flex: 1, height: "100%" }}
       center={[46.0, -6.0]}
-      zoom={6}
+      zoom={INIT_ZOOM}
+      whenCreated={setMap}
       scrollWheelZoom={true}
     >
-      <TileLayer {...PROVIDERS[props.provider]} />
-      <MyComponent onClick={handleSetMarker} />
-      {marker && (
-        <Marker position={[marker.lat, marker.lng]}>
-          <Popup>{marker.text}</Popup>
-        </Marker>
-      )}
+      <LayersControl position="topright">
+        <LayersControl.BaseLayer checked name="stadia">
+          <TileLayer {...PROVIDERS.stadia} />
+        </LayersControl.BaseLayer>
+        <LayersControl.BaseLayer name="esri">
+          <TileLayer {...PROVIDERS.esri} />
+        </LayersControl.BaseLayer>
+        <LayersControl.Overlay name="OpenSeaMap">
+          <TileLayer {...PROVIDERS.openSeaMap} />
+        </LayersControl.Overlay>
+      </LayersControl>
+      <LocationMarker onClick={handleSetMarker} />
+      <ZoomEndEvent trigger={handleOnZoomEnd} />
     </MapContainer>
   );
 }

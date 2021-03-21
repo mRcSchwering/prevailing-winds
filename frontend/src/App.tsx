@@ -14,12 +14,12 @@ import {
   ResponsiveContext,
   Layer,
   Text,
-  RadioButtonGroup,
 } from "grommet";
 import { Analytics, FormClose } from "grommet-icons";
 import { useTestPkl, TestPklData } from "./queries";
-import Map from "./Map";
+import Map, { INIT_ZOOM } from "./Map";
 import Chart from "./Chart";
+import { convertDMS } from "./util";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_BACKEND_URL || "http://localhost:8000/",
@@ -60,38 +60,44 @@ function AppBar(props: any): JSX.Element {
 }
 
 function SideBarContent(props: {
+  zoom: number;
+  pos: { lat: number; lng: number } | null;
   data?: TestPklData;
   loadData: () => void;
-  mapProvider: "stadia" | "esri";
-  onChangeMapProvider: (s: "stadia" | "esri") => void;
 }): JSX.Element {
-  function handleMapProviderChange(e: React.ChangeEvent<HTMLInputElement>) {
-    props.onChangeMapProvider(e.target.value as "stadia" | "esri");
-  }
+  const zoom = `${props.zoom} x`;
+  const pos = props.pos ? convertDMS(props.pos.lat, props.pos.lng) : "-";
 
   return (
     <>
-      sidebar
+      <Text>
+        Pos: {pos}
+        <br />
+        Zoom: {zoom}
+      </Text>
       <Button primary label="get data" onClick={props.loadData} />
       <Text>N Records: {props.data?.length}</Text>
       <Chart />
-      <RadioButtonGroup
-        name="mapProvider"
-        value={props.mapProvider}
-        options={["stadia", "esri"]}
-        onChange={handleMapProviderChange}
-      />
     </>
   );
 }
 
 function AppContent(): JSX.Element {
   const [showSidebar, setShowSidebar] = React.useState(true);
+  const [pos, setPos] = React.useState<{ lat: number; lng: number } | null>(
+    null
+  );
+  const [zoom, setZoom] = React.useState<number>(INIT_ZOOM);
   const [loadTestPkl, { data }] = useTestPkl();
   const size = React.useContext(ResponsiveContext);
-  const [mapProvider, setMapProvider] = React.useState<"stadia" | "esri">(
-    "stadia"
-  );
+
+  function handleMapClick(lat: number, lng: number) {
+    setPos({ lat, lng });
+  }
+
+  function handleMapZoom(lvl: number) {
+    setZoom(lvl);
+  }
 
   return (
     <Box fill>
@@ -108,7 +114,7 @@ function AppContent(): JSX.Element {
       </AppBar>
       <Box flex direction="row" overflow={{ horizontal: "hidden" }}>
         <Box flex justify="center">
-          <Map provider={mapProvider} />
+          <Map onClick={handleMapClick} onZoomEnd={handleMapZoom} />
         </Box>
         {!showSidebar || size !== "small" ? (
           <Collapsible direction="horizontal" open={showSidebar}>
@@ -121,10 +127,10 @@ function AppContent(): JSX.Element {
               justify="center"
             >
               <SideBarContent
+                pos={pos}
+                zoom={zoom}
                 data={data}
                 loadData={loadTestPkl}
-                mapProvider={mapProvider}
-                onChangeMapProvider={setMapProvider}
               />
             </Box>
           </Collapsible>
@@ -144,10 +150,10 @@ function AppContent(): JSX.Element {
             </Box>
             <Box fill background="light-2" align="center" justify="center">
               <SideBarContent
+                pos={pos}
+                zoom={zoom}
                 data={data}
                 loadData={loadTestPkl}
-                mapProvider={mapProvider}
-                onChangeMapProvider={setMapProvider}
               />
             </Box>
           </Layer>
