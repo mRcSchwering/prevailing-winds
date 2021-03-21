@@ -16,7 +16,6 @@ import {
   Text,
 } from "grommet";
 import { Analytics, FormClose } from "grommet-icons";
-import { useTestPkl, TestPklData } from "./queries";
 import Map, { INIT_ZOOM } from "./Map";
 import Chart from "./Chart";
 import { convertDMS } from "./util";
@@ -62,8 +61,6 @@ function AppBar(props: any): JSX.Element {
 function SideBarContent(props: {
   zoom: number;
   pos: { lat: number; lng: number } | null;
-  data?: TestPklData;
-  loadData: () => void;
 }): JSX.Element {
   const zoom = `${props.zoom} x`;
   const pos = props.pos ? convertDMS(props.pos.lat, props.pos.lng) : "-";
@@ -75,8 +72,6 @@ function SideBarContent(props: {
         <br />
         Zoom: {zoom}
       </Text>
-      <Button primary label="get data" onClick={props.loadData} />
-      <Text>N Records: {props.data?.length}</Text>
       <Chart />
     </>
   );
@@ -88,7 +83,6 @@ function AppContent(): JSX.Element {
     null
   );
   const [zoom, setZoom] = React.useState<number>(INIT_ZOOM);
-  const [loadTestPkl, { data }] = useTestPkl();
   const size = React.useContext(ResponsiveContext);
 
   function handleMapClick(lat: number, lng: number) {
@@ -126,12 +120,7 @@ function AppContent(): JSX.Element {
               align="center"
               justify="center"
             >
-              <SideBarContent
-                pos={pos}
-                zoom={zoom}
-                data={data}
-                loadData={loadTestPkl}
-              />
+              <SideBarContent pos={pos} zoom={zoom} />
             </Box>
           </Collapsible>
         ) : (
@@ -149,12 +138,7 @@ function AppContent(): JSX.Element {
               />
             </Box>
             <Box fill background="light-2" align="center" justify="center">
-              <SideBarContent
-                pos={pos}
-                zoom={zoom}
-                data={data}
-                loadData={loadTestPkl}
-              />
+              <SideBarContent pos={pos} zoom={zoom} />
             </Box>
           </Layer>
         )}
