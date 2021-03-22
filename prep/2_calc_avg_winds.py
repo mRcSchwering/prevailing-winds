@@ -1,6 +1,4 @@
 """
-- download hourly historic wind data from cds.climate.copernicus.eu
-- average winds to full minutes of lat and lon
 - count monthly occurence of wind direction x velocity
 - save as pickled dict
 """
@@ -8,14 +6,13 @@ import pickle
 import pupygrib
 import pandas as pd  # type: ignore
 import numpy as np  # type: ignore
-from src.cds import download_reanalysis
 from src.util import velocity, direction, wind_vels, wind_dirs
 
-years = [2020]
+years = [2020, 2019, 2018, 2017, 2016]
 
 
 def get_avg_winds(
-    lats: np.array, lons: np.array, u: np.array, v: np.array
+    lats: np.array, lons: np.array, arr_u: np.array, arr_v: np.array
 ) -> pd.DataFrame:
     """
     Round lats and lons to full minute and calculate mean u and v vectors
@@ -29,8 +26,8 @@ def get_avg_winds(
         {
             "lon": np.rint(lons.flatten()),
             "lat": np.rint(lats.flatten()),
-            "u": u.flatten(),
-            "v": v.flatten(),
+            "u": arr_u.flatten(),
+            "v": arr_v.flatten(),
         }
     )
     df = df.groupby(["lon", "lat"]).mean()
@@ -48,13 +45,9 @@ def get_avg_winds(
 
 if __name__ == "__main__":
     for year in years:
-        print(f"downloading files for {year}")
         u_file = f"data/wind_u_{year}.grib"
         v_file = f"data/wind_v_{year}.grib"
         outfile = f"data/monthly_counts_{year}.pkl"
-
-        download_reanalysis(u_file, "10m_u_component_of_wind", str(year))
-        download_reanalysis(v_file, "10m_v_component_of_wind", str(year))
 
         with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
             total: dict = {}
@@ -78,10 +71,12 @@ if __name__ == "__main__":
                 values_v = v.get_values()
                 assert values_u.shape == values_v.shape == lons_u.shape
 
-                df = get_avg_winds(lats=lats_u, lons=lons_u, u=values_u, v=values_v)
+                winds = get_avg_winds(
+                    lats=lats_u, lons=lons_u, arr_u=values_u, arr_v=values_v
+                )
 
                 # count occurences
-                for (lon, lat), row in df.iterrows():
+                for (lon, lat), row in winds.iterrows():
                     pos = (int(lat), int(lon))
                     wind = (int(row["dir_i"]), int(row["vel_i"]))
                     if year not in total:
