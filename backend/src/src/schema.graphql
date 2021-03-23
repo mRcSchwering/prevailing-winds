@@ -18,13 +18,14 @@ Description of wind velocities
 idx: used in wind records
 Beaufort names and numbers are taken wrom wiki
 from/to knots are half closed intervals
+missing from/to means open interval (to 0/infinite)
 """
 type WindVelocity {
   idx: Int!
   beaufortName: String!
   beaufortNumber: Int!
-  fromKt: Float!
-  toKt: Float!
+  fromKt: String
+  toKt: String
 }
 
 """

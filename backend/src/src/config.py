@@ -16,52 +16,48 @@ CONTENT_BUCKET_NAME = "prevailing-winds-data"
 # CORS
 # Note: this sets the response headers while the CORS config
 #       in template.yaml creates an OPTIONS endpoint
+# TODO: set CORS to prevailing-winds only
 CORS_ALLOW_ORIGIN = "*"
 
 
-# wind directions
-# binning with index "i", lower boundary "s"
-# key "k"
+# wind directions (see schema documentation)
 wind_dirs = [
-    {"i": 1, "k": "N", "s": -11.25},
-    {"i": 2, "k": "NNE", "s": 11.25},
-    {"i": 3, "k": "NE", "s": 33.75},
-    {"i": 4, "k": "ENE", "s": 56.25},
-    {"i": 5, "k": "E", "s": 78.75},
-    {"i": 6, "k": "ESE", "s": 101.25},
-    {"i": 7, "k": "SE", "s": 123.75},
-    {"i": 8, "k": "SSE", "s": 146.25},
-    {"i": 9, "k": "S", "s": 168.75},
-    {"i": 10, "k": "SSW", "s": 191.25},
-    {"i": 11, "k": "SW", "s": 213.75},
-    {"i": 12, "k": "WSW", "s": 236.25},
-    {"i": 13, "k": "W", "s": 258.75},
-    {"i": 14, "k": "WNW", "s": 281.25},
-    {"i": 15, "k": "NW", "s": 303.75},
-    {"i": 16, "k": "NNW", "s": 326.25},
-    {"i": 17, "k": "N", "s": 348.75},
+    {"i": 1, "n": "N", "a": 0.0},
+    {"i": 2, "n": "NNE", "a": 22.5},
+    {"i": 3, "n": "NE", "a": 45.0},
+    {"i": 4, "n": "ENE", "a": 67.5},
+    {"i": 5, "n": "E", "a": 90.0},
+    {"i": 6, "n": "ESE", "a": 112.5},
+    {"i": 7, "n": "SE", "a": 135.0},
+    {"i": 8, "n": "SSE", "a": 157.5},
+    {"i": 9, "n": "S", "a": 180.0},
+    {"i": 10, "n": "SSW", "a": 202.5},
+    {"i": 11, "n": "SW", "a": 225.0},
+    {"i": 12, "n": "WSW", "a": 247.5},
+    {"i": 13, "n": "W", "a": 270.0},
+    {"i": 14, "n": "WNW", "a": 292.5},
+    {"i": 15, "n": "NW", "a": 315.0},
+    {"i": 16, "n": "NNW", "a": 337.5},
 ]
 
 wind_dir_i2k = {d["i"]: d["k"] for d in wind_dirs}
 
 
-# wind velocities
-# binning with index "i", lower boundary "s"
-# in knots, key "k", beaufort scale "b"
+# wind velocities (see schema documentation)
 wind_vels = [
-    {"i": 1, "k": "Calm", "b": 0, "s": 0},
-    {"i": 2, "k": "Light air", "b": 1, "s": 1},
-    {"i": 3, "k": "Light breeze", "b": 2, "s": 4},
-    {"i": 4, "k": "Gentle breeze", "b": 3, "s": 7},
-    {"i": 5, "k": "Moderate breeze", "b": 4, "s": 11},
-    {"i": 6, "k": "Fresh breeze", "b": 5, "s": 17},
-    {"i": 7, "k": "Strong breeze", "b": 6, "s": 22},
-    {"i": 8, "k": "Near gale", "b": 7, "s": 28},
-    {"i": 9, "k": "Gale", "b": 8, "s": 34},
-    {"i": 10, "k": "Strong gale", "b": 9, "s": 41},
-    {"i": 11, "k": "Storm", "b": 10, "s": 48},
-    {"i": 12, "k": "Violent storm", "b": 11, "s": 56},
-    {"i": 13, "k": "Hurricane force", "b": 12, "s": 64},
+    {"i": 1, "n": "Calm", "b": 0, "from": "0", "to": "1"},
+    {"i": 2, "n": "Light air", "b": 1, "from": "1", "to": "4"},
+    {"i": 3, "n": "Light breeze", "b": 2, "from": "4", "to": "7"},
+    {"i": 4, "n": "Gentle breeze", "b": 3, "from": "7", "to": "11"},
+    {"i": 5, "n": "Moderate breeze", "b": 4, "from": "11", "to": "17"},
+    {"i": 6, "n": "Fresh breeze", "b": 5, "from": "17", "to": "22"},
+    {"i": 7, "n": "Strong breeze", "b": 6, "from": "22", "to": "28"},
+    {"i": 8, "n": "Near gale", "b": 7, "from": "28", "to": "34"},
+    {"i": 9, "n": "Gale", "b": 8, "from": "34", "41"},
+    {"i": 10, "n": "Strong gale", "b": 9, "from": "41", "to": "48"},
+    {"i": 11, "n": "Storm", "b": 10, "from": "48", "to": "56"},
+    {"i": 12, "n": "Violent storm", "b": 11, "from": "56", "to": "64"},
+    {"i": 13, "n": "Hurricane force", "b": 12, "from": "64"},
 ]
 
 wind_vel_i2k = {d["i"]: d["k"] for d in wind_vels}

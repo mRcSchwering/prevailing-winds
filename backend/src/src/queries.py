@@ -14,13 +14,6 @@ def resolve_meta(*_, **unused):
     return {"ciPipelineId": CI_PIPELINE_ID, "buildDate": BUILD_DATE}
 
 
-@query.field("testJson")
-def resolve_test_json(*_, **unused):
-    del unused
-    obj = s3.test_read_obj_json()
-    return len(obj)
-
-
 @query.field("testPkl")
 def resolve_test_pkl(*_, **unused):
     del unused
