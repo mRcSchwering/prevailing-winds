@@ -1,20 +1,69 @@
 type Query {
   meta: Meta!
-  testJson: Int!
-  testPkl: [AvgWinds]
-}
-
-type AvgWinds {
-  dir: String!
-  vel: Int!
-  velName: String!
-  count: Int!
+  winds(input: WindsInput): WindsResult!
 }
 
 """
-Some backend information
+Some metadata
 """
 type Meta {
   ciPipelineId: String!
   buildDate: String!
+  windDirections: [WindDirection]!
+  windVelocities: [WindVelocity]!
+}
+
+"""
+Description of wind velocities
+idx: used in wind records
+Beaufort names and numbers are taken wrom wiki
+from/to knots are half closed intervals
+"""
+type WindVelocity {
+  idx: Int!
+  beaufortName: String!
+  beaufortNumber: Int!
+  fromKt: Float!
+  toKt: Float!
+}
+
+"""
+Description of wind directions
+idx: used in wind records
+"""
+type WindDirection {
+  idx: Int!
+  name: String!
+  angle: Float!
+}
+
+"""
+from/to year: closed interval (e.g. [2020, 2020] for a single year)
+from/to lat/lng: half closed intervals
+"""
+input WindsInput {
+  fromYear: Int!
+  toYear: Int!
+  month: Int!
+  fromLat: Float!
+  toLat: Float!
+  fromLng: Float!
+  toLng: Float!
+}
+
+"""
+Historic winds for a particular time and place
+"""
+type WindsResult {
+  records: [WindRecord]!
+}
+
+"""
+Single records describing a bin of
+wind direction and velocity with count
+"""
+type WindRecord {
+  dir: Int!
+  vel: Int!
+  count: Int!
 }

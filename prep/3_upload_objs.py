@@ -1,20 +1,29 @@
 """
-Comparing file sizes:
-- all coords pkl: 19M
-- all coords json: 89M
-- single coord pkl: 350
-- single coord json: 1.6k
+Write all objects to S3:
+- key: <year>/<month>/avgwinds_<lat>;<lng>.pkl
+- file: keys and counts of winds where keys are (<direction>, <velocity>)
 """
 import pickle
+import src.s3 as s3
 
-# TODO
+years = [2020]
 
-with open("data/monthly_counts_2020.pkl", "rb") as fh:
-    data = pickle.load(fh)
+if __name__ == "__main__":
+    for year in years:
+        print(f"\nStarting year {year}...")
 
-single_file = data[2020][1]
+        with open(f"data/monthly_counts_{year}.pkl", "rb") as fh:
+            data = pickle.load(fh)
 
+        for month in data[year].keys():
+            print(f"Starting {year}/{month}...")
 
-with open("data/2020/1/avgwinds_40;20.pkl", "wb") as fh:
-    pickle.dump(single_file[(40, 20)], fh)
-
+            for lat, lng in data[year][month]:
+                s3.write_wind_obj(
+                    obj=data[year][month][(lat, lng)],
+                    year=year,
+                    month=month,
+                    lat=lat,
+                    lng=lng,
+                )
+    print("\ndone")
