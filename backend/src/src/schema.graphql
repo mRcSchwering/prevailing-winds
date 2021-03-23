@@ -9,6 +9,7 @@ Some metadata
 type Meta {
   ciPipelineId: String!
   buildDate: String!
+  timeRanges: [String]!
   windDirections: [WindDirection]!
   windVelocities: [WindVelocity]!
 }
@@ -39,12 +40,11 @@ type WindDirection {
 }
 
 """
-from/to year: closed interval (e.g. [2020, 2020] for a single year)
+timeRange: one of ("2020", "2016-2020")
 from/to lat/lng: half closed intervals
 """
 input WindsInput {
-  fromYear: Int!
-  toYear: Int!
+  timeRange: String!
   month: Int!
   fromLat: Float!
   toLat: Float!

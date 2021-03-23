@@ -20,45 +20,118 @@ CONTENT_BUCKET_NAME = "prevailing-winds-data"
 CORS_ALLOW_ORIGIN = "*"
 
 
-# wind directions (see schema documentation)
-wind_dirs = [
-    {"i": 1, "n": "N", "a": 0.0},
-    {"i": 2, "n": "NNE", "a": 22.5},
-    {"i": 3, "n": "NE", "a": 45.0},
-    {"i": 4, "n": "ENE", "a": 67.5},
-    {"i": 5, "n": "E", "a": 90.0},
-    {"i": 6, "n": "ESE", "a": 112.5},
-    {"i": 7, "n": "SE", "a": 135.0},
-    {"i": 8, "n": "SSE", "a": 157.5},
-    {"i": 9, "n": "S", "a": 180.0},
-    {"i": 10, "n": "SSW", "a": 202.5},
-    {"i": 11, "n": "SW", "a": 225.0},
-    {"i": 12, "n": "WSW", "a": 247.5},
-    {"i": 13, "n": "W", "a": 270.0},
-    {"i": 14, "n": "WNW", "a": 292.5},
-    {"i": 15, "n": "NW", "a": 315.0},
-    {"i": 16, "n": "NNW", "a": 337.5},
-]
+# deny single request downloading more than n objs
+EMERGENCY_BREAK = 100
 
-wind_dir_i2k = {d["i"]: d["k"] for d in wind_dirs}
+# check which are already prepared
+TIME_RANGES = ("2020",)
+
+
+# wind directions (see schema documentation)
+WIND_DIRS = [
+    {"idx": 1, "name": "N", "angle": 0.0},
+    {"idx": 2, "name": "NNE", "angle": 22.5},
+    {"idx": 3, "name": "NE", "angle": 45.0},
+    {"idx": 4, "name": "ENE", "angle": 67.5},
+    {"idx": 5, "name": "E", "angle": 90.0},
+    {"idx": 6, "name": "ESE", "angle": 112.5},
+    {"idx": 7, "name": "SE", "angle": 135.0},
+    {"idx": 8, "name": "SSE", "angle": 157.5},
+    {"idx": 9, "name": "S", "angle": 180.0},
+    {"idx": 10, "name": "SSW", "angle": 202.5},
+    {"idx": 11, "name": "SW", "angle": 225.0},
+    {"idx": 12, "name": "WSW", "angle": 247.5},
+    {"idx": 13, "name": "W", "angle": 270.0},
+    {"idx": 14, "name": "WNW", "angle": 292.5},
+    {"idx": 15, "name": "NW", "angle": 315.0},
+    {"idx": 16, "name": "NNW", "angle": 337.5},
+]
 
 
 # wind velocities (see schema documentation)
-wind_vels = [
-    {"i": 1, "n": "Calm", "b": 0, "from": "0", "to": "1"},
-    {"i": 2, "n": "Light air", "b": 1, "from": "1", "to": "4"},
-    {"i": 3, "n": "Light breeze", "b": 2, "from": "4", "to": "7"},
-    {"i": 4, "n": "Gentle breeze", "b": 3, "from": "7", "to": "11"},
-    {"i": 5, "n": "Moderate breeze", "b": 4, "from": "11", "to": "17"},
-    {"i": 6, "n": "Fresh breeze", "b": 5, "from": "17", "to": "22"},
-    {"i": 7, "n": "Strong breeze", "b": 6, "from": "22", "to": "28"},
-    {"i": 8, "n": "Near gale", "b": 7, "from": "28", "to": "34"},
-    {"i": 9, "n": "Gale", "b": 8, "from": "34", "41"},
-    {"i": 10, "n": "Strong gale", "b": 9, "from": "41", "to": "48"},
-    {"i": 11, "n": "Storm", "b": 10, "from": "48", "to": "56"},
-    {"i": 12, "n": "Violent storm", "b": 11, "from": "56", "to": "64"},
-    {"i": 13, "n": "Hurricane force", "b": 12, "from": "64"},
+WIND_VELS = [
+    {"idx": 1, "beaufortName": "Calm", "beaufortNumber": 0, "fromKt": "0", "toKt": "1"},
+    {
+        "idx": 2,
+        "beaufortName": "Light air",
+        "beaufortNumber": 1,
+        "fromKt": "1",
+        "toKt": "4",
+    },
+    {
+        "idx": 3,
+        "beaufortName": "Light breeze",
+        "beaufortNumber": 2,
+        "fromKt": "4",
+        "toKt": "7",
+    },
+    {
+        "idx": 4,
+        "beaufortName": "Gentle breeze",
+        "beaufortNumber": 3,
+        "fromKt": "7",
+        "toKt": "11",
+    },
+    {
+        "idx": 5,
+        "beaufortName": "Moderate breeze",
+        "beaufortNumber": 4,
+        "fromKt": "11",
+        "toKt": "17",
+    },
+    {
+        "idx": 6,
+        "beaufortName": "Fresh breeze",
+        "beaufortNumber": 5,
+        "fromKt": "17",
+        "toKt": "22",
+    },
+    {
+        "idx": 7,
+        "beaufortName": "Strong breeze",
+        "beaufortNumber": 6,
+        "fromKt": "22",
+        "toKt": "28",
+    },
+    {
+        "idx": 8,
+        "beaufortName": "Near gale",
+        "beaufortNumber": 7,
+        "fromKt": "28",
+        "toKt": "34",
+    },
+    {
+        "idx": 9,
+        "beaufortName": "Gale",
+        "beaufortNumber": 8,
+        "fromKt": "34",
+        "toKt": "41",
+    },
+    {
+        "idx": 10,
+        "beaufortName": "Strong gale",
+        "beaufortNumber": 9,
+        "fromKt": "41",
+        "toKt": "48",
+    },
+    {
+        "idx": 11,
+        "beaufortName": "Storm",
+        "beaufortNumber": 10,
+        "fromKt": "48",
+        "toKt": "56",
+    },
+    {
+        "idx": 12,
+        "beaufortName": "Violent storm",
+        "beaufortNumber": 11,
+        "fromKt": "56",
+        "toKt": "64",
+    },
+    {
+        "idx": 13,
+        "beaufortName": "Hurricane force",
+        "beaufortNumber": 12,
+        "fromKt": "64",
+    },
 ]
-
-wind_vel_i2k = {d["i"]: d["k"] for d in wind_vels}
-wind_vel_i2b = {d["i"]: d["b"] for d in wind_vels}
