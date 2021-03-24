@@ -1,6 +1,6 @@
-import { gql, useLazyQuery, ApolloError } from "@apollo/client";
+import { gql, useQuery, useLazyQuery, ApolloError } from "@apollo/client";
 
-/* below from https://www.graphql-code-generator.com/ */
+// added using https://www.graphql-code-generator.com/
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
@@ -9,7 +9,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
   { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
   { [SubKey in K]: Maybe<T[SubKey]> };
-/** All built-in and custom scalars, mapped to their actual values */
+
 export type Scalars = {
   ID: string;
   String: string;
@@ -18,30 +18,150 @@ export type Scalars = {
   Float: number;
 };
 
-export type TestPklData = Maybe<Array<Maybe<AvgWinds>>>;
-
 export type Query = {
   __typename?: "Query";
   meta: Meta;
-  testJson: Scalars["Int"];
-  testPkl?: Maybe<Array<Maybe<AvgWinds>>>;
+  winds: WindsResult;
+};
+
+export type QueryWindsArgs = {
+  input?: Maybe<WindsInput>;
 };
 
 export type Meta = {
   __typename?: "Meta";
   ciPipelineId: Scalars["String"];
   buildDate: Scalars["String"];
+  timeRanges: Array<Scalars["String"]>;
+  windDirections: Array<WindDirection>;
+  windVelocities: Array<WindVelocity>;
 };
 
-export type AvgWinds = {
-  __typename?: "AvgWinds";
-  dir: Scalars["String"];
+export type WindDirection = {
+  __typename?: "WindDirection";
+  idx: Scalars["Int"];
+  name: Scalars["String"];
+  angle: Scalars["Float"];
+};
+
+export type WindVelocity = {
+  __typename?: "WindVelocity";
+  idx: Scalars["Int"];
+  beaufortName: Scalars["String"];
+  beaufortNumber: Scalars["Int"];
+  fromKt?: Maybe<Scalars["String"]>;
+  toKt?: Maybe<Scalars["String"]>;
+};
+
+export type WindsInput = {
+  timeRange: Scalars["String"];
+  month: Scalars["Int"];
+  fromLat: Scalars["Float"];
+  toLat: Scalars["Float"];
+  fromLng: Scalars["Float"];
+  toLng: Scalars["Float"];
+};
+
+export type WindsResult = {
+  __typename?: "WindsResult";
+  records: Array<WindRecord>;
+};
+
+export type WindRecord = {
+  __typename?: "WindRecord";
+  dir: Scalars["Int"];
   vel: Scalars["Int"];
-  velName: Scalars["String"];
   count: Scalars["Int"];
 };
-/* above from https://www.graphql-code-generator.com/ */
 
+const META_QUERY = gql`
+  query Meta {
+    meta {
+      timeRanges
+      windDirections {
+        idx
+        name
+        angle
+      }
+      windVelocities {
+        idx
+        beaufortName
+        beaufortNumber
+        fromKt
+        toKt
+      }
+    }
+  }
+`;
+
+export type useMetaResp = {
+  loading: boolean;
+  data?: Meta;
+  error?: ApolloError;
+};
+
+export function useMeta(): useMetaResp {
+  const { data, loading, error } = useQuery<Query>(META_QUERY);
+  return { data: data?.meta, loading, error };
+}
+
+const WINDS_QUERY = gql`
+  query Winds(
+    $timeRange: String!
+    $month: Int!
+    $fromLat: Float!
+    $toLat: Float!
+    $fromLng: Float!
+    $toLng: Float!
+  ) {
+    winds(
+      input: {
+        timeRange: $timeRange
+        month: $month
+        fromLat: $fromLat
+        toLat: $toLat
+        fromLng: $fromLng
+        toLng: $toLng
+      }
+    ) {
+      records {
+        dir
+        vel
+        count
+      }
+    }
+  }
+`;
+
+export type useWindResp = {
+  loading: boolean;
+  data?: WindsResult;
+  error?: ApolloError;
+};
+
+export type useWindsVars = {
+  timeRange: string;
+  month: number;
+  fromLat: number;
+  toLat: number;
+  fromLng: number;
+  toLng: number;
+};
+
+export type loadWindsType = ({
+  variables,
+}: {
+  variables: useWindsVars;
+}) => void;
+
+export function useWinds(): [loadWindsType, useWindResp] {
+  const [loadWinds, { data, loading, error }] = useLazyQuery<Query>(
+    WINDS_QUERY
+  );
+  return [loadWinds, { data: data?.winds, loading, error }];
+}
+
+/*
 const QUERY = gql`
   query TestPkl {
     testPkl {
@@ -65,3 +185,4 @@ export function useTestPkl(): [
 
   return [loadTestPkl, { data: data?.testPkl, loading, error }];
 }
+*/
