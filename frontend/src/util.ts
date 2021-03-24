@@ -1,3 +1,5 @@
+const EXCLUSION_ZONES: [number, number] = [-70, 70];
+
 export function toDegreesMinutesAndSeconds(coordinate: number): string {
   var absolute = Math.abs(coordinate);
   var degrees = Math.floor(absolute);
@@ -44,6 +46,10 @@ export function getFloor(d: number, f: number): number {
 
 export function getCeil(d: number, f: number): number {
   return Math.round(d) + 0.5 * f;
+}
+
+export function excludePoles(d: number): number {
+  return Math.min(Math.max(d, EXCLUSION_ZONES[0]), EXCLUSION_ZONES[1]);
 }
 
 export function suggestAreaFactor(zoomLvl: number): number {

@@ -3,13 +3,14 @@ import {
   MapContainer,
   useMapEvents,
   TileLayer,
-  Marker,
-  Popup,
   LayersControl,
   Rectangle,
 } from "react-leaflet";
 import Leaflet from "leaflet";
-import { convertLatDMS, convertLngDMS, getFloor, getCeil } from "./util";
+import { getFloor, getCeil, excludePoles } from "./util";
+
+export const INIT_ZOOM = 6;
+export const INIT_POS: [number, number] = [46.0, -6.0];
 
 // from https://leaflet-extras.github.io/leaflet-providers/preview/
 const PROVIDERS = {
@@ -33,8 +34,6 @@ const PROVIDERS = {
   },
 };
 
-export const INIT_ZOOM = 6;
-
 function ZoomEndEvent(props: { trigger: () => void }): null {
   useMapEvents({
     zoomend: () => props.trigger(),
@@ -45,38 +44,29 @@ function ZoomEndEvent(props: { trigger: () => void }): null {
 export type Range = [number, number];
 
 type MarkerType = {
-  lat: number;
-  lng: number;
-  text: JSX.Element;
   bottomLeft: Range;
   topRight: Range;
 } | null;
 
 type AreaMarkerProps = {
   sizeFactor: number;
-  onClick: (lat: number, lng: number, latRange: Range, lngRange: Range) => void;
+  onClick?: (
+    lat: number,
+    lng: number,
+    latRange: Range,
+    lngRange: Range
+  ) => void;
 };
 
 function AreaMarker(props: AreaMarkerProps): JSX.Element | null {
   const [marker, setMarker] = React.useState<MarkerType>(null);
 
-  function handleSetMarker(lat: number, lng: number, lats: Range, lngs: Range) {
+  function handleSetMarker(lats: Range, lngs: Range) {
     const bottomLeft: Range = [lats[0], lngs[0]];
     const topRight: Range = [lats[1], lngs[1]];
     setMarker({
-      lat,
-      lng,
       bottomLeft: bottomLeft,
       topRight: topRight,
-      text: (
-        <div>
-          <strong>
-            {convertLatDMS(lat)}
-            <br />
-            {convertLngDMS(lng)}
-          </strong>
-        </div>
-      ),
     });
   }
 
@@ -85,32 +75,30 @@ function AreaMarker(props: AreaMarkerProps): JSX.Element | null {
       const lat = e.latlng.lat;
       const lng = e.latlng.lng;
       const lats: Range = [
-        getFloor(lat, props.sizeFactor),
-        getCeil(lat, props.sizeFactor),
+        excludePoles(getFloor(lat, props.sizeFactor)),
+        excludePoles(getCeil(lat, props.sizeFactor)),
       ];
       const lngs: Range = [
         getFloor(lng, props.sizeFactor),
         getCeil(lng, props.sizeFactor),
       ];
-      handleSetMarker(lat, lng, lats, lngs);
+      handleSetMarker(lats, lngs);
       if (props.onClick) {
         props.onClick(lat, lng, lats, lngs);
       }
     },
   });
 
-  const blackOptions = { stroke: false, fill: true, fillColor: "black" };
-
   return marker ? (
-    <>
-      <Rectangle
-        bounds={[marker.bottomLeft, marker.topRight]}
-        pathOptions={blackOptions}
-      />
-      <Marker position={[marker.lat, marker.lng]}>
-        <Popup>{marker.text}</Popup>
-      </Marker>
-    </>
+    <Rectangle
+      bounds={[marker.bottomLeft, marker.topRight]}
+      pathOptions={{
+        stroke: false,
+        fill: true,
+        fillColor: "black",
+      }}
+      interactive={false}
+    />
   ) : null;
 }
 
@@ -128,15 +116,6 @@ type MapProps = {
 export default function Map(props: MapProps): JSX.Element {
   const [map, setMap] = React.useState<Leaflet.Map | null>(null);
 
-  function handleSetMarker(
-    lat: number,
-    lng: number,
-    latRange: Range,
-    lngRange: Range
-  ) {
-    if (props.onClick) props.onClick(lat, lng, latRange, lngRange);
-  }
-
   function handleOnZoomEnd() {
     if (map) {
       const lvl = map.getZoom();
@@ -147,7 +126,7 @@ export default function Map(props: MapProps): JSX.Element {
   return (
     <MapContainer
       style={{ flex: 1, height: "100%" }}
-      center={[46.0, -6.0]}
+      center={INIT_POS}
       zoom={INIT_ZOOM}
       whenCreated={setMap}
       scrollWheelZoom={true}
@@ -163,7 +142,7 @@ export default function Map(props: MapProps): JSX.Element {
           <TileLayer {...PROVIDERS.openSeaMap} />
         </LayersControl.Overlay>
       </LayersControl>
-      <AreaMarker onClick={handleSetMarker} sizeFactor={props.areaFactor} />
+      <AreaMarker onClick={props.onClick} sizeFactor={props.areaFactor} />
       <ZoomEndEvent trigger={handleOnZoomEnd} />
     </MapContainer>
   );

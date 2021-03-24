@@ -13,7 +13,6 @@ import {
   Grommet,
   ResponsiveContext,
   Layer,
-  Text,
   RangeInput,
 } from "grommet";
 import { Analytics, FormClose } from "grommet-icons";
@@ -60,14 +59,12 @@ function AppBar(props: any): JSX.Element {
 }
 
 type SideBarContentProps = {
-  zoom: number;
   pos: { lat: number; lng: number } | null;
   areaFactor: number;
   onAreaFactorChange?: (factor: number) => void;
 };
 
 function SideBarContent(props: SideBarContentProps): JSX.Element {
-  const zoom = `${props.zoom} x`;
   const pos = props.pos ? convertDMS(props.pos.lat, props.pos.lng) : "-";
 
   function handleChangeAreaFactor(
@@ -79,21 +76,18 @@ function SideBarContent(props: SideBarContentProps): JSX.Element {
 
   return (
     <>
-      <RangeInput
-        value={props.areaFactor}
-        onChange={handleChangeAreaFactor}
-        min={1}
-        max={4}
-      />
-      <Text>
-        Pos: {pos}
-        <br />
-        Zoom: {zoom}
-        <br />
-        Area Factor: {props.areaFactor}
-        <br />
-        Area: {factor2area(props.areaFactor)} M<sup>2</sup>
-      </Text>
+      <Box>
+        <strong>{pos}</strong>
+        <RangeInput
+          value={props.areaFactor}
+          onChange={handleChangeAreaFactor}
+          min={1}
+          max={4}
+        />
+        <span>
+          area: {factor2area(props.areaFactor)} M<sup>2</sup>
+        </span>
+      </Box>
       <Chart />
     </>
   );
@@ -151,7 +145,6 @@ function AppContent(): JSX.Element {
             >
               <SideBarContent
                 pos={pos}
-                zoom={zoom}
                 areaFactor={areaFactor}
                 onAreaFactorChange={setAreaFactor}
               />
@@ -174,7 +167,6 @@ function AppContent(): JSX.Element {
             <Box fill background="light-2" align="center" justify="center">
               <SideBarContent
                 pos={pos}
-                zoom={zoom}
                 areaFactor={areaFactor}
                 onAreaFactorChange={setAreaFactor}
               />
