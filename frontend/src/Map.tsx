@@ -6,9 +6,10 @@ import {
   Marker,
   Popup,
   LayersControl,
+  Rectangle,
 } from "react-leaflet";
 import Leaflet from "leaflet";
-import { convertLatDMS, convertLngDMS } from "./util";
+import { convertLatDMS, convertLngDMS, getFloor, getCeil } from "./util";
 
 // from https://leaflet-extras.github.io/leaflet-providers/preview/
 const PROVIDERS = {
@@ -41,61 +42,91 @@ function ZoomEndEvent(props: { trigger: () => void }): null {
   return null;
 }
 
+export type Range = [number, number];
+
 type MarkerType = {
   lat: number;
   lng: number;
   text: JSX.Element;
+  bottomLeft: Range;
+  topRight: Range;
 } | null;
 
-type LocationMarkerProps = {
-  onClick: (lat: number, lng: number) => void;
+type AreaMarkerProps = {
+  onClick: (lat: number, lng: number, latRange: Range, lngRange: Range) => void;
 };
 
-function LocationMarker(props: LocationMarkerProps): JSX.Element | null {
+function AreaMarker(props: AreaMarkerProps): JSX.Element | null {
   const [marker, setMarker] = React.useState<MarkerType>(null);
 
-  function handleSetMarker(lat: number, lng: number) {
-    const latTxt = convertLatDMS(lat);
-    const lngTxt = convertLngDMS(lng);
+  function handleSetMarker(lat: number, lng: number, lats: Range, lngs: Range) {
+    const bottomLeft: Range = [lats[0], lngs[0]];
+    const topRight: Range = [lats[1], lngs[1]];
     setMarker({
       lat,
       lng,
+      bottomLeft: bottomLeft,
+      topRight: topRight,
       text: (
-        <span>
-          {latTxt}
-          <br />
-          {lngTxt}
-        </span>
+        <div>
+          <strong>
+            {convertLatDMS(lat)}
+            <br />
+            {convertLngDMS(lng)}
+          </strong>
+        </div>
       ),
     });
   }
 
   useMapEvents({
     click: (e) => {
-      handleSetMarker(e.latlng.lat, e.latlng.lng);
+      const lat = e.latlng.lat;
+      const lng = e.latlng.lng;
+      const lats: Range = [getFloor(lat), getCeil(lat)];
+      const lngs: Range = [getFloor(lng), getCeil(lng)];
+      handleSetMarker(lat, lng, lats, lngs);
       if (props.onClick) {
-        props.onClick(e.latlng.lat, e.latlng.lng);
+        props.onClick(lat, lng, lats, lngs);
       }
     },
   });
 
+  const blackOptions = { stroke: false, fill: true, fillColor: "black" };
+
   return marker ? (
-    <Marker position={[marker.lat, marker.lng]}>
-      <Popup>{marker.text}</Popup>
-    </Marker>
+    <>
+      <Rectangle
+        bounds={[marker.bottomLeft, marker.topRight]}
+        pathOptions={blackOptions}
+      />
+      <Marker position={[marker.lat, marker.lng]}>
+        <Popup>{marker.text}</Popup>
+      </Marker>
+    </>
   ) : null;
 }
 
 type MapProps = {
-  onClick?: (lat: number, lng: number) => void;
+  onClick?: (
+    lat: number,
+    lng: number,
+    latRange: Range,
+    lngRange: Range
+  ) => void;
   onZoomEnd?: (lvl: number) => void;
 };
 
 export default function Map(props: MapProps): JSX.Element {
   const [map, setMap] = React.useState<Leaflet.Map | null>(null);
 
-  function handleSetMarker(lat: number, lng: number) {
-    if (props.onClick) props.onClick(lat, lng);
+  function handleSetMarker(
+    lat: number,
+    lng: number,
+    latRange: Range,
+    lngRange: Range
+  ) {
+    if (props.onClick) props.onClick(lat, lng, latRange, lngRange);
   }
 
   function handleOnZoomEnd() {
@@ -124,7 +155,7 @@ export default function Map(props: MapProps): JSX.Element {
           <TileLayer {...PROVIDERS.openSeaMap} />
         </LayersControl.Overlay>
       </LayersControl>
-      <LocationMarker onClick={handleSetMarker} />
+      <AreaMarker onClick={handleSetMarker} />
       <ZoomEndEvent trigger={handleOnZoomEnd} />
     </MapContainer>
   );

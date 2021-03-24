@@ -16,7 +16,7 @@ import {
   Text,
 } from "grommet";
 import { Analytics, FormClose } from "grommet-icons";
-import Map, { INIT_ZOOM } from "./Map";
+import Map, { INIT_ZOOM, Range } from "./Map";
 import Chart from "./Chart";
 import { convertDMS } from "./util";
 
@@ -85,8 +85,9 @@ function AppContent(): JSX.Element {
   const [zoom, setZoom] = React.useState<number>(INIT_ZOOM);
   const size = React.useContext(ResponsiveContext);
 
-  function handleMapClick(lat: number, lng: number) {
+  function handleMapClick(lat: number, lng: number, lats: Range, lngs: Range) {
     setPos({ lat, lng });
+    console.log(lats, lngs);
   }
 
   function handleMapZoom(lvl: number) {

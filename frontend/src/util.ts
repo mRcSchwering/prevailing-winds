@@ -37,3 +37,11 @@ export function convertDMS(lat: number, lng: number): string {
     longitudeCardinal
   );
 }
+
+export function getFloor(d: number): number {
+  return Math.round(d) - 0.5;
+}
+
+export function getCeil(d: number): number {
+  return Math.round(d) + 0.5;
+}
