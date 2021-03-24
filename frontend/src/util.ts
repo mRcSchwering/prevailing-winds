@@ -38,10 +38,21 @@ export function convertDMS(lat: number, lng: number): string {
   );
 }
 
-export function getFloor(d: number): number {
-  return Math.round(d) - 0.5;
+export function getFloor(d: number, f: number): number {
+  return Math.round(d) - 0.5 * f;
 }
 
-export function getCeil(d: number): number {
-  return Math.round(d) + 0.5;
+export function getCeil(d: number, f: number): number {
+  return Math.round(d) + 0.5 * f;
+}
+
+export function suggestAreaFactor(zoomLvl: number): number {
+  if (zoomLvl <= 5) return 4;
+  if (zoomLvl <= 6) return 3;
+  if (zoomLvl <= 7) return 2;
+  return 1;
+}
+
+export function factor2area(areaFactor: number): string {
+  return new Intl.NumberFormat().format(areaFactor * 60 * 60);
 }

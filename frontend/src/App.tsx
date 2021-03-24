@@ -14,11 +14,12 @@ import {
   ResponsiveContext,
   Layer,
   Text,
+  RangeInput,
 } from "grommet";
 import { Analytics, FormClose } from "grommet-icons";
 import Map, { INIT_ZOOM, Range } from "./Map";
 import Chart from "./Chart";
-import { convertDMS } from "./util";
+import { convertDMS, suggestAreaFactor, factor2area } from "./util";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_BACKEND_URL || "http://localhost:8000/",
@@ -58,19 +59,40 @@ function AppBar(props: any): JSX.Element {
   );
 }
 
-function SideBarContent(props: {
+type SideBarContentProps = {
   zoom: number;
   pos: { lat: number; lng: number } | null;
-}): JSX.Element {
+  areaFactor: number;
+  onAreaFactorChange?: (factor: number) => void;
+};
+
+function SideBarContent(props: SideBarContentProps): JSX.Element {
   const zoom = `${props.zoom} x`;
   const pos = props.pos ? convertDMS(props.pos.lat, props.pos.lng) : "-";
 
+  function handleChangeAreaFactor(
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void {
+    const factor = parseInt(e.target.value);
+    if (props.onAreaFactorChange) props.onAreaFactorChange(factor);
+  }
+
   return (
     <>
+      <RangeInput
+        value={props.areaFactor}
+        onChange={handleChangeAreaFactor}
+        min={1}
+        max={4}
+      />
       <Text>
         Pos: {pos}
         <br />
         Zoom: {zoom}
+        <br />
+        Area Factor: {props.areaFactor}
+        <br />
+        Area: {factor2area(props.areaFactor)} M<sup>2</sup>
       </Text>
       <Chart />
     </>
@@ -84,14 +106,16 @@ function AppContent(): JSX.Element {
   );
   const [zoom, setZoom] = React.useState<number>(INIT_ZOOM);
   const size = React.useContext(ResponsiveContext);
+  const initFactor = suggestAreaFactor(zoom);
+  const [areaFactor, setAreaFactor] = React.useState(initFactor);
 
   function handleMapClick(lat: number, lng: number, lats: Range, lngs: Range) {
     setPos({ lat, lng });
-    console.log(lats, lngs);
   }
 
   function handleMapZoom(lvl: number) {
     setZoom(lvl);
+    setAreaFactor(suggestAreaFactor(lvl));
   }
 
   return (
@@ -109,7 +133,11 @@ function AppContent(): JSX.Element {
       </AppBar>
       <Box flex direction="row" overflow={{ horizontal: "hidden" }}>
         <Box flex justify="center">
-          <Map onClick={handleMapClick} onZoomEnd={handleMapZoom} />
+          <Map
+            areaFactor={areaFactor}
+            onClick={handleMapClick}
+            onZoomEnd={handleMapZoom}
+          />
         </Box>
         {!showSidebar || size !== "small" ? (
           <Collapsible direction="horizontal" open={showSidebar}>
@@ -121,7 +149,12 @@ function AppContent(): JSX.Element {
               align="center"
               justify="center"
             >
-              <SideBarContent pos={pos} zoom={zoom} />
+              <SideBarContent
+                pos={pos}
+                zoom={zoom}
+                areaFactor={areaFactor}
+                onAreaFactorChange={setAreaFactor}
+              />
             </Box>
           </Collapsible>
         ) : (
@@ -139,7 +172,12 @@ function AppContent(): JSX.Element {
               />
             </Box>
             <Box fill background="light-2" align="center" justify="center">
-              <SideBarContent pos={pos} zoom={zoom} />
+              <SideBarContent
+                pos={pos}
+                zoom={zoom}
+                areaFactor={areaFactor}
+                onAreaFactorChange={setAreaFactor}
+              />
             </Box>
           </Layer>
         )}

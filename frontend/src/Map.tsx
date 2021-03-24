@@ -18,7 +18,7 @@ const PROVIDERS = {
       "Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC",
     url:
       "https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}",
-    maxZoom: 16,
+    maxZoom: 12,
   },
   stadia: {
     attribution:
@@ -53,6 +53,7 @@ type MarkerType = {
 } | null;
 
 type AreaMarkerProps = {
+  sizeFactor: number;
   onClick: (lat: number, lng: number, latRange: Range, lngRange: Range) => void;
 };
 
@@ -83,8 +84,14 @@ function AreaMarker(props: AreaMarkerProps): JSX.Element | null {
     click: (e) => {
       const lat = e.latlng.lat;
       const lng = e.latlng.lng;
-      const lats: Range = [getFloor(lat), getCeil(lat)];
-      const lngs: Range = [getFloor(lng), getCeil(lng)];
+      const lats: Range = [
+        getFloor(lat, props.sizeFactor),
+        getCeil(lat, props.sizeFactor),
+      ];
+      const lngs: Range = [
+        getFloor(lng, props.sizeFactor),
+        getCeil(lng, props.sizeFactor),
+      ];
       handleSetMarker(lat, lng, lats, lngs);
       if (props.onClick) {
         props.onClick(lat, lng, lats, lngs);
@@ -108,6 +115,7 @@ function AreaMarker(props: AreaMarkerProps): JSX.Element | null {
 }
 
 type MapProps = {
+  areaFactor: number;
   onClick?: (
     lat: number,
     lng: number,
@@ -155,7 +163,7 @@ export default function Map(props: MapProps): JSX.Element {
           <TileLayer {...PROVIDERS.openSeaMap} />
         </LayersControl.Overlay>
       </LayersControl>
-      <AreaMarker onClick={handleSetMarker} />
+      <AreaMarker onClick={handleSetMarker} sizeFactor={props.areaFactor} />
       <ZoomEndEvent trigger={handleOnZoomEnd} />
     </MapContainer>
   );
