@@ -1,6 +1,6 @@
 type Query {
   meta: Meta!
-  winds(input: WindsInput): WindsResult!
+  winds(input: WindsInput!): WindsResult!
 }
 
 """
@@ -9,9 +9,10 @@ Some metadata
 type Meta {
   ciPipelineId: String!
   buildDate: String!
-  timeRanges: [String]!
-  windDirections: [WindDirection]!
-  windVelocities: [WindVelocity]!
+  timeRanges: [String!]!
+  months: [String!]!
+  windDirections: [WindDirection!]!
+  windVelocities: [WindVelocity!]!
 }
 
 """
@@ -45,7 +46,7 @@ from/to lat/lng: half closed intervals
 """
 input WindsInput {
   timeRange: String!
-  month: Int!
+  month: String!
   fromLat: Float!
   toLat: Float!
   fromLng: Float!
@@ -56,7 +57,7 @@ input WindsInput {
 Historic winds for a particular time and place
 """
 type WindsResult {
-  records: [WindRecord]!
+  records: [WindRecord!]!
 }
 
 """
