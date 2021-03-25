@@ -23,8 +23,6 @@ import Chart from "./Chart";
 import { convertDMS, suggestAreaFactor, factor2area } from "./util";
 import { useMeta, useMetaResp, useWinds, useWindResp } from "./queries";
 
-const MONTHS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
-
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_BACKEND_URL || "http://localhost:8000/",
 });
@@ -97,6 +95,7 @@ function SideBarContent(props: SideBarContentProps): JSX.Element {
   if (!props.metaResp.loading) {
     if (props.metaResp.data) {
       const timeRanges = props.metaResp.data.timeRanges;
+      const months = props.metaResp.data.months;
       inputs = (
         <>
           <Select
@@ -105,7 +104,7 @@ function SideBarContent(props: SideBarContentProps): JSX.Element {
             onChange={handleTimeRangeChange}
           />
           <Select
-            options={MONTHS}
+            options={months}
             value={props.selectedMonth}
             onChange={handleMonthChange}
           />
@@ -145,12 +144,13 @@ function AppContent(): JSX.Element {
   const [areaFactor, setAreaFactor] = React.useState(initFactor);
   const metaResp = useMeta();
   const [timeRange, setTimeRange] = React.useState("");
-  const [month, setMonth] = React.useState(MONTHS[0]);
+  const [month, setMonth] = React.useState("");
   const [loadWinds, windsResp] = useWinds();
 
   React.useEffect(() => {
-    if (metaResp.data?.timeRanges) {
+    if (metaResp.data?.timeRanges && metaResp.data?.months) {
       setTimeRange(metaResp.data.timeRanges[0]);
+      setMonth(metaResp.data.months[0]);
     }
   }, [metaResp]);
 
@@ -164,7 +164,7 @@ function AppContent(): JSX.Element {
       loadWinds({
         variables: {
           timeRange: timeRange,
-          month: parseInt(month),
+          month: month,
           fromLat: lats[0],
           toLat: lats[1],
           fromLng: lngs[0],

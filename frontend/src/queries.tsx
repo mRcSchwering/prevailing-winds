@@ -9,7 +9,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
   { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
   { [SubKey in K]: Maybe<T[SubKey]> };
-
+/** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
   String: string;
@@ -25,7 +25,7 @@ export type Query = {
 };
 
 export type QueryWindsArgs = {
-  input?: Maybe<WindsInput>;
+  input: WindsInput;
 };
 
 export type Meta = {
@@ -33,6 +33,7 @@ export type Meta = {
   ciPipelineId: Scalars["String"];
   buildDate: Scalars["String"];
   timeRanges: Array<Scalars["String"]>;
+  months: Array<Scalars["String"]>;
   windDirections: Array<WindDirection>;
   windVelocities: Array<WindVelocity>;
 };
@@ -55,7 +56,7 @@ export type WindVelocity = {
 
 export type WindsInput = {
   timeRange: Scalars["String"];
-  month: Scalars["Int"];
+  month: Scalars["String"];
   fromLat: Scalars["Float"];
   toLat: Scalars["Float"];
   fromLng: Scalars["Float"];
@@ -78,6 +79,7 @@ const META_QUERY = gql`
   query Meta {
     meta {
       timeRanges
+      months
       windDirections {
         idx
         name
@@ -108,7 +110,7 @@ export function useMeta(): useMetaResp {
 const WINDS_QUERY = gql`
   query Winds(
     $timeRange: String!
-    $month: Int!
+    $month: String!
     $fromLat: Float!
     $toLat: Float!
     $fromLng: Float!
@@ -141,7 +143,7 @@ export type useWindResp = {
 
 export type useWindsVars = {
   timeRange: string;
-  month: number;
+  month: string;
   fromLat: number;
   toLat: number;
   fromLng: number;
@@ -160,29 +162,3 @@ export function useWinds(): [loadWindsType, useWindResp] {
   );
   return [loadWinds, { data: data?.winds, loading, error }];
 }
-
-/*
-const QUERY = gql`
-  query TestPkl {
-    testPkl {
-      dir
-      vel
-      velName
-      count
-    }
-  }
-`;
-
-export function useTestPkl(): [
-  () => void,
-  {
-    data?: TestPklData;
-    loading: boolean;
-    error?: ApolloError;
-  }
-] {
-  const [loadTestPkl, { data, loading, error }] = useLazyQuery<Query>(QUERY);
-
-  return [loadTestPkl, { data: data?.testPkl, loading, error }];
-}
-*/
