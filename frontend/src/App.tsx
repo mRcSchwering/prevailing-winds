@@ -13,15 +13,12 @@ import {
   Grommet,
   ResponsiveContext,
   Layer,
-  RangeInput,
-  Select,
 } from "grommet";
-import Spinner from "./SpinnerBrand";
 import { Analytics, FormClose } from "grommet-icons";
 import Map, { INIT_ZOOM, Range } from "./Map";
-import Chart from "./Chart";
-import { convertDMS, suggestAreaFactor, factor2area } from "./util";
-import { useMeta, useMetaResp, useWinds, useWindResp } from "./queries";
+import { suggestAreaFactor, factor2area } from "./util";
+import { useMeta, useWinds } from "./queries";
+import SideBarContent from "./SideBarContent";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_BACKEND_URL || "http://localhost:8000/",
@@ -61,78 +58,6 @@ function AppBar(props: any): JSX.Element {
   );
 }
 
-type SideBarContentProps = {
-  windResp: useWindResp;
-  metaResp: useMetaResp;
-  selectedTimeRange: string;
-  selectedMonth: string;
-  pos: { lat: number; lng: number } | null;
-  areaFactor: number;
-  onAreaFactorChange?: (factor: number) => void;
-  onTimeRangeChange?: (timeRange: string) => void;
-  onMonthChange?: (month: string) => void;
-};
-
-function SideBarContent(props: SideBarContentProps): JSX.Element {
-  const pos = props.pos ? convertDMS(props.pos.lat, props.pos.lng) : "-";
-
-  function handleChangeAreaFactor(
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void {
-    const factor = parseInt(e.target.value);
-    if (props.onAreaFactorChange) props.onAreaFactorChange(factor);
-  }
-
-  function handleTimeRangeChange({ option }: { option: string }) {
-    if (props.onTimeRangeChange) props.onTimeRangeChange(option);
-  }
-
-  function handleMonthChange({ option }: { option: string }) {
-    if (props.onMonthChange) props.onMonthChange(option);
-  }
-
-  let inputs = <Spinner />;
-  if (!props.metaResp.loading) {
-    if (props.metaResp.data) {
-      const timeRanges = props.metaResp.data.timeRanges;
-      const months = props.metaResp.data.months;
-      inputs = (
-        <>
-          <Select
-            options={timeRanges}
-            value={props.selectedTimeRange}
-            onChange={handleTimeRangeChange}
-          />
-          <Select
-            options={months}
-            value={props.selectedMonth}
-            onChange={handleMonthChange}
-          />
-        </>
-      );
-    }
-  }
-
-  return (
-    <>
-      <Box pad="medium">
-        <Box direction="row">{inputs}</Box>
-        <strong>{pos}</strong>
-        <RangeInput
-          value={props.areaFactor}
-          onChange={handleChangeAreaFactor}
-          min={1}
-          max={4}
-        />
-        <span>
-          area: {factor2area(props.areaFactor)} M<sup>2</sup>
-        </span>
-      </Box>
-      <Chart winds={props.windResp} meta={props.metaResp} />
-    </>
-  );
-}
-
 function AppContent(): JSX.Element {
   const [showSidebar, setShowSidebar] = React.useState(true);
   const [pos, setPos] = React.useState<{ lat: number; lng: number } | null>(
@@ -142,6 +67,7 @@ function AppContent(): JSX.Element {
   const size = React.useContext(ResponsiveContext);
   const initFactor = suggestAreaFactor(zoom);
   const [areaFactor, setAreaFactor] = React.useState(initFactor);
+  const [selectedArea, setSelectedArea] = React.useState("");
   const metaResp = useMeta();
   const [timeRange, setTimeRange] = React.useState("");
   const [month, setMonth] = React.useState("");
@@ -152,11 +78,12 @@ function AppContent(): JSX.Element {
       setTimeRange(metaResp.data.timeRanges[0]);
       setMonth(metaResp.data.months[0]);
     }
-  }, [metaResp]);
+  }, [metaResp.data?.timeRanges, metaResp.data?.months]);
 
   function handleMapClick(lat: number, lng: number, lats: Range, lngs: Range) {
     setPos({ lat, lng });
-    if (timeRange !== "" && lats[1] - lats[0] > 0 && lngs[1] - lngs[0] > 0) {
+    setSelectedArea(factor2area(areaFactor));
+    if (timeRange !== "" && month !== "") {
       loadWinds({
         variables: {
           timeRange: timeRange,
@@ -204,7 +131,7 @@ function AppContent(): JSX.Element {
               background="light-2"
               elevation="small"
               align="center"
-              justify="center"
+              justify="start"
             >
               <SideBarContent
                 windResp={windsResp}
@@ -212,8 +139,7 @@ function AppContent(): JSX.Element {
                 selectedMonth={month}
                 metaResp={metaResp}
                 pos={pos}
-                areaFactor={areaFactor}
-                onAreaFactorChange={setAreaFactor}
+                area={selectedArea}
                 onMonthChange={setMonth}
               />
             </Box>
@@ -239,8 +165,7 @@ function AppContent(): JSX.Element {
                 selectedMonth={month}
                 metaResp={metaResp}
                 pos={pos}
-                areaFactor={areaFactor}
-                onAreaFactorChange={setAreaFactor}
+                area={selectedArea}
                 onMonthChange={setMonth}
               />
             </Box>

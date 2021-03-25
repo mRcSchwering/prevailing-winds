@@ -14,4 +14,3 @@ def natural_series(nums: List[float]) -> List[int]:
     floor = int(n) if n - int(n) < 0.0001 else int(n + 1)
     ceil = int(m) if m - int(m) < 0.0001 else int(m + 1)
     return list(range(floor, ceil))
-

@@ -30,7 +30,21 @@ function createName(windBin: WindBinType): string {
   return `BFT ${windBin.bfts.join(" to ")} (${kts})`;
 }
 
+const config = {
+  displaylogo: false,
+  responsive: true,
+  modeBarButtonsToRemove: [
+    "zoom2d",
+    "lasso2d",
+    "zoomIn2d",
+    "zoomOut2d",
+    "select2d",
+  ],
+};
+
 const layout = {
+  margin: { t: 25 },
+  paper_bgcolor: "#F2F2F2",
   font: { size: 16 },
   showlegend: true,
   legend: {
@@ -44,19 +58,7 @@ const layout = {
     angularaxis: { direction: "clockwise" },
   },
   width: 400,
-  height: 550,
-};
-
-const config = {
-  displaylogo: false,
-  responsive: true,
-  modeBarButtonsToRemove: [
-    "zoom2d",
-    "lasso2d",
-    "zoomIn2d",
-    "zoomOut2d",
-    "select2d",
-  ],
+  height: 500,
 };
 
 type ChartProps = {
@@ -75,7 +77,7 @@ export default function Chart(props: ChartProps): JSX.Element {
   }
 
   if (!props.meta.data || !props.winds.data) {
-    return <Text color="status-critical">something went wrong</Text>;
+    return <Text>click somewhere on the chart</Text>;
   }
 
   const bins = [];
