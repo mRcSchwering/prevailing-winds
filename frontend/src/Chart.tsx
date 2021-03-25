@@ -1,43 +1,41 @@
 import React from "react";
 import Plot from "react-plotly.js";
 import { Text } from "grommet";
-import { sampleData } from "./sampleData";
-import {
-  useWindResp,
-  useMetaResp,
-  WindRecord,
-  WindDirection,
-  WindVelocity,
-} from "./queries";
+import { useWindResp, useMetaResp } from "./queries";
 import Spinner from "./SpinnerBrand";
 
-// TODO: backend regel 0-360 stimmt nicht
-// TODO: wie will ich hier bins machen?
-// TODO: vllt im backend schon frequencies berechnen?
+type WindBinType = {
+  bfts: number[];
+  minKt: null | number;
+  maxKt: null | number;
+  color: string;
+};
 
-const COLORS = [
-  "#ffffe0",
-  "#eeeedb",
-  "#dedcd5",
-  "#cfcbcf",
-  "#c0bac7",
-  "#b2aac0",
-  "#a599b7",
-  "#9988ad",
-  "#8f77a2",
-  "#876695",
-  "#825485",
-  "#813e70",
-  "#94003a",
+const windBins: WindBinType[] = [
+  { bfts: [0, 1], minKt: null, maxKt: 3, color: "#ffffe0" },
+  { bfts: [2, 3], minKt: 4, maxKt: 10, color: "#dedcd5" },
+  { bfts: [4, 5], minKt: 11, maxKt: 21, color: "#c0bac7" },
+  { bfts: [6, 7], minKt: 22, maxKt: 33, color: "#a599b7" },
+  { bfts: [8, 9], minKt: 34, maxKt: 47, color: "#8f77a2" },
+  { bfts: [10, 11], minKt: 48, maxKt: 55, color: "#825485" },
+  { bfts: [12, 13], minKt: 56, maxKt: null, color: "#94003a" },
 ];
 
+function createName(windBin: WindBinType): string {
+  let kts = "";
+  if (windBin.minKt && windBin.maxKt)
+    kts = `${windBin.minKt} to ${windBin.maxKt} kt`;
+  else if (windBin.minKt) kts = `>= ${windBin.minKt} kt`;
+  else if (windBin.maxKt) kts = `<= ${windBin.maxKt} kt`;
+  return `BFT ${windBin.bfts.join(" to ")} (${kts})`;
+}
+
 const layout = {
-  title: "not yet in use",
   font: { size: 16 },
   showlegend: true,
   legend: {
     x: 0.7,
-    y: -0.5,
+    y: -1,
   },
   polar: {
     barmode: "stack",
@@ -46,7 +44,7 @@ const layout = {
     angularaxis: { direction: "clockwise" },
   },
   width: 400,
-  height: 480,
+  height: 550,
 };
 
 const config = {
@@ -80,34 +78,40 @@ export default function Chart(props: ChartProps): JSX.Element {
     return <Text color="status-critical">something went wrong</Text>;
   }
 
-  const allDirIdxs = props.meta.data.windDirections.map((d) => d.idx);
-  const allVelIdxs = props.meta.data.windVelocities.map((d) => d.idx);
-  const winds = props.winds.data.records;
-
-  const series = [];
-  for (const i in allVelIdxs) {
-    const vel = props.meta.data.windVelocities[i];
-    const ser = {
-      marker: { color: COLORS[i] },
-      name: `${vel.fromKt} - ${vel.toKt}`,
+  const bins = [];
+  for (const windBin of windBins) {
+    const bin = {
+      marker: { color: windBin.color },
+      name: createName(windBin),
       type: "barpolar",
       r: [] as number[],
       theta: [] as string[],
     };
-    for (const j in allDirIdxs) {
-      const dir = props.meta.data.windDirections[j];
-      const filtered = winds.filter(
-        (d) => d.dir === dir.idx && d.vel === vel.idx
-      );
-      let count = 0;
-      if (filtered.length > 0) {
-        count = filtered.map((d) => d.count).reduce((a, b) => a + b);
+
+    const vels = props.meta.data.windVelocities.filter((d) =>
+      windBin.bfts.includes(d.beaufortNumber)
+    );
+    for (const vel of vels) {
+      for (const dir of props.meta.data.windDirections) {
+        const filtered = props.winds.data.records.filter(
+          (d) => d.dir === dir.idx && d.vel === vel.idx
+        );
+        let count = 0;
+        if (filtered.length > 0) {
+          count = filtered.map((d) => d.count).reduce((a, b) => a + b);
+        }
+        const thetaIdx = bin.theta.indexOf(dir.name);
+        if (bin.theta.indexOf(dir.name) === -1) {
+          bin.r.push(count);
+          bin.theta.push(dir.name);
+        } else {
+          bin.r[thetaIdx] = bin.r[thetaIdx] + count;
+        }
       }
-      ser.r.push(count);
-      ser.theta.push(dir.name);
     }
-    series.push(ser);
+
+    bins.push(bin);
   }
 
-  return <Plot data={series} layout={layout} config={config} />;
+  return <Plot data={bins} layout={layout} config={config} />;
 }

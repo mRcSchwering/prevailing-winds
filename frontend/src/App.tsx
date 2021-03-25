@@ -154,10 +154,6 @@ function AppContent(): JSX.Element {
     }
   }, [metaResp]);
 
-  React.useEffect(() => {
-    console.log(windsResp);
-  }, [windsResp]);
-
   function handleMapClick(lat: number, lng: number, lats: Range, lngs: Range) {
     setPos({ lat, lng });
     if (timeRange !== "" && lats[1] - lats[0] > 0 && lngs[1] - lngs[0] > 0) {
