@@ -37,11 +37,13 @@ export default function SideBarContent(
       inputs = (
         <>
           <Select
+            margin="xsmall"
             options={timeRanges}
             value={props.selectedTimeRange}
             onChange={handleTimeRangeChange}
           />
           <Select
+            margin="xsmall"
             options={months}
             value={props.selectedMonth}
             onChange={handleMonthChange}

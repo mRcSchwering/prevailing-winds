@@ -48,7 +48,7 @@ const layout = {
   font: { size: 16 },
   showlegend: true,
   legend: {
-    x: 0.7,
+    x: -0.2,
     y: -1,
   },
   polar: {
