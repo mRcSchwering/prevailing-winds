@@ -2,51 +2,59 @@ import React from "react";
 import { Box, Select, Heading } from "grommet";
 import Spinner from "./SpinnerBrand";
 import Chart from "./Chart";
-import { convertDMS } from "./util";
-import { useMetaResp, useWindResp } from "./queries";
+import { convertDMS, factor2area } from "./util";
+import { useMeta, useWinds } from "./queries";
+import { SelectionContext } from "./SelectionContext";
 
-type SideBarContentProps = {
-  windResp: useWindResp;
-  metaResp: useMetaResp;
-  selectedTimeRange: string;
-  selectedMonth: string;
-  pos: { lat: number; lng: number } | null;
-  area: string;
-  onTimeRangeChange?: (timeRange: string) => void;
-  onMonthChange?: (month: string) => void;
-};
+export default function SideBarContent(): JSX.Element {
+  const { pos, rect, areaFactor } = React.useContext(SelectionContext);
 
-export default function SideBarContent(
-  props: SideBarContentProps
-): JSX.Element {
-  const pos = props.pos ? convertDMS(props.pos.lat, props.pos.lng) : "-";
+  const metaResp = useMeta();
+  const [timeRange, setTimeRange] = React.useState("");
+  const [month, setMonth] = React.useState("");
 
-  function handleTimeRangeChange({ option }: { option: string }) {
-    if (props.onTimeRangeChange) props.onTimeRangeChange(option);
-  }
+  const [loadWinds, windsResp] = useWinds();
 
-  function handleMonthChange({ option }: { option: string }) {
-    if (props.onMonthChange) props.onMonthChange(option);
-  }
+  React.useEffect(() => {
+    if (metaResp.data?.timeRanges && metaResp.data?.months) {
+      setTimeRange(metaResp.data.timeRanges[0]);
+      setMonth(metaResp.data.months[0]);
+    }
+  }, [metaResp.data?.timeRanges, metaResp.data?.months]);
+
+  React.useEffect(() => {
+    if (rect) {
+      loadWinds({
+        variables: {
+          timeRange: timeRange,
+          month: month,
+          fromLat: rect.lats[0],
+          toLat: rect.lats[1],
+          fromLng: rect.lngs[0],
+          toLng: rect.lngs[1],
+        },
+      });
+    }
+  }, [rect, timeRange, month, loadWinds]);
 
   let inputs = <Spinner />;
-  if (!props.metaResp.loading) {
-    if (props.metaResp.data) {
-      const timeRanges = props.metaResp.data.timeRanges;
-      const months = props.metaResp.data.months;
+  if (!metaResp.loading) {
+    if (metaResp.data) {
+      const timeRanges = metaResp.data.timeRanges;
+      const months = metaResp.data.months;
       inputs = (
         <>
           <Select
             margin="xsmall"
             options={timeRanges}
-            value={props.selectedTimeRange}
-            onChange={handleTimeRangeChange}
+            value={timeRange}
+            onChange={({ option }) => setTimeRange(option)}
           />
           <Select
             margin="xsmall"
             options={months}
-            value={props.selectedMonth}
-            onChange={handleMonthChange}
+            value={month}
+            onChange={({ option }) => setMonth(option)}
           />
         </>
       );
@@ -60,16 +68,16 @@ export default function SideBarContent(
       </Box>
       <Box align="center">
         <Heading level={4} margin={{ bottom: "0px", top: "20px" }}>
-          {pos}
+          {pos ? convertDMS(pos.lat, pos.lng) : "-"}
         </Heading>
         <Heading level={4} margin={{ bottom: "20px", top: "0px" }}>
-          {props.area && (
+          {areaFactor && (
             <>
-              {props.area} M<sup>2</sup>
+              {factor2area(areaFactor)} M<sup>2</sup>
             </>
           )}
         </Heading>
-        <Chart winds={props.windResp} meta={props.metaResp} />
+        <Chart winds={windsResp} meta={metaResp} />
       </Box>
     </>
   );
