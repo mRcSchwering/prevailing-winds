@@ -2,12 +2,12 @@ import React from "react";
 import { Box, Select, Heading } from "grommet";
 import Spinner from "./SpinnerBrand";
 import Chart from "./Chart";
-import { convertDMS, factor2area } from "./util";
+import { convertDMS, rect2area } from "./util";
 import { useMeta, useWinds } from "./queries";
 import { SelectionContext } from "./SelectionContext";
 
 export default function SideBarContent(): JSX.Element {
-  const { pos, rect, areaFactor } = React.useContext(SelectionContext);
+  const { pos, rect } = React.useContext(SelectionContext);
 
   const metaResp = useMeta();
   const [timeRange, setTimeRange] = React.useState("");
@@ -71,9 +71,9 @@ export default function SideBarContent(): JSX.Element {
           {pos ? convertDMS(pos.lat, pos.lng) : "-"}
         </Heading>
         <Heading level={4} margin={{ bottom: "20px", top: "0px" }}>
-          {areaFactor && (
+          {rect && (
             <>
-              {factor2area(areaFactor)} M<sup>2</sup>
+              {rect2area(rect.lats, rect.lngs)} M<sup>2</sup>
             </>
           )}
         </Heading>

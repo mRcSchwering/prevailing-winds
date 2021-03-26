@@ -1,33 +1,32 @@
-const EXCLUSION_ZONES: [number, number] = [-70, 70];
+import { EXCLUSION_ZONES, Tuple } from "./constants";
 
 export function toDegreesMinutesAndSeconds(coordinate: number): string {
-  var absolute = Math.abs(coordinate);
-  var degrees = Math.floor(absolute);
-  var minutesNotTruncated = (absolute - degrees) * 60;
-  var minutes = Math.floor(minutesNotTruncated);
-  var seconds = Math.floor((minutesNotTruncated - minutes) * 60);
-
+  const absolute = Math.abs(coordinate);
+  const degrees = Math.floor(absolute);
+  const minutesNotTruncated = (absolute - degrees) * 60;
+  const minutes = Math.floor(minutesNotTruncated);
+  const seconds = Math.floor((minutesNotTruncated - minutes) * 60);
   return degrees + "° " + minutes + "' " + seconds + "''";
 }
 
 export function convertLatDMS(lat: number): string {
-  var val = toDegreesMinutesAndSeconds(lat);
-  var card = lat >= 0 ? "N" : "S";
+  const val = toDegreesMinutesAndSeconds(lat);
+  const card = lat >= 0 ? "N" : "S";
   return val + " " + card;
 }
 
 export function convertLngDMS(lng: number): string {
-  var val = toDegreesMinutesAndSeconds(lng);
-  var card = lng >= 0 ? "E" : "W";
+  const val = toDegreesMinutesAndSeconds(lng);
+  const card = lng >= 0 ? "E" : "W";
   return val + " " + card;
 }
 
 export function convertDMS(lat: number, lng: number): string {
-  var latitude = toDegreesMinutesAndSeconds(lat);
-  var latitudeCardinal = lat >= 0 ? "N" : "S";
+  const latitude = toDegreesMinutesAndSeconds(lat);
+  const latitudeCardinal = lat >= 0 ? "N" : "S";
 
-  var longitude = toDegreesMinutesAndSeconds(lng);
-  var longitudeCardinal = lng >= 0 ? "E" : "W";
+  const longitude = toDegreesMinutesAndSeconds(lng);
+  const longitudeCardinal = lng >= 0 ? "E" : "W";
 
   return (
     latitude +
@@ -40,25 +39,44 @@ export function convertDMS(lat: number, lng: number): string {
   );
 }
 
-export function getFloor(d: number, f: number): number {
-  return Math.round(d) - 0.5 * f;
+export function cosine(degree: number): number {
+  return Math.cos((degree * Math.PI) / 180);
 }
 
-export function getCeil(d: number, f: number): number {
-  return Math.round(d) + 0.5 * f;
-}
-
-export function excludePoles(d: number): number {
-  return Math.min(Math.max(d, EXCLUSION_ZONES[0]), EXCLUSION_ZONES[1]);
-}
-
-export function suggestAreaFactor(zoomLvl: number): number {
+export function suggestPadFactor(zoomLvl: number): number {
   if (zoomLvl <= 5) return 4;
   if (zoomLvl <= 6) return 3;
   if (zoomLvl <= 7) return 2;
   return 1;
 }
 
-export function factor2area(areaFactor: number): string {
-  return new Intl.NumberFormat().format(areaFactor * 60 * 60);
+export function getLatFloor(degree: number, pad: number): number {
+  return Math.round(degree) - 0.5 * pad;
+}
+
+export function getLngFloor(degree: number, pad: number): number {
+  return Math.round(degree) - 0.5 * pad;
+}
+
+export function getLatCeil(degree: number, pad: number): number {
+  return Math.round(degree) + 0.5 * pad;
+}
+
+export function getLngCeil(degree: number, pad: number): number {
+  return Math.round(degree) + 0.5 * pad;
+}
+
+export function excludePoles(d: number): number {
+  return Math.min(Math.max(d, EXCLUSION_ZONES[0]), EXCLUSION_ZONES[1]);
+}
+
+/**
+ * Calculate (and format) area in M from bounding rect.
+ * Adjusts longitude distances based on mean latitude.
+ */
+export function rect2area(lats: Tuple, lngs: Tuple): string {
+  const v = (lats[1] - lats[0]) * 60;
+  const aveLat = (lats[0] + lats[1]) / 2;
+  const u = (lngs[1] - lngs[0]) * 60 * cosine(aveLat);
+  return new Intl.NumberFormat().format(Math.round(u * v));
 }

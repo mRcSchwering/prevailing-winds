@@ -7,11 +7,17 @@ import {
   Rectangle,
 } from "react-leaflet";
 import Leaflet from "leaflet";
-import { getFloor, getCeil, excludePoles } from "./util";
+import {
+  getLngFloor,
+  getLngCeil,
+  getLatFloor,
+  getLatCeil,
+  excludePoles,
+  suggestPadFactor,
+  cosine,
+} from "./util";
 import { SelectionContext } from "./SelectionContext";
-import { INIT_ZOOM } from "./constants";
-
-export const INIT_POS: [number, number] = [46.0, -6.0];
+import { INIT_ZOOM, INIT_POS, Tuple } from "./constants";
 
 // from https://leaflet-extras.github.io/leaflet-providers/preview/
 const PROVIDERS = {
@@ -42,20 +48,18 @@ function ZoomEndEvent(props: { trigger: () => void }): null {
   return null;
 }
 
-export type Range = [number, number];
-
 type MarkerType = {
-  bottomLeft: Range;
-  topRight: Range;
+  bottomLeft: Tuple;
+  topRight: Tuple;
 } | null;
 
 function AreaMarker(): JSX.Element | null {
   const [marker, setMarker] = React.useState<MarkerType>(null);
-  const { updatePos, areaFactor } = React.useContext(SelectionContext);
+  const { updatePos, zoomLvl } = React.useContext(SelectionContext);
 
-  function handleSetMarker(lats: Range, lngs: Range) {
-    const bottomLeft: Range = [lats[0], lngs[0]];
-    const topRight: Range = [lats[1], lngs[1]];
+  function handleSetMarker(lats: Tuple, lngs: Tuple) {
+    const bottomLeft: Tuple = [lats[0], lngs[0]];
+    const topRight: Tuple = [lats[1], lngs[1]];
     setMarker({
       bottomLeft: bottomLeft,
       topRight: topRight,
@@ -66,11 +70,13 @@ function AreaMarker(): JSX.Element | null {
     click: (e) => {
       const lat = e.latlng.lat;
       const lng = e.latlng.lng;
-      const lats: Range = [
-        excludePoles(getFloor(lat, areaFactor)),
-        excludePoles(getCeil(lat, areaFactor)),
+      const pad = suggestPadFactor(zoomLvl);
+      const adjPad = pad / cosine(lat);
+      const lats: Tuple = [
+        excludePoles(getLatFloor(lat, pad)),
+        excludePoles(getLatCeil(lat, pad)),
       ];
-      const lngs: Range = [getFloor(lng, areaFactor), getCeil(lng, areaFactor)];
+      const lngs: Tuple = [getLngFloor(lng, adjPad), getLngCeil(lng, adjPad)];
       handleSetMarker(lats, lngs);
       updatePos({
         lat,

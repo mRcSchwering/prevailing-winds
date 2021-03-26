@@ -1,13 +1,11 @@
 import React from "react";
-import { Range } from "./Map";
-import { INIT_ZOOM } from "./constants";
-import { suggestAreaFactor } from "./util";
+import { INIT_ZOOM, Tuple } from "./constants";
 
 type SelectionContextType = {
   pos: { lat: number; lng: number } | null;
-  rect: { lats: Range; lngs: Range } | null;
+  rect: { lats: Tuple; lngs: Tuple } | null;
   zoomLvl: number;
-  areaFactor: number;
+  posZoomLvl: number | null;
   updatePos: (d: MapClickType) => void;
   updateZoom: (d: number) => void;
 };
@@ -16,7 +14,7 @@ const defaultContext = {
   pos: null,
   rect: null,
   zoomLvl: INIT_ZOOM,
-  areaFactor: suggestAreaFactor(INIT_ZOOM),
+  posZoomLvl: null,
   updatePos: () => {},
   updateZoom: () => {},
 };
@@ -31,26 +29,23 @@ type SelectionContextProviderProps = {
 
 type SelectionContextStateType = {
   pos: { lat: number; lng: number } | null;
-  rect: { lats: Range; lngs: Range } | null;
-  zoomLvl: number;
-  areaFactor: number;
+  rect: { lats: Tuple; lngs: Tuple } | null;
+  posZoomLvl: number | null;
 };
 
 type MapClickType = {
   lat: number;
   lng: number;
-  lats: Range;
-  lngs: Range;
+  lats: Tuple;
+  lngs: Tuple;
 };
 
-// TODO: areafactor ist einen click hinter zoom
-
 export function SelectionContextProvider(props: SelectionContextProviderProps) {
+  const [zoom, setZoom] = React.useState<number>(INIT_ZOOM);
   const [state, setState] = React.useState<SelectionContextStateType>({
     pos: null,
     rect: null,
-    zoomLvl: INIT_ZOOM,
-    areaFactor: suggestAreaFactor(INIT_ZOOM),
+    posZoomLvl: null,
   });
 
   function updatePos({ lat, lng, lats, lngs }: MapClickType) {
@@ -58,19 +53,18 @@ export function SelectionContextProvider(props: SelectionContextProviderProps) {
       ...prev,
       pos: { lat, lng },
       rect: { lats, lngs },
-      areaFactor: suggestAreaFactor(prev.zoomLvl),
+      posZoomLvl: zoom,
     }));
   }
 
   function updateZoom(lvl: number) {
-    setState((prev) => ({
-      ...prev,
-      zoomLvl: lvl,
-    }));
+    setZoom(lvl);
   }
 
   return (
-    <SelectionContext.Provider value={{ ...state, updatePos, updateZoom }}>
+    <SelectionContext.Provider
+      value={{ ...state, updatePos, updateZoom, zoomLvl: zoom }}
+    >
       {props.children}
     </SelectionContext.Provider>
   );
