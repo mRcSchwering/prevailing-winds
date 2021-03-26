@@ -13,12 +13,12 @@ type WindBinType = {
 
 const windBins: WindBinType[] = [
   { bfts: [0, 1], minKt: null, maxKt: 3, color: "#ffffe0" },
-  { bfts: [2, 3], minKt: 4, maxKt: 10, color: "#aac0ca" },
-  { bfts: [4, 5], minKt: 11, maxKt: 21, color: "#5581b3" },
-  { bfts: [6, 7], minKt: 22, maxKt: 33, color: "#00429d" },
-  { bfts: [8, 9], minKt: 34, maxKt: 47, color: "#312c7c" },
-  { bfts: [10, 11], minKt: 48, maxKt: 55, color: "#63165b" },
-  { bfts: [12, 13], minKt: 56, maxKt: null, color: "#94003a" },
+  { bfts: [2, 3], minKt: 4, maxKt: 10, color: "#80a1bf" },
+  { bfts: [4, 5], minKt: 11, maxKt: 21, color: "#00429d" },
+  { bfts: [6, 7], minKt: 22, maxKt: 33, color: "#54479f" },
+  { bfts: [8, 9], minKt: 34, maxKt: 47, color: "#a84da0" },
+  { bfts: [10, 11], minKt: 48, maxKt: 55, color: "#b92650" },
+  { bfts: [12, 13], minKt: 56, maxKt: null, color: "#ca0000" },
 ];
 
 function createName(windBin: WindBinType): string {

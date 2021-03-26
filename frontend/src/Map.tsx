@@ -113,7 +113,7 @@ export default function Map(): JSX.Element {
 
   return (
     <MapContainer
-      style={{ flex: 1, height: "100%" }}
+      style={{ flex: 1, height: "100%", zIndex: 1 }}
       center={INIT_POS}
       zoom={INIT_ZOOM}
       whenCreated={setMap}
@@ -121,13 +121,13 @@ export default function Map(): JSX.Element {
     >
       <LayersControl position="topright">
         <LayersControl.BaseLayer checked name="esri">
-          <TileLayer {...PROVIDERS.esri} />
+          <TileLayer {...PROVIDERS.esri} zIndex={1} />
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="stadia">
-          <TileLayer {...PROVIDERS.stadia} />
+          <TileLayer {...PROVIDERS.stadia} zIndex={1} />
         </LayersControl.BaseLayer>
         <LayersControl.Overlay name="OpenSeaMap">
-          <TileLayer {...PROVIDERS.openSeaMap} />
+          <TileLayer {...PROVIDERS.openSeaMap} zIndex={2} />
         </LayersControl.Overlay>
       </LayersControl>
       <AreaMarker />

@@ -3,31 +3,28 @@ import { Box, Select, Heading } from "grommet";
 import Spinner from "./SpinnerBrand";
 import Chart from "./Chart";
 import { convertDMS, rect2area } from "./util";
-import { useMeta, useWinds } from "./queries";
+import { useWinds, MetaRespType } from "./queries";
 import { SelectionContext } from "./SelectionContext";
 
-export default function SideBarContent(): JSX.Element {
+type SideBarProps = {
+  timeRange: string;
+  month: string;
+  metaResp: MetaRespType;
+  onTimeRangeChange: (timeRange: string) => void;
+  onMonthChange: (month: string) => void;
+};
+
+export default function SideBar(props: SideBarProps): JSX.Element {
   const { pos, rect } = React.useContext(SelectionContext);
-
-  const metaResp = useMeta();
-  const [timeRange, setTimeRange] = React.useState("");
-  const [month, setMonth] = React.useState("");
-
   const [loadWinds, windsResp] = useWinds();
-
-  React.useEffect(() => {
-    if (metaResp.data?.timeRanges && metaResp.data?.months) {
-      setTimeRange(metaResp.data.timeRanges[0]);
-      setMonth(metaResp.data.months[0]);
-    }
-  }, [metaResp.data?.timeRanges, metaResp.data?.months]);
+  const meta = props.metaResp;
 
   React.useEffect(() => {
     if (rect) {
       loadWinds({
         variables: {
-          timeRange: timeRange,
-          month: month,
+          timeRange: props.timeRange,
+          month: props.month,
           fromLat: rect.lats[0],
           toLat: rect.lats[1],
           fromLng: rect.lngs[0],
@@ -35,26 +32,26 @@ export default function SideBarContent(): JSX.Element {
         },
       });
     }
-  }, [rect, timeRange, month, loadWinds]);
+  }, [rect, props.timeRange, props.month, loadWinds]);
 
   let inputs = <Spinner />;
-  if (!metaResp.loading) {
-    if (metaResp.data) {
-      const timeRanges = metaResp.data.timeRanges;
-      const months = metaResp.data.months;
+  if (!meta.loading) {
+    if (meta.data) {
+      const timeRanges = meta.data.timeRanges;
+      const months = meta.data.months;
       inputs = (
         <>
           <Select
             margin="xsmall"
             options={timeRanges}
-            value={timeRange}
-            onChange={({ option }) => setTimeRange(option)}
+            value={props.timeRange}
+            onChange={({ option }) => props.onTimeRangeChange(option)}
           />
           <Select
             margin="xsmall"
             options={months}
-            value={month}
-            onChange={({ option }) => setMonth(option)}
+            value={props.month}
+            onChange={({ option }) => props.onMonthChange(option)}
           />
         </>
       );
@@ -77,7 +74,7 @@ export default function SideBarContent(): JSX.Element {
             </>
           )}
         </Heading>
-        <Chart winds={windsResp} meta={metaResp} />
+        <Chart winds={windsResp} meta={meta} />
       </Box>
     </>
   );
