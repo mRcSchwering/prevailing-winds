@@ -16,7 +16,7 @@ import {
 } from "grommet";
 import { Analytics, FormClose } from "grommet-icons";
 import Map from "./Map";
-import SideBarContent from "./SideBarContent";
+import SideBar from "./SideBar";
 import { SelectionContextProvider } from "./SelectionContext";
 
 const httpLink = createHttpLink({
@@ -88,7 +88,7 @@ function AppContent(): JSX.Element {
               align="center"
               justify="start"
             >
-              <SideBarContent />
+              <SideBar />
             </Box>
           </Collapsible>
         ) : (
@@ -106,7 +106,7 @@ function AppContent(): JSX.Element {
               />
             </Box>
             <Box fill background="light-2" align="center" justify="center">
-              <SideBarContent />
+              <SideBar />
             </Box>
           </Layer>
         )}

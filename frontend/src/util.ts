@@ -1,5 +1,9 @@
 import { EXCLUSION_ZONES, Tuple } from "./constants";
 
+/**
+ * Some formatting functions for DMS
+ */
+
 export function toDegreesMinutesAndSeconds(coordinate: number): string {
   const absolute = Math.abs(coordinate);
   const degrees = Math.floor(absolute);
@@ -32,23 +36,39 @@ export function convertDMS(lat: number, lng: number): string {
     latitude +
     " " +
     latitudeCardinal +
-    "\n" +
+    " - " +
     longitude +
     " " +
     longitudeCardinal
   );
 }
 
+/**
+ * I need this because I often have to adjust for varying distances between meridians.
+ * I'm estimating distances between lngs at given lat like this:
+ * l_lng = cos(d_lat) * 60M
+ */
 export function cosine(degree: number): number {
   return Math.cos((degree * Math.PI) / 180);
 }
 
+/**
+ * suggesting a reasonable padding factor for given zoom level
+ * factor below 1 doesnt make sense because data points are per degree
+ * avoid too high factor because it would mean that a lot of datapoints
+ * would need to be aggregated -> slow
+ */
 export function suggestPadFactor(zoomLvl: number): number {
   if (zoomLvl <= 5) return 4;
   if (zoomLvl <= 6) return 3;
   if (zoomLvl <= 7) return 2;
   return 1;
 }
+
+/**
+ * Functions for getting lats/lngs for bounding rectangle
+ * given a position and a padding factor
+ */
 
 export function getLatFloor(degree: number, pad: number): number {
   return Math.round(degree) - 0.5 * pad;

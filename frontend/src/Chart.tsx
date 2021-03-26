@@ -1,7 +1,7 @@
 import React from "react";
 import Plot from "react-plotly.js";
 import { Text } from "grommet";
-import { useWindResp, useMetaResp } from "./queries";
+import { WindsRespType, MetaRespType } from "./queries";
 import Spinner from "./SpinnerBrand";
 
 type WindBinType = {
@@ -13,11 +13,11 @@ type WindBinType = {
 
 const windBins: WindBinType[] = [
   { bfts: [0, 1], minKt: null, maxKt: 3, color: "#ffffe0" },
-  { bfts: [2, 3], minKt: 4, maxKt: 10, color: "#dedcd5" },
-  { bfts: [4, 5], minKt: 11, maxKt: 21, color: "#c0bac7" },
-  { bfts: [6, 7], minKt: 22, maxKt: 33, color: "#a599b7" },
-  { bfts: [8, 9], minKt: 34, maxKt: 47, color: "#8f77a2" },
-  { bfts: [10, 11], minKt: 48, maxKt: 55, color: "#825485" },
+  { bfts: [2, 3], minKt: 4, maxKt: 10, color: "#aac0ca" },
+  { bfts: [4, 5], minKt: 11, maxKt: 21, color: "#5581b3" },
+  { bfts: [6, 7], minKt: 22, maxKt: 33, color: "#00429d" },
+  { bfts: [8, 9], minKt: 34, maxKt: 47, color: "#312c7c" },
+  { bfts: [10, 11], minKt: 48, maxKt: 55, color: "#63165b" },
   { bfts: [12, 13], minKt: 56, maxKt: null, color: "#94003a" },
 ];
 
@@ -62,8 +62,8 @@ const layout = {
 };
 
 type ChartProps = {
-  winds: useWindResp;
-  meta: useMetaResp;
+  winds: WindsRespType;
+  meta: MetaRespType;
 };
 
 export default function Chart(props: ChartProps): JSX.Element {

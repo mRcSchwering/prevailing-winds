@@ -96,13 +96,13 @@ const META_QUERY = gql`
   }
 `;
 
-export type useMetaResp = {
+export type MetaRespType = {
   loading: boolean;
   data?: Meta;
   error?: ApolloError;
 };
 
-export function useMeta(): useMetaResp {
+export function useMeta(): MetaRespType {
   const { data, loading, error } = useQuery<Query>(META_QUERY);
   return { data: data?.meta, loading, error };
 }
@@ -135,7 +135,7 @@ const WINDS_QUERY = gql`
   }
 `;
 
-export type useWindResp = {
+export type WindsRespType = {
   loading: boolean;
   data?: WindsResult;
   error?: ApolloError;
@@ -156,7 +156,7 @@ export type loadWindsType = ({
   variables: useWindsVars;
 }) => void;
 
-export function useWinds(): [loadWindsType, useWindResp] {
+export function useWinds(): [loadWindsType, WindsRespType] {
   const [loadWinds, { data, loading, error }] = useLazyQuery<Query>(
     WINDS_QUERY
   );
