@@ -37,6 +37,7 @@ const PROVIDERS = {
     attribution:
       'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors',
     url: "https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png",
+    maxZoom: 12,
   },
 };
 
