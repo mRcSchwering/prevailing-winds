@@ -17,8 +17,8 @@ export default function AppBar(props: AppBarProps): JSX.Element {
       elevation="medium"
     >
       <Box direction="row">
-        <Anchor href="/" label="Map" margin="xsmall" />
-        <Anchor href="/about" label="About" margin="xsmall" />
+        <Anchor href="/" label="Map" margin="xsmall" color="light-1" />
+        <Anchor href="/about" label="About" margin="xsmall" color="light-1" />
       </Box>
 
       {props.children}

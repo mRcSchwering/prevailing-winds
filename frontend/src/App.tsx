@@ -7,6 +7,7 @@ import {
   InMemoryCache,
 } from "@apollo/client";
 import { Grommet } from "grommet";
+import { hp } from "grommet-theme-hp";
 import { SelectionContextProvider } from "./SelectionContext";
 import AboutPage from "./AboutPage";
 import MapPage from "./MapPage";
@@ -20,24 +21,11 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const theme = {
-  global: {
-    colors: {
-      brand: "#228BE6",
-    },
-    font: {
-      family: "Roboto",
-      size: "18px",
-      height: "20px",
-    },
-  },
-};
-
 function App() {
   return (
     <ApolloProvider client={client}>
       <SelectionContextProvider>
-        <Grommet theme={theme} full>
+        <Grommet theme={hp} full>
           <Router>
             <Route key="map" path="/" exact component={MapPage} />
             <Route key="about" path="/about" exact component={AboutPage} />

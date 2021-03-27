@@ -15,6 +15,7 @@
     "graphql": "^15.5.0",
     "grommet": "^2.16.3",
     "grommet-icons": "^4.5.0",
+    "grommet-theme-hp": "^0.1.2",
     "leaflet": "^1.7.1",
     "plotly.js": "1.45.3",
     "react": "^17.0.1",
