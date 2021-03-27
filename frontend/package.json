@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start": "react-scripts --max_old_space_size=4096 start",
-    "build": "react-scripts --max_old_space_size=4096 build",
+    "build": "REACT_APP_BACKEND_URL=https://ha0eqjwykj.execute-api.eu-central-1.amazonaws.com/stage/graphql/ react-scripts --max_old_space_size=4096 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "aws s3 sync build/ s3://www.prevailing-winds.de/ --delete --only-show-errors"

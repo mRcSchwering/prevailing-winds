@@ -3,7 +3,6 @@ import {
   MapContainer,
   useMapEvents,
   TileLayer,
-  LayersControl,
   Rectangle,
 } from "react-leaflet";
 import Leaflet from "leaflet";
@@ -119,17 +118,8 @@ export default function Map(): JSX.Element {
       whenCreated={setMap}
       scrollWheelZoom={true}
     >
-      <LayersControl position="topright">
-        <LayersControl.BaseLayer checked name="esri">
-          <TileLayer {...PROVIDERS.esri} zIndex={1} />
-        </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="stadia">
-          <TileLayer {...PROVIDERS.stadia} zIndex={1} />
-        </LayersControl.BaseLayer>
-        <LayersControl.Overlay name="OpenSeaMap">
-          <TileLayer {...PROVIDERS.openSeaMap} zIndex={2} />
-        </LayersControl.Overlay>
-      </LayersControl>
+      <TileLayer {...PROVIDERS.esri} zIndex={1} />
+      <TileLayer {...PROVIDERS.openSeaMap} zIndex={2} />
       <AreaMarker />
       <ZoomEndEvent trigger={handleOnZoomEnd} />
     </MapContainer>
