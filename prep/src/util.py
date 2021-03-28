@@ -62,3 +62,9 @@ def velocity(u: np.array, v: np.array) -> np.array:
     """
     return np.sqrt(u ** 2 + v ** 2) * 1.94384
 
+
+def chunk(l: list, n: int):
+    """Split list into chunks of max-size n"""
+    for i in range(0, len(l), n):
+        yield l[i : i + n]
+
