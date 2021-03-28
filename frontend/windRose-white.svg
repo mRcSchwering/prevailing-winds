@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg class="main-svg" width="243.07" height="239" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs></defs>
+ <line x1="-1313.2" x2="-1313.2" y1="-304.11" y2="-304.11" display="none" fill="none" stroke="#000"/>
+ <g transform="translate(-1307.9 -308.61)" stroke="#fff">
+  <g fill="#fff" stroke-miterlimit="2">
+   <g class="points" transform="translate(1311.9 312.61)">
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5 0.15268-0.76759a0.78263 0.78263 0 0 0-0.30536 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5 0.60873-0.91103a1.0957 1.0957 0 0 0-0.39497-0.1636z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5 1.3015-0.86961a1.5653 1.5653 0 0 0-0.43186-0.43186z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5 0.46056-0.0916a0.46958 0.46958 0 0 0-0.0701-0.16927z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5 1.0746 0.21376a1.0957 1.0957 0 0 0 0-0.42752z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5 0.78088 0.52177a0.93916 0.93916 0 0 0 0.14023-0.33855z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5 0.26088 0.39044a0.46958 0.46958 0 0 0 0.12956-0.12956z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5 0.27483 1.3817a1.4087 1.4087 0 0 0 0.50782-0.21035z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5-0.36644 1.8422a1.8783 1.8783 0 0 0 0.73288 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5-1.3044 1.9522a2.3479 2.3479 0 0 0 0.84637 0.35058z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5-2.2125 1.4783a2.6609 2.6609 0 0 0 0.73416 0.73416z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5-2.3028 0.45805a2.3479 2.3479 0 0 0 0.35058 0.84637z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5-1.8422-0.36644a1.8783 1.8783 0 0 0 0 0.73288z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5-2.0824-1.3914a2.5044 2.5044 0 0 0-0.37395 0.90279z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5-0.86961-1.3015a1.5653 1.5653 0 0 0-0.43186 0.43186z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.5 115.5-0.27483-1.3817a1.4087 1.4087 0 0 0-0.50782 0.21035z" fill="#fff" stroke-width="0px"/>
+    </g>
+   </g>
+   <g class="points" transform="translate(1311.9 312.61)">
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.65 114.73 0.18322-0.92112a1.7218 1.7218 0 0 0-0.6718 0l0.18322 0.92112a0.78263 0.78263 0 0 1 0.30536 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m116.11 114.59 2.9567-4.425a6.4176 6.4176 0 0 0-2.3134-0.95825l-1.0382 5.2196a1.0957 1.0957 0 0 1 0.39497 0.1636z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m116.8 114.63 13.535-9.044a17.844 17.844 0 0 0-4.9232-4.9232l-9.044 13.535a1.5653 1.5653 0 0 1 0.43186 0.43186z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.96 115.41 17.348-3.4507a18.157 18.157 0 0 0-2.7111-6.5452l-14.707 9.8266a0.46958 0.46958 0 0 1 0.0701 0.16927z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m116.57 115.71 6.6013 1.3131a7.8263 7.8263 0 0 0 0-3.0537l-6.6013 1.3131a1.0957 1.0957 0 0 1 0 0.42752z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m116.28 116.02 5.9868 4.0002a8.1394 8.1394 0 0 0 1.2153-2.9341l-7.0619-1.4047a0.93916 0.93916 0 0 1-0.14023 0.33855z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.76 115.89 4.7829 7.1581a9.0785 9.0785 0 0 0 2.5048-2.5048l-7.1581-4.7829a0.46958 0.46958 0 0 1-0.12956 0.12956z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.77 116.88 1.9849 9.9787a11.583 11.583 0 0 0 4.1754-1.7295l-5.6525-8.4596a1.4087 1.4087 0 0 1-0.50782 0.21035z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.13 117.34-4.0309 20.264a22.54 22.54 0 0 0 8.7946 0l-4.0309-20.264a1.8783 1.8783 0 0 1-0.73288 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m114.2 117.45-14.523 21.735a28.488 28.488 0 0 0 10.269 4.2537l5.0996-25.638a2.3479 2.3479 0 0 1-0.84637-0.35058z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m113.29 116.98-27.851 18.61a36.158 36.158 0 0 0 9.9759 9.9759l18.61-27.851a2.6609 2.6609 0 0 1-0.73416-0.73416z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m113.2 115.96-19.19 3.8171a21.914 21.914 0 0 0 3.2721 7.8994l16.268-10.87a2.3479 2.3479 0 0 1-0.35058-0.84637z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m113.66 115.13-13.97-2.7788a16.122 16.122 0 0 0 0 6.2906l13.97-2.7788a1.8783 1.8783 0 0 1 0-0.73288z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m113.42 114.11-2.8632-1.9132a5.948 5.948 0 0 0-0.88813 2.1441l3.3774 0.67181a2.5044 2.5044 0 0 1 0.37395-0.90279z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m114.63 114.2-1.9132-2.8632a5.0088 5.0088 0 0 0-1.3819 1.3819l2.8632 1.9132a1.5653 1.5653 0 0 1 0.43186-0.43186z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.23 114.12-1.0993-5.5267a7.0437 7.0437 0 0 0-2.5391 1.0517l3.1306 4.6853a1.4087 1.4087 0 0 1 0.50782-0.21035z" fill="#fff" stroke-width="0px"/>
+    </g>
+   </g>
+   <g class="points" transform="translate(1311.9 312.61)">
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m115.84 113.81 0.18323-0.92111a2.6609 2.6609 0 0 0-1.0383 0l0.18323 0.92111a1.7218 1.7218 0 0 1 0.6718 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m119.07 110.16 1.3044-1.9522a8.7655 8.7655 0 0 0-3.1598-1.3088l-0.45805 2.3028a6.4176 6.4176 0 0 1 2.3134 0.95825z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m130.34 105.59 20.824-13.914a42.888 42.888 0 0 0-11.833-11.833l-13.914 20.824a17.844 17.844 0 0 1 4.9232 4.9232z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m133.31 111.96 33.16-6.5959a51.967 51.967 0 0 0-7.7595-18.733l-28.112 18.784a18.157 18.157 0 0 1 2.7111 6.5452z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m123.18 117.03 3.838 0.76342a11.739 11.739 0 0 0 0-4.5805l-3.838 0.76342a7.8263 7.8263 0 0 1 0 3.0537z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m122.27 120.02 2.9934 2.0001a11.739 11.739 0 0 0 1.7529-4.2318l-3.5309-0.70235a8.1394 8.1394 0 0 1-1.2153 2.9341z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m120.54 123.05 1.7392 2.6029a12.209 12.209 0 0 0 3.3685-3.3685l-2.6029-1.7392a9.0785 9.0785 0 0 1-2.5048 2.5048z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m117.76 126.86 1.8933 9.5182a21.288 21.288 0 0 0 7.6738-3.1786l-5.3916-8.0691a11.583 11.583 0 0 1-4.1754 1.7295z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m111.1 137.61-2.5651 12.896a35.688 35.688 0 0 0 13.925 0l-2.5651-12.896a22.54 22.54 0 0 1-8.7946 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m99.673 139.19-20.61 30.845a65.585 65.585 0 0 0 23.642 9.7928l7.2372-36.384a28.488 28.488 0 0 1-10.269-4.2537z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m85.436 135.59-47.764 31.915a93.603 93.603 0 0 0 25.825 25.825l31.915-47.764a36.158 36.158 0 0 1-9.9759-9.9759z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m94.007 119.78-38.226 7.6037a60.889 60.889 0 0 0 9.0916 21.949l32.407-21.653a21.914 21.914 0 0 1-3.2721-7.8994z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m99.688 112.35-28.094-5.5882a44.767 44.767 0 0 0 0 17.467l28.094-5.5882a16.122 16.122 0 0 1 0-6.2906z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m110.55 112.2-6.3772-4.2611a13.618 13.618 0 0 0-2.0334 4.9089l7.5224 1.4963a5.948 5.948 0 0 1 0.88813-2.1441z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m112.72 111.34-1.6523-2.4728a7.9828 7.9828 0 0 0-2.2025 2.2025l2.4728 1.6523a5.0088 5.0088 0 0 1 1.3819-1.3819z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m114.13 108.59-1.0993-5.5267a12.679 12.679 0 0 0-4.5704 1.8931l3.1306 4.6853a7.0437 7.0437 0 0 1 2.5391-1.0517z" fill="#fff" stroke-width="0px"/>
+    </g>
+   </g>
+   <g class="points" transform="translate(1311.9 312.61)">
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m151.16 91.673 6.3772-4.2611a50.558 50.558 0 0 0-13.949-13.949l-4.2611 6.3772a42.888 42.888 0 0 1 11.833 11.833z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m166.47 105.36 9.9787-1.9849a62.141 62.141 0 0 0-9.2786-22.401l-8.4596 5.6525a51.967 51.967 0 0 1 7.7595 18.733z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m127.01 117.79 0.15352 0.0305a11.896 11.896 0 0 0 0-4.6416l-0.15352 0.0305a11.739 11.739 0 0 1 0 4.5805z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m125.26 122.02 0.26029 0.17392a12.053 12.053 0 0 0 1.7996-4.3447l-0.30704-0.0611a11.739 11.739 0 0 1-1.7529 4.2318z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m119.65 136.38 0.21376 1.0746a22.383 22.383 0 0 0 8.0687-3.3422l-0.60873-0.91103a21.288 21.288 0 0 1-7.6738 3.1786z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m108.54 150.5-0.30536 1.5352a37.253 37.253 0 0 0 14.536 0l-0.30536-1.5352a35.688 35.688 0 0 1-13.925 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m79.063 170.03-6.0873 9.1103a76.541 76.541 0 0 0 27.592 11.429l2.1376-10.746a65.585 65.585 0 0 1-23.642-9.7928z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m37.672 167.5-12.364 8.2613a108.47 108.47 0 0 0 29.928 29.928l8.2613-12.364a93.603 93.603 0 0 1-25.825-25.825z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m55.781 127.38-11.053 2.1986a72.159 72.159 0 0 0 10.774 26.012l9.3706-6.2612a60.889 60.889 0 0 1-9.0916-21.949z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m71.594 106.77-14.431-2.8705a59.48 59.48 0 0 0 0 23.208l14.431-2.8705a44.767 44.767 0 0 1 0-17.467z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m104.18 107.93-2.3426-1.5653a16.435 16.435 0 0 0-2.454 5.9246l2.7633 0.54966a13.618 13.618 0 0 1 2.0334-4.9089z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m111.06 108.86-0.95658-1.4316a9.7046 9.7046 0 0 0-2.6775 2.6775l1.4316 0.95658a7.9828 7.9828 0 0 1 2.2025-2.2025z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+   </g>
+   <g class="points" transform="translate(1311.9 312.61)">
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m72.976 179.14-0.34785 0.52059a77.168 77.168 0 0 0 27.817 11.522l0.12214-0.61408a76.541 76.541 0 0 1-27.592-11.429z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m25.308 175.76-1.0412 0.69569a109.72 109.72 0 0 0 30.273 30.273l0.69569-1.0412a108.47 108.47 0 0 1-29.928-29.928z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m44.728 129.58-0.92111 0.18322a73.098 73.098 0 0 0 10.915 26.35l0.78088-0.52177a72.159 72.159 0 0 1-10.774-26.012z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m57.163 103.9-0.61408-0.12215a60.106 60.106 0 0 0 0 23.452l0.61408-0.12215a59.48 59.48 0 0 1 0-23.208z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+    <g class="point" vector-effect="non-scaling-stroke">
+     <path d="m0 0z" fill="#fff" stroke-width="0px"/>
+    </g>
+   </g>
+  </g>
+  <g class="points" transform="translate(1311.9 312.61)" stroke-miterlimit="2">
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+  </g>
+  <g class="points" transform="translate(1311.9 312.61)" stroke-miterlimit="2">
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+  </g>
+  <g class="points" transform="translate(1581 312.61)" stroke-miterlimit="2">
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#b92650" stroke-width="0px"/>
+   </g>
+  </g>
+  <g class="points" transform="translate(1581 312.61)" stroke-miterlimit="2">
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+   <g class="point" vector-effect="non-scaling-stroke">
+    <path d="m0 0z" fill="#ca0000" stroke-width="0px"/>
+   </g>
+  </g>
+  <path d="m1542.9 428.11a115.5 115.5 0 1 0-231 0 115.5 115.5 0 1 0 231 0z" fill="none" stroke-width="8"/>
+ </g>
+</svg>

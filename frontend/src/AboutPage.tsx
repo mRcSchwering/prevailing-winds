@@ -59,9 +59,9 @@ export default function AboutPage(): JSX.Element {
         <Paragraph>
           You might have noticed there was no <b>cookie banner</b> you had to
           click away ({gdprLink}). This is because I don't track any information
-          about you and don't give anything to third-party vendors. This is by
-          the way also the reason you always end up somewhere in the West
-          European Bay when you reload the page.
+          about you and don't give anything to third-party vendors. That's why
+          you always end up somewhere in the West European Basin when you reload
+          the page.
         </Paragraph>
         <Heading level="4">Data</Heading>
         <Paragraph>

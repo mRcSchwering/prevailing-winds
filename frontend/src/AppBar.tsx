@@ -13,8 +13,9 @@ export default function AppBar(props: AppBarProps): JSX.Element {
       align="center"
       justify="between"
       background="brand"
-      pad={{ left: "medium", right: "small", vertical: "small" }}
+      pad={{ left: "medium", right: "medium", vertical: "xsmall" }}
       elevation="medium"
+      margin="none"
     >
       <Box direction="row">
         <Anchor href="/" label="Map" margin="xsmall" color="light-1" />

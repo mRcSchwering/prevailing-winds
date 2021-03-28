@@ -1,10 +1,19 @@
 import React from "react";
 import { Box, Button, ResponsiveContext, Layer } from "grommet";
-import { Analytics, FormClose } from "grommet-icons";
+import { FormClose } from "grommet-icons";
 import { useMeta } from "./queries";
 import Map from "./Map";
 import SideBar from "./SideBar";
 import AppBar from "./AppBar";
+import svg from "./windRose-white.svg";
+
+function Icon(): JSX.Element {
+  return (
+    <Box width="40px" margin="none">
+      <img src={svg} alt="windrose" />
+    </Box>
+  );
+}
 
 type DelayedProps = {
   waitBeforeShow: number;
@@ -107,7 +116,9 @@ export default function MapPage(): JSX.Element {
       <AppBar>
         {size === "small" && (
           <Button
-            icon={<Analytics />}
+            margin="none"
+            plain={true}
+            icon={<Icon />}
             onClick={() => setShowSidebar(!showSidebar)}
           />
         )}

@@ -44,7 +44,7 @@ const config = {
 
 const layout = {
   margin: { t: 25 },
-  paper_bgcolor: "#F2F2F2",
+  paper_bgcolor: "rgba(0,0,0,0)",
   font: { size: 16 },
   showlegend: true,
   legend: {

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="82.597mm" height="82.597mm" version="1.1" viewBox="0 0 82.597 82.597" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g transform="translate(-94.735 -3.7802)">
+  <g stroke-width=".066146">
+   <circle cx="136.03" cy="45.079" r="19.05" fill="none" stroke="#000"/>
+   <circle cx="136.03" cy="45.079" r="25.4" fill="none" stroke="#000"/>
+   <path d="m136.03 19.679c-14.028 0-25.4 11.372-25.4 25.4 0 14.028 11.372 25.4 25.4 25.4 14.028 0 25.4-11.372 25.4-25.4 0-14.028-11.372-25.4-25.4-25.4zm0 6.35c10.521 0 19.05 8.5291 19.05 19.05 0 10.521-8.5291 19.05-19.05 19.05-10.521 0-19.05-8.5291-19.05-19.05 0-10.521 8.5291-19.05 19.05-19.05z" fill="#808080" stroke="#808080"/>
+  </g>
+  <g fill="none" stroke="#fff" stroke-width=".26458">
+   <path d="m136.03 45.079 6.35-6.35-6.35-34.925"/>
+   <path d="m136.03 45.079 6.35 6.35 34.925-6.35"/>
+   <path d="m136.03 45.079-6.35 6.35 6.35 34.925"/>
+   <path d="m136.03 45.079-6.35-6.35-34.925 6.35"/>
+  </g>
+  <g transform="matrix(.26458 0 0 .26458 94.759 3.8039)" fill="#fff" stroke-width=".25">
+   <path d="m156 156 48-48-48 23" stroke="#808080"/>
+   <path d="m156 156 48 48-23-48" stroke="#000"/>
+   <path d="m156 156-48 48 48-23" stroke="#808080"/>
+   <path d="m156 156-48-48 23 48" stroke="#808080"/>
+  </g>
+  <g transform="matrix(.26458 0 0 .26458 94.759 3.8039)" fill="#808080">
+   <path d="m156 156 48-48-23 48"/>
+   <path d="m156 156 48 48-48-23" stroke="#808080"/>
+   <path d="m156 156-48 48 23-48"/>
+   <path d="m156 156-48-48 48 23"/>
+  </g>
+  <g transform="matrix(.26458 0 0 .26458 94.759 3.8039)" fill="#fff" stroke="#808080" stroke-width=".25">
+   <path d="m156 156-24-24 24-132"/>
+   <path d="m156 156 24-24 132 24"/>
+   <path d="m156 156 24 24-24 132"/>
+   <path d="m156 156-24 24-132-24"/>
+  </g>
+  <g transform="matrix(.26458 0 0 .26458 94.759 3.8039)" fill="#808080">
+   <path d="m156 156 24-24-24-132"/>
+   <path d="m156 156 24 24 132-24"/>
+   <path d="m156 156-24 24 24 132"/>
+   <path d="m156 156-24-24-132 24"/>
+  </g>
+ </g>
+</svg>
