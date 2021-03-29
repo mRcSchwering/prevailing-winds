@@ -24,7 +24,7 @@ CORS_ALLOW_ORIGIN = "*"
 EMERGENCY_BREAK = 100
 
 # check which are already prepared
-TIME_RANGES = ("2020",)
+TIME_RANGES = ("2016-2020", "2020")
 
 MONTHS = {
     "Jan": 1,
