@@ -11,4 +11,4 @@ As the user zooms out, the area is increased.
 At the equator the smallest rectangle is 3600M^2 big and is layed out
 at -0.5° to +0.5° lat-lng from where the user clicked.
 Further away from the equator meridians move closer together.
-I compensate for that when drawing the rectangle with factor $cos(lat)$.
+I compensate for that when drawing the rectangle with factor _cos(lat)_.
