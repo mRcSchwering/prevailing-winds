@@ -2,7 +2,9 @@
 
 Bootstrapped with [create-react-app](https://www.npmjs.com/package/create-react-app).
 A [leaflet](https://leafletjs.com/) app with a [plotly](https://plotly.com/) windrose and [grommet](https://v2.grommet.io/) components.
-See [CRA_README.md](./CRA_README.md) for original create-react-app README.
+
+- [CRA_README.md](./CRA_README.md) original create-react-app README
+- [package.json](./package.json) for commands
 
 From the backend I get data points which cover 1°-lat x 1°-lng.
 So, that's the smallest area I can use for showing winds.
