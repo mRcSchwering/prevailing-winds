@@ -59,13 +59,11 @@ export default function AboutPage(): JSX.Element {
         <Paragraph>
           You might have noticed there was no <b>cookie banner</b> you had to
           click away ({gdprLink}). This is because I don't track any information
-          about you and don't give anything to third-party vendors. That's why
-          you always end up somewhere in the West European Basin when you reload
-          the page.
+          about you and don't give anything to third-party vendors.
         </Paragraph>
         <Heading level="4">Data</Heading>
         <Paragraph>
-          I used {era5Link} as a basis for calculating wind strangths and
+          I used {era5Link} as a basis for calculating wind strengths and
           directions. This dataset is a ECMWF reanalysis which holds hourly data
           of a lot of variables like wind, pressure, temperature. Winds were
           regridded to a regular lat-lon grid of 0.25 degrees. To reduce the

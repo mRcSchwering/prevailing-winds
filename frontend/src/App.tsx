@@ -21,6 +21,8 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+hp.global.colors.brand = "#606061";
+
 function App() {
   return (
     <ApolloProvider client={client}>
