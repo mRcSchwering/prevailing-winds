@@ -54,7 +54,7 @@ const layout = {
   polar: {
     barmode: "stack",
     bargap: 0,
-    radialaxis: { visible: false },
+    radialaxis: { visible: false, hovertemplate: "aaaaaaaaaaaa" },
     angularaxis: { direction: "clockwise" },
   },
   width: 400,
@@ -80,14 +80,17 @@ export default function Chart(props: ChartProps): JSX.Element {
     return <Text>click somewhere on the chart</Text>;
   }
 
+  // create series
   const bins = [];
   for (const windBin of windBins) {
+    const name = createName(windBin);
     const bin = {
       marker: { color: windBin.color },
-      name: createName(windBin),
+      name: name,
       type: "barpolar",
       r: [] as number[],
       theta: [] as string[],
+      hovertemplate: `%{r:.2f}% %{theta}-winds<br>${name}<extra></extra>`,
     };
 
     const vels = props.meta.data.windVelocities.filter((d) =>
@@ -111,8 +114,18 @@ export default function Chart(props: ChartProps): JSX.Element {
         }
       }
     }
-
     bins.push(bin);
+  }
+
+  // convert frequencies to counts
+  let total = 0;
+  for (const bin of bins) {
+    total = total + bin.r.reduce((agg, d) => agg + d);
+  }
+  if (total > 0) {
+    for (const bin of bins) {
+      bin.r = bin.r.map((d) => (d / total) * 100);
+    }
   }
 
   return <Plot data={bins} layout={layout} config={config} />;
