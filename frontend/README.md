@@ -2,7 +2,18 @@
 
 Bootstrapped with [create-react-app](https://www.npmjs.com/package/create-react-app).
 A [leaflet](https://leafletjs.com/) app with a [plotly](https://plotly.com/) windrose and [grommet](https://v2.grommet.io/) components.
-See [CRA_README.md](./CRA_README.md) for original create-react-app README.
+
+- [CRA_README.md](./CRA_README.md) original create-react-app README
+- [package.json](./package.json) for commands
+
+From the backend I get data points which cover 1°-lat x 1°-lng.
+So, that's the smallest area I can use for showing winds.
+This is shown to the user with a rectangle.
+As the user zooms out, the area is increased.
+At the equator the smallest rectangle is 3600M^2 big and is layed out
+at -0.5° to +0.5° lat-lng from where the user clicked.
+Further away from the equator meridians move closer together.
+I compensate for that when drawing the rectangle with factor _cos(lat)_.
 
 ## Deploy
 
