@@ -54,6 +54,10 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: stage
+      Domain:
+        DomainName: backend.prevailing-winds.de
+        CertificateArn: arn:aws:acm:us-east-1:484021385160:certificate/d6d871f4-7383-4e80-ada1-d24f6c6bed90
+        EndpointConfiguration: EDGE
 
 Outputs:
   GqlApi:

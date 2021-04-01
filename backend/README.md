@@ -10,10 +10,8 @@ adapted for GraphQL endpoints.
 - [src/](./src/) code to be included in Lambda functions
 - [tests/](./tests/) pytest suite
 
-Current backend URLs are genrated.
-If for some reason I need to recreate the stack these URLs will change.
-
-- **URL** https://ha0eqjwykj.execute-api.eu-central-1.amazonaws.com/stage/graphql/
+- **API Gateway** https://ha0eqjwykj.execute-api.eu-central-1.amazonaws.com/stage/graphql/
+- **Cloudfront** d2ysezm77udmsh.cloudfront.net
 
 ## tldr;
 
@@ -39,6 +37,15 @@ sam validate
 sam build
 sam deploy --guided
 ```
+
+An URL is generated from the AWS region and some id.
+To fix the backend URL and let it go through cloudflare:
+
+1. Create AWS certificate (ACM) for `*.prevailing-winds`.
+2. Add custom domain definition to with `backend.prevailing-winds.de` to [template.yaml](./template.yaml) and deploy.
+3. In AWS console > API Gateway > _prevailing-winds_ > _Custom Domains_ check target domain (`*.cloudfront.net`).
+4. In cloudflare > DNS > add CNAME `backend` with value of that target domain.
+5. Test https://backend.prevailing-winds.de/graphql/
 
 ## Local App
 
