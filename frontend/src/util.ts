@@ -4,6 +4,13 @@ import { EXCLUSION_ZONES, Tuple } from "./constants";
  * Some formatting functions for DMS
  */
 
+export function adjustLng(lng: number): number {
+  const lngAdj = lng % 360;
+  if (lngAdj > 180) return (lngAdj % 180) - 180;
+  if (lngAdj < -180) return (lngAdj % 180) + 180;
+  return lngAdj;
+}
+
 export function toDegreesMinutesAndSeconds(coordinate: number): string {
   const absolute = Math.abs(coordinate);
   const degrees = Math.floor(absolute);
@@ -20,8 +27,9 @@ export function convertLatDMS(lat: number): string {
 }
 
 export function convertLngDMS(lng: number): string {
-  const val = toDegreesMinutesAndSeconds(lng);
-  const card = lng >= 0 ? "E" : "W";
+  let lngAdj = adjustLng(lng);
+  const val = toDegreesMinutesAndSeconds(lngAdj);
+  const card = lngAdj >= 0 ? "E" : "W";
   return val + " " + card;
 }
 
@@ -29,8 +37,9 @@ export function convertDMS(lat: number, lng: number): string {
   const latitude = toDegreesMinutesAndSeconds(lat);
   const latitudeCardinal = lat >= 0 ? "N" : "S";
 
-  const longitude = toDegreesMinutesAndSeconds(lng);
-  const longitudeCardinal = lng >= 0 ? "E" : "W";
+  let lngAdj = adjustLng(lng);
+  const longitude = toDegreesMinutesAndSeconds(lngAdj);
+  const longitudeCardinal = lngAdj >= 0 ? "E" : "W";
 
   return (
     latitude +

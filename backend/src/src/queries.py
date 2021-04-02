@@ -11,7 +11,7 @@ from src.config import (
     EMERGENCY_BREAK,
 )
 import src.s3 as s3
-from src.utils import natural_series
+from src.utils import natural_series, fix_lng_degrees
 
 
 query = QueryType()
@@ -42,15 +42,19 @@ def resolve_winds(*_, **kwargs):
         raise ValueError(f"timeRange must be one of: {TIME_RANGES}")
     if max(lat_range) < -70 or min(lat_range) > 70:
         raise ValueError("only latitutes -70 to 70 are covered")
-    if max(lng_range) < -180 or min(lng_range) > 180:
-        raise ValueError("only longitudes -180 to 180 are covered")
     if month not in MONTH_NAMES:
         raise ValueError(f"Month must be one of {MONTH_NAMES}")
 
     lats = natural_series(lat_range)
     lats = [d for d in lats if d <= 70 and d >= -70]
-    lngs = natural_series(lng_range)
-    lngs = [d for d in lngs if d <= 180 and d >= -180]
+
+    lng_range = [fix_lng_degrees(d) for d in lng_range]
+    if lng_range[0] <= lng_range[1]:
+        lngs = natural_series(lng_range)
+    else:
+        lngs = natural_series([lng_range[0], 180]) + natural_series(
+            [-180, lng_range[1]]
+        )
 
     if len(lats) * len(lngs) > EMERGENCY_BREAK:
         raise ValueError(f"Stop: tried to download {len(lats) * len(lngs):,} objs")
@@ -69,4 +73,3 @@ def resolve_winds(*_, **kwargs):
 
 
 queries = (query,)
-
