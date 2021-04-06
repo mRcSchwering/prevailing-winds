@@ -1,6 +1,6 @@
 {
-  "short_name": "Prevailing winds",
-  "name": "Wind roses from -70° to 70°",
+  "short_name": "Prevailing Winds - Worldwide Windroses of Historical Data",
+  "name": "Windroses of historic winds for kiters, surfers, paragliders, pilots, sailors and anyone else. This is essentially like an open, interactive pilot chart.",
   "icons": [
     {
       "src": "compass-favicon.ico",
