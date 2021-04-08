@@ -1,5 +1,5 @@
 """
-WSGI app for easier development
+ASGI app for easier development
 
     PYTHONPATH=./src uvicorn app:app --reload
 
