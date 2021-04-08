@@ -52,9 +52,9 @@ export default function AboutPage(): JSX.Element {
           There are many great apps like {windyLink} that show you the current
           winds (and more) with short-term predictions. However, I didn't really
           find anything with historic wind data for long-term planning,
-          <i> e.g.</i> when planning a Törn or passage. So I made this app. The
-          code is all on {repoLink}. The data is derived from {copernicusLink}{" "}
-          datasets.
+          <i> e.g.</i> when planning a holiday or passage. So I made this app.
+          The code is all on {repoLink}. The data is derived from{" "}
+          {copernicusLink} datasets.
         </Paragraph>
         <Paragraph>
           You might have noticed there was no <b>cookie banner</b> you had to

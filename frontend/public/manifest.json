@@ -1,6 +1,6 @@
 {
-  "short_name": "Prevailing Winds - Worldwide Windroses of Historical Data",
-  "name": "Windroses of historic winds for kiters, surfers, paragliders, pilots, sailors and anyone else. This is essentially like an open, interactive pilot chart.",
+  "short_name": "Prevailing winds: Windroses of historic winds",
+  "name": "Historic winds for pilots/sailors/surfers and anyone else. Basically a global interactive pilot chart.",
   "icons": [
     {
       "src": "compass-favicon.ico",
