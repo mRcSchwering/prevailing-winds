@@ -1,5 +1,5 @@
 import pytest
-from src.utils import natural_series  # type: ignore
+from src.utils import natural_series, fix_lng_degrees  # type: ignore
 
 
 @pytest.mark.parametrize(
@@ -17,4 +17,30 @@ from src.utils import natural_series  # type: ignore
 )
 def test_correct_natural_intervals(n, m, exp):
     res = natural_series([n, m])
+    assert res == exp
+
+
+@pytest.mark.parametrize(
+    "lng, exp",
+    [
+        (170, 170),
+        (180, 180),
+        (181, -179),
+        (190, -170),
+        (-170, -170),
+        (-180, -180),
+        (-181, 179),
+        (-190, 170),
+        (0, 0),
+        (10, 10),
+        (-10, -10),
+    ],
+)
+def test_fixing_lng_coords(lng, exp):
+    sign = 1 if lng >= 0 else -1
+    res = fix_lng_degrees(lng)
+    assert res == exp
+    res = fix_lng_degrees(lng + 360 * sign)
+    assert res == exp
+    res = fix_lng_degrees(lng + 2 * 360 * sign)
     assert res == exp
