@@ -41,7 +41,7 @@ sam deploy --guided
 An URL is generated from the AWS region and some id.
 To fix the backend URL and let it go through cloudflare:
 
-1. Create AWS certificate (ACM) for `*.prevailing-winds`.
+1. Create AWS certificate (ACM) for `*.prevailing-winds` in us-1 (even if used for another region).
 2. Add custom domain definition with `backend.prevailing-winds.de` to [template.yaml](./template.yaml) and deploy.
 3. In AWS console > API Gateway > _prevailing-winds_ > _Custom Domains_ check target domain (`*.cloudfront.net`).
 4. In cloudflare > DNS > add CNAME `backend` with value of that target domain.
