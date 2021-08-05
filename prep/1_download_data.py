@@ -1,19 +1,44 @@
 """
-- download hourly historic wind data from cds.climate.copernicus.eu
-- average winds to full minutes of lat and lon
+Download hourly historic wind data from cds.climate.copernicus.eu
+
+Edit `DATA_DIR` and run directly.
+Add pos arg `test` for a test run.
+
+    python 1_download_data.py test
+    python 1_download_data.py
+
 """
+import sys
+from pathlib import Path
 from src.cds import download_reanalysis
 
-years = [2020, 2019, 2018, 2017, 2016]
+DATA_DIR = Path("/media/marc/Elements/")
+YEARS = [2020, 2019, 2018, 2017, 2016]
+IS_TEST = "test" in sys.argv[1:]
 
 
 if __name__ == "__main__":
-    for year in years:
-        print(f"downloading files for {year}")
-        u_file = f"data/wind_u_{year}.grib"
-        v_file = f"data/wind_v_{year}.grib"
+    print(f"data dir: {DATA_DIR}")
+    if IS_TEST:
+        print("testrun")
 
-        download_reanalysis(u_file, "10m_u_component_of_wind", str(year))
-        download_reanalysis(v_file, "10m_v_component_of_wind", str(year))
+    variables = [
+        "10m_u_component_of_wind",
+        "10m_v_component_of_wind",
+        "2m_temperature",
+        "sea_surface_temperature",
+        "significant_height_of_combined_wind_waves_and_swell",
+        "total_precipitation",
+    ]
+
+    for year in YEARS[:1] if IS_TEST else YEARS:
+        for var in variables:
+            print(f"downloading {var} for {year}...")
+            download_reanalysis(
+                outfile=DATA_DIR / f"{var}_{year}.grib",
+                variable=var,
+                year=str(year),
+                test=IS_TEST,
+            )
 
     print("done")

@@ -5,6 +5,8 @@ from: https://cds.climate.copernicus.eu/cdsapp#!/yourrequests?tab=form
 doc: https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=overview
 
 """
+from typing import Union
+from pathlib import Path
 import cdsapi  # type: ignore
 
 client = cdsapi.Client()
@@ -86,7 +88,9 @@ all_days = [
 years = ["2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"]
 
 
-def download_reanalysis(outfile: str, variable: str, year: str):
+def download_reanalysis(
+    outfile: Union[str, Path], variable: str, year: str, test=False
+):
     """
     - using dataset: reanalysis-era5-single-levels (global hourly data back to 1981)
     - reduce file size by just taking every 3rd hour, -70 to 70 lat, and only 1 year and 1 variable
@@ -99,11 +103,11 @@ def download_reanalysis(outfile: str, variable: str, year: str):
             "product_type": "reanalysis",
             "variable": variable,
             "year": year,
-            "month": all_months,
-            "day": all_days,
-            "time": sparse_times,
+            "month": all_months[:1] if test else all_months,
+            "day": all_days[:1] if test else all_days,
+            "time": sparse_times[:1] if test else sparse_times,
             "format": "grib",
-            "area": [70, -180, -70, 180],
+            "area": [70, 179, 69, 180] if test else [70, -180, -70, 180],
         },
-        outfile,
+        str(outfile),
     )
