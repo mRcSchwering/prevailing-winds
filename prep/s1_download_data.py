@@ -2,17 +2,20 @@
 Download hourly historic wind data from cds.climate.copernicus.eu
 
 Edit `DATA_DIR` and run directly.
+Need to have `.cdsapirc` configured with token.
+This can run for really long because each file needs to get approved first
+(which can take several hours).
 Add pos arg `test` for a test run.
 
-    python 1_download_data.py test
-    python 1_download_data.py
+    python s1_download_data.py test
+    python s1_download_data.py
 
 """
 import sys
 from pathlib import Path
 from src.cds import download_reanalysis
 
-DATA_DIR = Path("/media/marc/Elements/")
+DATA_DIR = Path("/media/marc/Elements/copernicus")
 YEARS = [2020, 2019, 2018, 2017, 2016]
 IS_TEST = "test" in sys.argv[1:]
 
