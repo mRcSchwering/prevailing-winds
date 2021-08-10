@@ -2,9 +2,12 @@
 """
 Collect values for each month-year and aggregate them
 
-Winds will be binned by direction x velocity.
-Temperatures and precipitation values will be collected.
+I have to be careful not to fill up my RAM.
+Data for each month-year for all coordinates is collected in a
+DataFrame which is written as a parquet file.
+Column names in that DataFrame contain the day of the month (<day>-<hash>).
 Set `DATA_DIR` and run directly.
+`test` only runs 1 year, 1 month.
 
     python s2_collect_values.py test
     python s2_collect_values.py
@@ -19,62 +22,56 @@ import sys
 from typing import BinaryIO, Tuple
 import pupygrib
 import pandas as pd  # type: ignore
-import numpy as np  # type: ignore
-import pyarrow as pa  # type: ignore
-import pyarrow.parquet as pq  # type: ignore
-from src.util import velocity, direction, wind_vels, wind_dirs
+from src.util import velocity, direction, randstr, write_parquet
 
 YEARS = [2020, 2019, 2018, 2017, 2016]
+MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 DATA_DIR = Path("/media/marc/Elements/copernicus")
 IS_TEST = "test" in sys.argv[1:]
 
 
-def get_winds(
-    lats: np.array, lons: np.array, arr_u: np.array, arr_v: np.array
-) -> pd.DataFrame:
+def collect_scalars(year: int, month: int, grib_file: BinaryIO) -> pd.DataFrame:
     """
-    Calculate direction and velocity for each average and
-    bin them to 16 directions and Beaufort wind speeds.
+    Collect in DataFrame with lat-lng index
     """
-    df = pd.DataFrame(
-        {
-            "lon": lons.flatten(),
-            "lat": lats.flatten(),
-            "u": arr_u.flatten(),
-            "v": arr_v.flatten(),
-        }
-    )
-    df = df.groupby(["lon", "lat"]).mean()
+    print(f"Processing {year}-{month}...")
+    dfs = []
+    for msg in pupygrib.read(grib_file):
+        time = msg.get_time()
+        if time.year != year or time.month != month:
+            continue
 
-    # get direction and velocity
-    df["dir"] = direction(u=df["u"], v=df["v"])
-    df["vel"] = velocity(u=df["u"], v=df["v"])
+        lons, lats = msg.get_coordinates()
+        values = msg.get_values()
+        assert lats.shape == values.shape == lons.shape
 
-    # bin directions and velocities
-    df["dir_i"] = np.digitize(df["dir"], bins=[d["s"] for d in wind_dirs])
-    df["vel_i"] = np.digitize(df["vel"], bins=[d["s"] for d in wind_vels])
+        df = pd.DataFrame(
+            {
+                "lon": lons.flatten(),
+                "lat": lats.flatten(),
+                f"{time.day}-{randstr()}": values.flatten(),
+            }
+        )
+        dfs.append(df.groupby(["lon", "lat"]).mean())
 
-    return df
+    return pd.concat(dfs, axis=1)
 
 
 def collect_winds(
-    grib_file_u: BinaryIO, grib_file_v: BinaryIO
+    year: int, month: int, grib_file_u: BinaryIO, grib_file_v: BinaryIO
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Calculate directions and velocities and collect in 2 DataFrames
+    with lat-lng index each
+    """
+    print(f"Processing {year}-{month}...")
     dirs_dfs = []
     vels_dfs = []
-    for i, (u, v) in enumerate(
-        zip(pupygrib.read(grib_file_u), pupygrib.read(grib_file_v))
-    ):
-        if IS_TEST and i > 10:
-            break
-
+    for u, v in zip(pupygrib.read(grib_file_u), pupygrib.read(grib_file_v)):
         time = u.get_time()
-        if time.year != year:
+        if time.year != year or month != time.month:
             continue
         assert time == v.get_time()
-
-        if i % 500 == 0:
-            print(f"Processing msg {i:,} ({year}-{time.month})...")
 
         lons_u, lats_u = u.get_coordinates()
         lons_v, lats_v = v.get_coordinates()
@@ -94,16 +91,12 @@ def collect_winds(
             }
         )
         df = df.groupby(["lon", "lat"]).mean()
-        df["dir"] = direction(u=df["u"], v=df["v"])
-        df["vel"] = velocity(u=df["u"], v=df["v"])
-
-        dirs_binned = np.digitize(df["dir"], bins=[d["s"] for d in wind_dirs])
-        vels_binned = np.digitize(df["vel"], bins=[d["s"] for d in wind_vels])
         dirs_df = pd.DataFrame(
-            {f"{year}-{time.month}/{i}": dirs_binned}, index=df.index
+            {f"{time.day}-{randstr()}": direction(u=df["u"], v=df["v"])},
+            index=df.index,
         )
         vels_df = pd.DataFrame(
-            {f"{year}-{time.month}/{i}": vels_binned}, index=df.index
+            {f"{time.day}-{randstr()}": velocity(u=df["u"], v=df["v"])}, index=df.index,
         )
         dirs_dfs.append(dirs_df)
         vels_dfs.append(vels_df)
@@ -111,71 +104,48 @@ def collect_winds(
     return pd.concat(dirs_dfs, axis=1), pd.concat(vels_dfs, axis=1)
 
 
-def collect_scalars(grib_file: BinaryIO) -> pd.DataFrame:
-    dfs = []
-    for i, msg in enumerate(pupygrib.read(grib_file)):
-        if IS_TEST and i > 10:
-            break
-
-        time = msg.get_time()
-        if time.year != year:
-            continue
-
-        if i % 500 == 0:
-            print(f"Processing msg {i:,} ({year}-{time.month})...")
-
-        lons, lats = msg.get_coordinates()
-        values = msg.get_values()
-        assert lats.shape == values.shape == lons.shape
-
-        df = pd.DataFrame(
-            {
-                "lon": lons.flatten(),
-                "lat": lats.flatten(),
-                f"{year}-{time.month}/{i}": values.flatten(),
-            }
-        )
-        dfs.append(df.groupby(["lon", "lat"]).mean())
-
-    return pd.concat(dfs, axis=1)
-
-
 if __name__ == "__main__":
 
     print("\nProcessing prec...")
     for year in YEARS[:1] if IS_TEST else YEARS:
         infile = DATA_DIR / f"total_precipitation_{year}.grib"
-        outfile = DATA_DIR / f"s2_prec_{year}.pq"
+        for month in MONTHS[:1] if IS_TEST else MONTHS:
+            outfile = DATA_DIR / "tmp" / f"s2_prec_{year}-{month}.pq"
 
-        with open(infile, "rb") as fh:
-            prec = collect_scalars(grib_file=fh)
+            with open(infile, "rb") as fh:
+                prec = collect_scalars(year=year, month=month, grib_file=fh)
 
-        pq.write_table(pq.pa.Table.from_pandas(prec), outfile)
+            write_parquet(data=prec, file=outfile)
     del prec
 
     print("\nProcessing tmps...")
     for year in YEARS[:1] if IS_TEST else YEARS:
         infile = DATA_DIR / f"2m_temperature_{year}.grib"
-        outfile = DATA_DIR / f"s2_tmps_{year}.pq"
+        for month in MONTHS[:1] if IS_TEST else MONTHS:
+            outfile = DATA_DIR / "tmp" / f"s2_tmps_{year}-{month}.pq"
 
-        with open(infile, "rb") as fh:
-            tmps = collect_scalars(grib_file=fh)
+            with open(infile, "rb") as fh:
+                tmps = collect_scalars(year=year, month=month, grib_file=fh)
 
-        pq.write_table(pq.pa.Table.from_pandas(tmps), outfile)
+            write_parquet(data=tmps, file=outfile)
     del tmps
 
-    print("Processing winds...")
+    print("\nProcessing winds...")
     for year in YEARS[:1] if IS_TEST else YEARS:
         u_file = DATA_DIR / f"10m_u_component_of_wind_{year}.grib"
         v_file = DATA_DIR / f"10m_v_component_of_wind_{year}.grib"
-        dirs_outfile = DATA_DIR / f"s2_wind_dirs_{year}.pq"
-        vels_outfile = DATA_DIR / f"s2_wind_vels_{year}.pq"
+        for month in MONTHS[:1] if IS_TEST else MONTHS:
+            dirs_outfile = DATA_DIR / "tmp" / f"s2_wind_dirs_{year}-{month}.pq"
+            vels_outfile = DATA_DIR / "tmp" / f"s2_wind_vels_{year}-{month}.pq"
 
-        with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
-            dirs, vels = collect_winds(grib_file_u=fh_u, grib_file_v=fh_v)
+            with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
+                dirs, vels = collect_winds(
+                    year=year, month=month, grib_file_u=fh_u, grib_file_v=fh_v
+                )
 
-        pq.write_table(pq.pa.Table.from_pandas(dirs), dirs_outfile)
-        pq.write_table(pq.pa.Table.from_pandas(vels), vels_outfile)
+            write_parquet(data=dirs, file=dirs_outfile)
+            write_parquet(data=vels, file=vels_outfile)
     del dirs, vels
 
     print("done")
+

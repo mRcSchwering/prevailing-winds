@@ -1,9 +1,16 @@
+from typing import Union
+from pathlib import Path
+import random
+import string
 import numpy as np  # type: ignore
+import pandas as pd  # type: ignore
+import pyarrow as pa  # type: ignore
+import pyarrow.parquet as pq  # type: ignore
 
 # wind directions
 # binning with index "i", lower boundary "s"
 # key "k"
-wind_dirs = [
+WIND_DIRS = [
     {"i": 1, "k": "N", "s": -11.25},
     {"i": 2, "k": "NNE", "s": 11.25},
     {"i": 3, "k": "NE", "s": 33.75},
@@ -26,7 +33,7 @@ wind_dirs = [
 # wind velocities
 # binning with index "i", lower boundary "s"
 # in knots, key "k", beaufort scale "b"
-wind_vels = [
+WIND_VELS = [
     {"i": 1, "k": "Calm", "b": 0, "s": 0},
     {"i": 2, "k": "Light air", "b": 1, "s": 1},
     {"i": 3, "k": "Light breeze", "b": 2, "s": 4},
@@ -68,3 +75,22 @@ def chunk(l: list, n: int):
     for i in range(0, len(l), n):
         yield l[i : i + n]
 
+
+def bin_wind_dirs(dirs: np.array) -> np.array:
+    return np.digitize(dirs, bins=[d["s"] for d in WIND_DIRS])
+
+
+def bin_wind_vels(vels: np.array) -> np.array:
+    return np.digitize(vels, bins=[d["s"] for d in WIND_VELS])
+
+
+def randstr(n: int = 4) -> str:
+    return "".join(random.choices(string.ascii_uppercase + string.digits, k=n))
+
+
+def write_parquet(data: pd.DataFrame, file: Union[str, Path]):
+    pq.write_table(pa.Table.from_pandas(data), file)
+
+
+def read_parquet(file: Union[str, Path]) -> pd.DataFrame:
+    return pq.read_table(file).to_pandas()
