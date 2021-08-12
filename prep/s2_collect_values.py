@@ -47,8 +47,8 @@ def collect_scalars(year: int, month: int, grib_file: BinaryIO) -> pd.DataFrame:
 
         df = pd.DataFrame(
             {
-                "lon": lons.flatten(),
                 "lat": lats.flatten(),
+                "lon": lons.flatten(),
                 f"{time.day}-{randstr()}": values.flatten(),
             }
         )
@@ -84,20 +84,16 @@ def collect_winds(
 
         df = pd.DataFrame(
             {
-                "lon": lons_u.flatten(),
                 "lat": lats_u.flatten(),
+                "lon": lons_u.flatten(),
                 "u": values_u.flatten(),
                 "v": values_v.flatten(),
             }
         )
         df = df.groupby(["lon", "lat"]).mean()
-        dirs_df = pd.DataFrame(
-            {f"{time.day}-{randstr()}": direction(u=df["u"], v=df["v"])},
-            index=df.index,
-        )
-        vels_df = pd.DataFrame(
-            {f"{time.day}-{randstr()}": velocity(u=df["u"], v=df["v"])}, index=df.index,
-        )
+        key = f"{time.day}-{randstr()}"  # same key = important
+        dirs_df = pd.DataFrame({key: direction(u=df["u"], v=df["v"])}, index=df.index)
+        vels_df = pd.DataFrame({key: velocity(u=df["u"], v=df["v"])}, index=df.index)
         dirs_dfs.append(dirs_df)
         vels_dfs.append(vels_df)
 

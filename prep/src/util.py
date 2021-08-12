@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 from pathlib import Path
 import random
 import string
@@ -7,10 +7,11 @@ import pandas as pd  # type: ignore
 import pyarrow as pa  # type: ignore
 import pyarrow.parquet as pq  # type: ignore
 
+
 # wind directions
 # binning with index "i", lower boundary "s"
-# key "k"
-WIND_DIRS = [
+# in azimut, key "k"
+WIND_DIRS: List[dict] = [
     {"i": 1, "k": "N", "s": -11.25},
     {"i": 2, "k": "NNE", "s": 11.25},
     {"i": 3, "k": "NE", "s": 33.75},
@@ -33,7 +34,7 @@ WIND_DIRS = [
 # wind velocities
 # binning with index "i", lower boundary "s"
 # in knots, key "k", beaufort scale "b"
-WIND_VELS = [
+WIND_VELS: List[dict] = [
     {"i": 1, "k": "Calm", "b": 0, "s": 0},
     {"i": 2, "k": "Light air", "b": 1, "s": 1},
     {"i": 3, "k": "Light breeze", "b": 2, "s": 4},
@@ -47,6 +48,18 @@ WIND_VELS = [
     {"i": 11, "k": "Storm", "b": 10, "s": 48},
     {"i": 12, "k": "Violent storm", "b": 11, "s": 56},
     {"i": 13, "k": "Hurricane force", "b": 12, "s": 64},
+]
+
+
+# precipitation classes
+# binning with index "i", lower boundary "s"
+# in mm rain per hour, key "k"
+RAINS: List[dict] = [
+    {"i": 1, "k": "Dry", "s": 0.0},
+    {"i": 2, "k": "Light rain", "s": 0.1},
+    {"i": 3, "k": "Moderate rain", "s": 2.5},
+    {"i": 4, "k": "Heavy rain", "s": 7.6},
+    {"i": 5, "k": "Violent rain", "s": 50.0},
 ]
 
 
@@ -76,16 +89,9 @@ def chunk(l: list, n: int):
         yield l[i : i + n]
 
 
-def bin_wind_dirs(dirs: np.array) -> np.array:
-    return np.digitize(dirs, bins=[d["s"] for d in WIND_DIRS])
-
-
-def bin_wind_vels(vels: np.array) -> np.array:
-    return np.digitize(vels, bins=[d["s"] for d in WIND_VELS])
-
-
-def randstr(n: int = 4) -> str:
-    return "".join(random.choices(string.ascii_uppercase + string.digits, k=n))
+def randstr(n: int = 6) -> str:
+    chars = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    return "".join(random.choices(chars, k=n))
 
 
 def write_parquet(data: pd.DataFrame, file: Union[str, Path]):
