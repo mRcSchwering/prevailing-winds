@@ -21,18 +21,3 @@ def put_obj(key: str, obj: Any):
     res = RESOURCE.Object(CONTENT_BUCKET_NAME, key).put(Body=pickle.dumps(obj))
     assert res["ResponseMetadata"]["HTTPStatusCode"] == 200
 
-
-def write_wind_obj(
-    obj,
-    year: Union[int, str],
-    month: int,
-    lat: float,
-    lng: float,
-    prefix: Optional[str] = None,
-):
-    key = f"{year}/{month}/avgwinds_{lat:.2f};{lng:.2f}.pkl"
-    if prefix is not None:
-        key = prefix + "/" + key
-    res = RESOURCE.Object(CONTENT_BUCKET_NAME, key).put(Body=pickle.dumps(obj))
-    assert res["ResponseMetadata"]["HTTPStatusCode"] == 200
-
