@@ -2,10 +2,12 @@
 Write all objects to s3
 
 One object for every position x month x time range => ~20M objects.
+This would not only take long but also be quite expensive.
+I reduce the amount of objects by binning them to full lat-lng minutes.
 
-Vanilla from home 1 month, 100 records: 18s => 20 days
-Subroutines from home 1 month, 100 records: 7s => 8 days
-
+That's 1.2M objects.
+Vanilla 2 time ranges, 1 month, 100 records: 18s => 30h
+Subroutines 2 time ranges, 1 month, 100 records: 7s => 12h
 
     python s4_upload_objs.py test
     python s4_upload_objs.py
@@ -13,12 +15,12 @@ Subroutines from home 1 month, 100 records: 7s => 8 days
 """
 from pathlib import Path
 import sys
+from itertools import product
 import eventlet  # type: ignore
 
 eventlet.monkey_patch()
 from src.util import read_parquet
 import src.s3 as s3
-import time
 
 TIME_RANGES = ["2020", "2016-2020"]
 MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -26,12 +28,8 @@ PREFIX = "v2"
 DATA_DIR = Path("data/tmp")
 IS_TEST = "test" in sys.argv[1:]
 
-# TODO: check https://stackoverflow.com/questions/27478568/how-to-upload-small-files-to-amazon-s3-efficiently-in-python
-# mit https://eventlet.net/
-
 
 if __name__ == "__main__":
-    t0 = time.time()
     for time_range in TIME_RANGES:
         for month in MONTHS[:1] if IS_TEST else MONTHS:
             print(f"Processing {time_range}/{month}...")
@@ -56,21 +54,33 @@ if __name__ == "__main__":
             n = len(prec.index)
 
             pool = eventlet.GreenPool()
-            for i, (lng, lat) in enumerate(prec.index):
+
+            lngs = prec.index.get_level_values("lon").astype(int)
+            lngs = list(range(lngs.min(), lngs.max() + 1))
+            lats = prec.index.get_level_values("lat").astype(int)
+            lats = list(range(lats.min(), lats.max()))  # ignore lat=70.00
+
+            parts = (0.0, 0.25, 0.5, 0.75)
+            for i, (lng_base, lat_base) in enumerate(product(lngs, lats)):
                 if i % 40000 == 0:
                     print(f"...{i/n*100:.0f}% done...")
                 if IS_TEST and i > 100:
                     break
 
-                key = f"{PREFIX}/{time_range}/{month}/{lat:.2f}/{lng:.2f}/data.pkl"
-                data = {
-                    "prec": prec.loc[(lng, lat)].to_dict(),
-                    "tmps": tmps.loc[(lng, lat)].to_dict(),
-                    "winds": winds.loc[(lng, lat)].to_dict(),
-                }
+                data = {}
+                for part in parts:
+                    lat = lat_base + part
+                    lng = lng_base + part
+                    data[(lat, lng)] = {
+                        "prec": prec.loc[(lng, lat)].to_dict(),
+                        "tmps": tmps.loc[(lng, lat)].to_dict(),
+                        "winds": winds.loc[(lng, lat)].to_dict(),
+                    }
+                key = (
+                    f"{PREFIX}/{time_range}/{month}/{lat_base:d}/{lng_base:d}/data.pkl"
+                )
                 # s3.put_obj(key=key, obj=data)
                 pool.spawn_n(s3.put_obj, key, data)
             pool.waitall()
 
-    print(time.time() - t0)
     print("\ndone")
