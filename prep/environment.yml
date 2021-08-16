@@ -1,0 +1,9 @@
+name: prevailing-winds-prep
+
+dependencies:
+  - python=3.8
+  - eventlet
+  - boto3
+  - cdsapi
+  - pandas
+  - pyarrow
