@@ -39,8 +39,8 @@ type WindDirection {
 }
 
 """
-Precipitation intensity with name and
-range in mm.
+Precipitation intensity with name.
+From/to mm are half-closed intervals.
 """
 type PrecIntensity {
   idx: Int!
@@ -64,7 +64,8 @@ input WindsInput {
 
 """
 **timeRange** one of ("2020", "2016-2020")
-**from/to lat/lng** in half closed intervals
+**month** in 3 letters (_e.g._ "Jan")
+**from/to lat/lng** considering only lats [-70;70)
 """
 input WeatherInput {
   timeRange: String!
