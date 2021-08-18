@@ -62,6 +62,7 @@ WIND_DIRS = [
     {"idx": 15, "name": "NW", "angle": 315.0},
     {"idx": 16, "name": "NNW", "angle": 337.5},
 ]
+WIND_DIR_IDXS = [str(d["idx"]) for d in WIND_DIRS]
 
 
 # wind velocities (see schema documentation)
@@ -150,4 +151,15 @@ WIND_VELS = [
         "beaufortNumber": 12,
         "fromKt": "64",
     },
+]
+WIND_VEL_IDXS = [str(d["idx"]) for d in WIND_VELS]
+
+
+# precipitation intensities
+RAINS = [
+    {"idx": 1, "name": "Dry", "fromMm": "0", "toMm": "0.1"},
+    {"idx": 2, "name": "Light rain", "fromMm": "0.1", "toMm": "2.5"},
+    {"idx": 3, "name": "Moderate rain", "fromMm": "2.5", "toMm": "7.6"},
+    {"idx": 4, "name": "Heavy rain", "fromMm": "7.6", "toMm": "50.0"},
+    {"idx": 5, "name": "Violent rain", "fromMm": "50.0"},
 ]

@@ -1,6 +1,7 @@
 type Query {
   meta: Meta!
   winds(input: WindsInput!): WindsResult!
+  weather(input: WeatherInput!): WeatherResult!
 }
 
 """
@@ -13,14 +14,12 @@ type Meta {
   months: [String!]!
   windDirections: [WindDirection!]!
   windVelocities: [WindVelocity!]!
+  precIntensities: [PrecIntensity!]!
 }
 
 """
-Description of wind velocities
-idx: used in wind records
-Beaufort names and numbers are taken wrom wiki
-from/to knots are half closed intervals
-missing from/to means open interval (to 0/infinite)
+Wind velocity with Beaufort name and number.
+From/to knots are half closed intervals.
 """
 type WindVelocity {
   idx: Int!
@@ -31,13 +30,23 @@ type WindVelocity {
 }
 
 """
-Description of wind directions
-idx: used in wind records
+Wind direction with name and bearing.
 """
 type WindDirection {
   idx: Int!
   name: String!
   angle: Float!
+}
+
+"""
+Precipitation intensity with name and
+range in mm.
+"""
+type PrecIntensity {
+  idx: Int!
+  name: String!
+  fromMm: String
+  toMm: String
 }
 
 """
@@ -54,6 +63,19 @@ input WindsInput {
 }
 
 """
+**timeRange** one of ("2020", "2016-2020")
+**from/to lat/lng** in half closed intervals
+"""
+input WeatherInput {
+  timeRange: String!
+  month: String!
+  fromLat: Float!
+  toLat: Float!
+  fromLng: Float!
+  toLng: Float!
+}
+
+"""
 Historic winds for a particular time and place
 """
 type WindsResult {
@@ -61,11 +83,42 @@ type WindsResult {
 }
 
 """
-Single records describing a bin of
-wind direction and velocity with count
+Historic weather data for a particular
+time and place/area.
+"""
+type WeatherResult {
+  windRecords: [WindRecord!]!
+  precRecords: [PrecRecord!]!
+  tmpRecords: [TmpRecord!]!
+}
+
+"""
+Describes how many times a certain wind direction
+and wind strength was counted.
+See **Meta** for indexes.
 """
 type WindRecord {
   dir: Int!
   vel: Int!
   count: Int!
+}
+
+"""
+Describes how many times a certain precipitation
+was counted. See **Meta** for indexes.
+"""
+type PrecRecord {
+  amt: Int!
+  count: Int!
+}
+
+"""
+Describes the days' high and low
+temperatures in C. See **Meta** for indexes.
+"""
+type TmpRecord {
+  highMean: Float!
+  lowMean: Float!
+  highStd: Float!
+  lowStd: Float!
 }

@@ -22,7 +22,7 @@ eventlet.monkey_patch()
 from src.util import read_parquet
 import src.s3 as s3
 
-TIME_RANGES = ["2020", "2016-2020"]
+TIME_RANGES = ["2016-2020"]  # ["2020", "2016-2020"] TODO: back in
 MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 PREFIX = "v2"
 DATA_DIR = Path("data/tmp")
@@ -53,7 +53,7 @@ if __name__ == "__main__":
             assert tmps.index.equals(winds.index)
             n = len(prec.index)
 
-            pool = eventlet.GreenPool()
+            pool = eventlet.GreenPool(200)
 
             lngs = prec.index.get_level_values("lon").astype(int)
             lngs = list(range(lngs.min(), lngs.max() + 1))
@@ -62,15 +62,13 @@ if __name__ == "__main__":
 
             parts = (0.0, 0.25, 0.5, 0.75)
             for i, (lng_base, lat_base) in enumerate(product(lngs, lats)):
-                if i % 40000 == 0:
-                    print(f"...{i/n*100:.0f}% done...")
                 if IS_TEST and i > 100:
                     break
 
                 data = {}
-                for part in parts:
-                    lat = lat_base + part
-                    lng = lng_base + part
+                for lat_add, lng_add in product(parts, parts):
+                    lat = lat_base + lat_add
+                    lng = lng_base + lng_add
                     data[(lat, lng)] = {
                         "prec": prec.loc[(lng, lat)].to_dict(),
                         "tmps": tmps.loc[(lng, lat)].to_dict(),
@@ -79,7 +77,6 @@ if __name__ == "__main__":
                 key = (
                     f"{PREFIX}/{time_range}/{month}/{lat_base:d}/{lng_base:d}/data.pkl"
                 )
-                # s3.put_obj(key=key, obj=data)
                 pool.spawn_n(s3.put_obj, key, data)
             pool.waitall()
 
