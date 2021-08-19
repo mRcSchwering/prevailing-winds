@@ -101,6 +101,7 @@ export default function Map(): JSX.Element {
     if (map) {
       const lvl = map.getZoom();
       updateZoom(lvl);
+      console.log(lvl);
     }
   }
 

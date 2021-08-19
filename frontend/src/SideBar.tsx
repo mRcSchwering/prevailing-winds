@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Select, Heading } from "grommet";
 import Spinner from "./SpinnerBrand";
 import WindRoseChart from "./WindRoseChart";
-import { convertDMS, rect2area } from "./util";
+import { convertDMS } from "./util";
 import { useWeather, MetaRespType } from "./queries";
 import { SelectionContext } from "./SelectionContext";
 

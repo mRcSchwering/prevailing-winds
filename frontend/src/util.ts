@@ -71,7 +71,8 @@ export function suggestPadFactor(zoomLvl: number): number {
   if (zoomLvl <= 5) return 4;
   if (zoomLvl <= 6) return 3;
   if (zoomLvl <= 7) return 2;
-  return 1;
+  if (zoomLvl <= 8) return 1;
+  return 0.5;
 }
 
 /**
@@ -80,19 +81,19 @@ export function suggestPadFactor(zoomLvl: number): number {
  */
 
 export function getLatFloor(degree: number, pad: number): number {
-  return Math.round(degree) - 0.5 * pad;
+  return degree - 0.5 * pad;
 }
 
 export function getLngFloor(degree: number, pad: number): number {
-  return Math.round(degree) - 0.5 * pad;
+  return degree - 0.5 * pad;
 }
 
 export function getLatCeil(degree: number, pad: number): number {
-  return Math.round(degree) + 0.5 * pad;
+  return degree + 0.5 * pad;
 }
 
 export function getLngCeil(degree: number, pad: number): number {
-  return Math.round(degree) + 0.5 * pad;
+  return degree + 0.5 * pad;
 }
 
 export function excludePoles(d: number): number {
