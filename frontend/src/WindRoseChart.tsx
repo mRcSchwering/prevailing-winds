@@ -61,12 +61,12 @@ const layout = {
   height: 500,
 };
 
-type ChartProps = {
+type WindRoseChartProps = {
   weather: WeatherRespType;
   meta: MetaRespType;
 };
 
-export default function Chart(props: ChartProps): JSX.Element {
+export default function WindRoseChart(props: WindRoseChartProps): JSX.Element {
   if (props.weather.loading || props.meta.loading) return <Spinner />;
 
   if (props.weather.error) {

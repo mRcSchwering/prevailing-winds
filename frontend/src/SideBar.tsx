@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Select, Heading } from "grommet";
 import Spinner from "./SpinnerBrand";
-import Chart from "./Chart";
+import WindRoseChart from "./WindRoseChart";
 import { convertDMS, rect2area } from "./util";
 import { useWeather, MetaRespType } from "./queries";
 import { SelectionContext } from "./SelectionContext";
@@ -74,7 +74,7 @@ export default function SideBar(props: SideBarProps): JSX.Element {
             </>
           )}
         </Heading>
-        <Chart weather={weatherResp} meta={meta} />
+        <WindRoseChart weather={weatherResp} meta={meta} />
       </Box>
     </>
   );
