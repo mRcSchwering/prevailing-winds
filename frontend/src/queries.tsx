@@ -1,5 +1,5 @@
 import { gql, useQuery, useLazyQuery, ApolloError } from "@apollo/client";
-import { Meta, Query, WindsResult } from "./types";
+import { Meta, Query, WindsResult, WeatherResult } from "./types";
 
 const META_QUERY = gql`
   query Meta {
@@ -17,6 +17,12 @@ const META_QUERY = gql`
         beaufortNumber
         fromKt
         toKt
+      }
+      precIntensities {
+        idx
+        name
+        fromMm
+        toMm
       }
     }
   }
@@ -86,4 +92,69 @@ export function useWinds(): [loadWindsType, WindsRespType] {
   const [loadWinds, { data, loading, error }] =
     useLazyQuery<Query>(WINDS_QUERY);
   return [loadWinds, { data: data?.winds, loading, error }];
+}
+
+const WEATHER_QUERY = gql`
+  query Weather(
+    $timeRange: String!
+    $month: String!
+    $fromLat: Float!
+    $toLat: Float!
+    $fromLng: Float!
+    $toLng: Float!
+  ) {
+    weather(
+      input: {
+        timeRange: $timeRange
+        month: $month
+        fromLat: $fromLat
+        toLat: $toLat
+        fromLng: $fromLng
+        toLng: $toLng
+      }
+    ) {
+      windRecords {
+        dir
+        vel
+        count
+      }
+      precRecords {
+        amt
+        count
+      }
+      tmpRecords {
+        highMean
+        lowMean
+        highStd
+        lowStd
+      }
+    }
+  }
+`;
+
+export type WeatherRespType = {
+  loading: boolean;
+  data?: WeatherResult;
+  error?: ApolloError;
+};
+
+export type useWeatherVars = {
+  timeRange: string;
+  month: string;
+  fromLat: number;
+  toLat: number;
+  fromLng: number;
+  toLng: number;
+};
+
+export type loadWeatherType = ({
+  variables,
+}: {
+  variables: useWeatherVars;
+}) => void;
+
+export function useWeather(): [loadWeatherType, WeatherRespType] {
+  const [loadWeather, { data, loading, error }] =
+    useLazyQuery<Query>(WEATHER_QUERY);
+  return [loadWeather, { data: data?.weather, loading, error }];
 }

@@ -3,7 +3,7 @@ import { Box, Select, Heading } from "grommet";
 import Spinner from "./SpinnerBrand";
 import Chart from "./Chart";
 import { convertDMS, rect2area } from "./util";
-import { useWinds, MetaRespType } from "./queries";
+import { useWeather, MetaRespType } from "./queries";
 import { SelectionContext } from "./SelectionContext";
 
 type SideBarProps = {
@@ -16,12 +16,12 @@ type SideBarProps = {
 
 export default function SideBar(props: SideBarProps): JSX.Element {
   const { pos, rect } = React.useContext(SelectionContext);
-  const [loadWinds, windsResp] = useWinds();
+  const [loadWeather, weatherResp] = useWeather();
   const meta = props.metaResp;
 
   React.useEffect(() => {
     if (rect) {
-      loadWinds({
+      loadWeather({
         variables: {
           timeRange: props.timeRange,
           month: props.month,
@@ -32,7 +32,7 @@ export default function SideBar(props: SideBarProps): JSX.Element {
         },
       });
     }
-  }, [rect, props.timeRange, props.month, loadWinds]);
+  }, [rect, props.timeRange, props.month, loadWeather]);
 
   let inputs = <Spinner />;
   if (!meta.loading) {
@@ -74,7 +74,7 @@ export default function SideBar(props: SideBarProps): JSX.Element {
             </>
           )}
         </Heading>
-        <Chart winds={windsResp} meta={meta} />
+        <Chart weather={weatherResp} meta={meta} />
       </Box>
     </>
   );

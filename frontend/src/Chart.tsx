@@ -1,7 +1,6 @@
-import React from "react";
 import Plot from "react-plotly.js";
 import { Text } from "grommet";
-import { WindsRespType, MetaRespType } from "./queries";
+import { WeatherRespType, MetaRespType } from "./queries";
 import Spinner from "./SpinnerBrand";
 
 type WindBinType = {
@@ -11,6 +10,7 @@ type WindBinType = {
   color: string;
 };
 
+// TODO: sth wrong here. to 13?!
 const windBins: WindBinType[] = [
   { bfts: [0, 1], minKt: null, maxKt: 3, color: "#ffffe0" },
   { bfts: [2, 3], minKt: 4, maxKt: 10, color: "#80a1bf" },
@@ -62,23 +62,26 @@ const layout = {
 };
 
 type ChartProps = {
-  winds: WindsRespType;
+  weather: WeatherRespType;
   meta: MetaRespType;
 };
 
 export default function Chart(props: ChartProps): JSX.Element {
-  if (props.winds.loading || props.meta.loading) return <Spinner />;
+  if (props.weather.loading || props.meta.loading) return <Spinner />;
 
-  if (props.winds.error) {
-    return <Text color="status-critical">{props.winds.error.message}</Text>;
+  if (props.weather.error) {
+    return <Text color="status-critical">{props.weather.error.message}</Text>;
   }
   if (props.meta.error) {
     return <Text color="status-critical">{props.meta.error.message}</Text>;
   }
 
-  if (!props.meta.data || !props.winds.data) {
+  if (!props.meta.data || !props.weather.data) {
     return <Text>click somewhere on the chart</Text>;
   }
+
+  const meta = props.meta.data;
+  const winds = props.weather.data.windRecords;
 
   // create series
   const bins = [];
@@ -93,12 +96,12 @@ export default function Chart(props: ChartProps): JSX.Element {
       hovertemplate: `%{r:.2f}% %{theta}-winds<br>${name}<extra></extra>`,
     };
 
-    const vels = props.meta.data.windVelocities.filter((d) =>
+    const vels = meta.windVelocities.filter((d) =>
       windBin.bfts.includes(d.beaufortNumber)
     );
     for (const vel of vels) {
-      for (const dir of props.meta.data.windDirections) {
-        const filtered = props.winds.data.records.filter(
+      for (const dir of meta.windDirections) {
+        const filtered = winds.filter(
           (d) => d.dir === dir.idx && d.vel === vel.idx
         );
         let count = 0;
