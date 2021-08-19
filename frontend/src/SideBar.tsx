@@ -64,15 +64,8 @@ export default function SideBar(props: SideBarProps): JSX.Element {
         <Box direction="row">{inputs}</Box>
       </Box>
       <Box align="center">
-        <Heading level={4} margin={{ bottom: "0px", top: "20px" }}>
+        <Heading level={4} margin={{ vertical: "20px" }}>
           {pos ? convertDMS(pos.lat, pos.lng) : "-"}
-        </Heading>
-        <Heading level={4} margin={{ bottom: "20px", top: "0px" }}>
-          {rect && (
-            <>
-              {rect2area(rect.lats, rect.lngs)} M<sup>2</sup>
-            </>
-          )}
         </Heading>
         <WindRoseChart weather={weatherResp} meta={meta} />
       </Box>
