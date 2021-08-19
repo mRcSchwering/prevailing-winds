@@ -10,7 +10,7 @@ type WindBinType = {
   color: string;
 };
 
-// TODO: sth wrong here. to 13?!
+// TODO: rather fetch from backend
 const windBins: WindBinType[] = [
   { bfts: [0, 1], minKt: null, maxKt: 3, color: "#ffffe0" },
   { bfts: [2, 3], minKt: 4, maxKt: 10, color: "#80a1bf" },
@@ -18,7 +18,7 @@ const windBins: WindBinType[] = [
   { bfts: [6, 7], minKt: 22, maxKt: 33, color: "#54479f" },
   { bfts: [8, 9], minKt: 34, maxKt: 47, color: "#a84da0" },
   { bfts: [10, 11], minKt: 48, maxKt: 55, color: "#b92650" },
-  { bfts: [12, 13], minKt: 56, maxKt: null, color: "#ca0000" },
+  { bfts: [12], minKt: 56, maxKt: null, color: "#ca0000" },
 ];
 
 function createName(windBin: WindBinType): string {
