@@ -1,6 +1,5 @@
 type Query {
   meta: Meta!
-  winds(input: WindsInput!): WindsResult!
   weather(input: WeatherInput!): WeatherResult!
 }
 
@@ -50,19 +49,6 @@ type PrecIntensity {
 }
 
 """
-timeRange: one of ("2020", "2016-2020")
-from/to lat/lng: half closed intervals
-"""
-input WindsInput {
-  timeRange: String!
-  month: String!
-  fromLat: Float!
-  toLat: Float!
-  fromLng: Float!
-  toLng: Float!
-}
-
-"""
 **timeRange** one of ("2020", "2016-2020")
 **month** in 3 letters (_e.g._ "Jan")
 **from/to lat/lng** considering only lats [-70;70)
@@ -74,13 +60,6 @@ input WeatherInput {
   toLat: Float!
   fromLng: Float!
   toLng: Float!
-}
-
-"""
-Historic winds for a particular time and place
-"""
-type WindsResult {
-  records: [WindRecord!]!
 }
 
 """
