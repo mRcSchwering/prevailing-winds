@@ -29,8 +29,8 @@ const rainBins = [
   { idx: 1, name: "Dry<br>< 0.1 mm", color: "rgba(0,0,0,0)" },
   { idx: 2, name: "Light rain<br>0.1 to 2.5 mm", color: "#80a1bf" },
   { idx: 3, name: "Moderate rain<br>2.5 to 7.6 mm", color: "#00429d" },
-  { idx: 4, name: "Heavy rain<br>7.6 to 50 mm", color: "#b92650" },
-  { idx: 5, name: "Violent rain<br>> 50 mm", color: "#ca0000" },
+  { idx: 4, name: "Heavy rain<br>7.6 to 50 mm", color: "#a84da0" },
+  { idx: 5, name: "Violent rain<br>> 50 mm", color: "#b92650" },
 ];
 
 function createWindName(windBin: WindBinType): string {
@@ -146,46 +146,57 @@ function WindRainBars(props: WindRainBarsProps): JSX.Element {
   );
 }
 
+function getMean(arr: number[]): number {
+  return arr.reduce((a, b) => a + b) / arr.length;
+}
+
+function getStdMean(arr: number[]): number {
+  return Math.pow(getMean(arr.map((d) => Math.pow(d, 2))), 0.5);
+}
+
+function getTmpColor(celsius: number): string {
+  if (celsius > 40) return "#85144B";
+  if (celsius > 30) return "#b92650";
+  if (celsius > 10) return "#a84da0";
+  if (celsius > 0) return "#80a1bf";
+  if (celsius > -10) return "#00429d";
+  return "#54479f";
+}
+
 interface TmpRangesProps {
   tmps: TmpRecord[];
   meta: Meta;
 }
 
 function TmpRanges(props: TmpRangesProps): JSX.Element {
-  // average means
-  const aveHiM =
-    props.tmps.map((d) => d.highMean).reduce((a, b) => a + b) /
-    props.tmps.length;
-  const aveLoM =
-    props.tmps.map((d) => d.lowMean).reduce((a, b) => a + b) /
-    props.tmps.length;
-
-  // average vars of stds
-  const aveHiS = Math.pow(
-    props.tmps.map((d) => Math.pow(d.highStd, 2)).reduce((a, b) => a + b) /
-      props.tmps.length,
-    0.5
-  );
-  const aveLoS = Math.pow(
-    props.tmps.map((d) => Math.pow(d.lowStd, 2)).reduce((a, b) => a + b) /
-      props.tmps.length,
-    0.5
-  );
+  const aveHiM = getMean(props.tmps.map((d) => d.highMean));
+  const aveLoM = getMean(props.tmps.map((d) => d.lowMean));
+  const aveHiS = getStdMean(props.tmps.map((d) => d.highStd));
+  const aveLoS = getStdMean(props.tmps.map((d) => d.lowStd));
 
   const lo = aveLoM - 1.2 * aveLoS;
   const hi = aveHiM + 1.2 * aveHiS;
   const tickVals = [lo, (lo + hi) / 2, hi].map(Math.round);
+  const tickText = tickVals.map((d) => `${d}°C`);
+  const color = getTmpColor(aveHiM);
+  // TODO: high und low color
+  // TODO: 0 records catchen
 
   const layout = {
     hovermode: "closest",
-    margin: { t: 10, r: 30, l: 30, b: 50 },
+    margin: { t: 10, r: 30, l: 50, b: 50 },
     paper_bgcolor: "rgba(0,0,0,0)",
     plot_bgcolor: "rgba(0,0,0,0)",
     font: { size: 16 },
     showlegend: false,
-    width: 100,
+    width: 150,
     height: 300,
-    xaxis: { fixedrange: true, showgrid: false, showline: false },
+    xaxis: {
+      fixedrange: true,
+      showgrid: false,
+      showline: false,
+      range: [-0.4, 1.5],
+    },
     yaxis: {
       showgrid: false,
       zeroline: false,
@@ -193,7 +204,7 @@ function TmpRanges(props: TmpRangesProps): JSX.Element {
       showticklabels: true,
       fixedrange: true,
       tickvals: tickVals,
-      ticktext: tickVals.map((d) => `${d}°C`),
+      ticktext: tickText,
       range: [lo, hi],
     },
   };
@@ -202,11 +213,11 @@ function TmpRanges(props: TmpRangesProps): JSX.Element {
     {
       x: ["high"],
       y: [aveHiM],
-      marker: { color: "#85144B" },
+      marker: { color: color },
       hovertemplate: `${Math.round(aveHiM)}°C<extra></extra>`,
       error_y: {
         type: "constant",
-        color: "#85144B",
+        color: color,
         value: aveHiS,
         thickness: 1.5,
         width: 3,
@@ -217,11 +228,11 @@ function TmpRanges(props: TmpRangesProps): JSX.Element {
     {
       x: ["low"],
       y: [aveLoM],
-      marker: { color: "#85144B" },
+      marker: { color: color },
       hovertemplate: `${Math.round(aveLoM)}°C<extra></extra>`,
       error_y: {
         type: "constant",
-        color: "#85144B",
+        color: color,
         value: aveLoS,
         thickness: 1.5,
         width: 3,
