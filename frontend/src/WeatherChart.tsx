@@ -129,18 +129,7 @@ interface TmpRangesProps {
 }
 
 function TmpRanges(props: TmpRangesProps): JSX.Element {
-  const aveHiM = getMean(props.tmps.map((d) => d.highMean));
-  const aveLoM = getMean(props.tmps.map((d) => d.lowMean));
-  const aveHiS = getStdMean(props.tmps.map((d) => d.highStd));
-  const aveLoS = getStdMean(props.tmps.map((d) => d.lowStd));
-
-  const tickVals = [aveLoM, aveHiM].map(Math.round);
-  const tickText = tickVals.map((d) => `${d}°C`);
-  const hiColor = getTmpColor(aveHiM);
-  const loColor = getTmpColor(aveLoM);
-  // TODO: 0 records catchen
-
-  const layout = {
+  const layout: any = {
     hovermode: "closest",
     margin: { t: 10, r: 30, l: 50, b: 50 },
     paper_bgcolor: "rgba(0,0,0,0)",
@@ -161,11 +150,26 @@ function TmpRanges(props: TmpRangesProps): JSX.Element {
       showline: true,
       showticklabels: true,
       fixedrange: true,
-      tickvals: tickVals,
-      ticktext: tickText,
-      range: [aveLoM - 1.2 * aveLoS, aveHiM + 1.2 * aveHiS],
     },
   };
+
+  if (props.tmps.length < 1) {
+    return <Plot data={[]} layout={layout} config={config} />;
+  }
+
+  const aveHiM = getMean(props.tmps.map((d) => d.highMean));
+  const aveLoM = getMean(props.tmps.map((d) => d.lowMean));
+  const aveHiS = getStdMean(props.tmps.map((d) => d.highStd));
+  const aveLoS = getStdMean(props.tmps.map((d) => d.lowStd));
+
+  const tickVals = [aveLoM, aveHiM].map(Math.round);
+  const tickText = tickVals.map((d) => `${d}°C`);
+  const hiColor = getTmpColor(aveHiM);
+  const loColor = getTmpColor(aveLoM);
+
+  layout["tickVals"] = tickVals;
+  layout["ticktext"] = tickText;
+  layout["range"] = [aveLoM - 1.2 * aveLoS, aveHiM + 1.2 * aveHiS];
 
   const traces = [
     {
