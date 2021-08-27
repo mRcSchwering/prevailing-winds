@@ -2,38 +2,11 @@ import Plot from "react-plotly.js";
 import { Text, Box } from "grommet";
 import { WeatherRespType, MetaRespType } from "./queries";
 import { WindRecord, Meta, PrecRecord, TmpRecord } from "./types";
+import { windBins, rainBins, WindBinType, tmpBins } from "./constants";
+import { getMean, getStdMean } from "./util";
 import Spinner from "./SpinnerBrand";
 
-type WindBinType = {
-  bfts: number[];
-  minKt: null | number;
-  maxKt: null | number;
-  color: string;
-};
-
-// TODO: define these in central place
-// pos 0 will be left out in summary (should be "no wind")
-const windBins: WindBinType[] = [
-  { bfts: [0, 1], minKt: null, maxKt: 3, color: "rgba(0,0,0,0)" },
-  { bfts: [2, 3], minKt: 4, maxKt: 10, color: "#80a1bf" },
-  { bfts: [4, 5], minKt: 11, maxKt: 21, color: "#00429d" },
-  { bfts: [6, 7], minKt: 22, maxKt: 33, color: "#54479f" },
-  { bfts: [8, 9], minKt: 34, maxKt: 47, color: "#a84da0" },
-  { bfts: [10, 11], minKt: 48, maxKt: 55, color: "#b92650" },
-  { bfts: [12], minKt: 56, maxKt: null, color: "#ca0000" },
-];
-
-// TODO: derive from meta?
-// pos 0 will be left out in summary (should be "no rain")
-const rainBins = [
-  { idx: 1, name: "Dry<br>< 0.1 mm", color: "rgba(0,0,0,0)" },
-  { idx: 2, name: "Light rain<br>0.1 to 2.5 mm", color: "#80a1bf" },
-  { idx: 3, name: "Moderate rain<br>2.5 to 7.6 mm", color: "#00429d" },
-  { idx: 4, name: "Heavy rain<br>7.6 to 50 mm", color: "#a84da0" },
-  { idx: 5, name: "Violent rain<br>> 50 mm", color: "#b92650" },
-];
-
-function createWindName(windBin: WindBinType): string {
+function getWindName(windBin: WindBinType): string {
   let kts = "";
   if (windBin.minKt && windBin.maxKt)
     kts = `${windBin.minKt} to ${windBin.maxKt} kt`;
@@ -110,7 +83,7 @@ function WindRainBars(props: WindRainBarsProps): JSX.Element {
 
   const windTraces = windBins
     .map((bin, i) => {
-      const name = createWindName(bin);
+      const name = getWindName(bin);
       const pct = Math.round(windFreqs[i] * 100);
       return {
         marker: { color: bin.color },
@@ -146,21 +119,8 @@ function WindRainBars(props: WindRainBarsProps): JSX.Element {
   );
 }
 
-function getMean(arr: number[]): number {
-  return arr.reduce((a, b) => a + b) / arr.length;
-}
-
-function getStdMean(arr: number[]): number {
-  return Math.pow(getMean(arr.map((d) => Math.pow(d, 2))), 0.5);
-}
-
 function getTmpColor(celsius: number): string {
-  if (celsius > 40) return "#85144B";
-  if (celsius > 30) return "#b92650";
-  if (celsius > 10) return "#a84da0";
-  if (celsius > 0) return "#80a1bf";
-  if (celsius > -10) return "#00429d";
-  return "#54479f";
+  return tmpBins.filter((d) => d.maxC >= celsius && d.minC < celsius)[0].color;
 }
 
 interface TmpRangesProps {

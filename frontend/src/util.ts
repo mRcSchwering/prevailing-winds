@@ -110,3 +110,18 @@ export function rect2area(lats: Tuple, lngs: Tuple): string {
   const u = (lngs[1] - lngs[0]) * 60 * cosine(aveLat);
   return new Intl.NumberFormat().format(Math.round(u * v));
 }
+
+/**
+ * Arithmetic mean of number array
+ */
+export function getMean(arr: number[]): number {
+  return arr.reduce((a, b) => a + b) / arr.length;
+}
+
+/**
+ * Average standard deviations by calculating the arithmetic
+ * mean of their variances.
+ */
+export function getStdMean(arr: number[]): number {
+  return Math.pow(getMean(arr.map((d) => Math.pow(d, 2))), 0.5);
+}
