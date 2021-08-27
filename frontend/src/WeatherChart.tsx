@@ -2,19 +2,10 @@ import Plot from "react-plotly.js";
 import { Text, Box } from "grommet";
 import { WeatherRespType, MetaRespType } from "./queries";
 import { WindRecord, Meta, PrecRecord, TmpRecord } from "./types";
-import { windBins, rainBins, WindBinType, tmpBins } from "./constants";
-import { getMean, getStdMean } from "./util";
+import { windBins, rainBins, COLORS } from "./constants";
+import { getMean, getStdMean, getWindName, getTmpColor } from "./util";
 import Spinner from "./SpinnerBrand";
 import Tooltip from "./Tooltip";
-
-function getWindName(windBin: WindBinType): string {
-  let kts = "";
-  if (windBin.minKt && windBin.maxKt)
-    kts = `${windBin.minKt} to ${windBin.maxKt} kt`;
-  else if (windBin.minKt) kts = `>= ${windBin.minKt} kt`;
-  else if (windBin.maxKt) kts = `<= ${windBin.maxKt} kt`;
-  return `BFT ${windBin.bfts.join(" to ")}<br>${kts}`;
-}
 
 const config = {
   displaylogo: false,
@@ -32,8 +23,8 @@ function WindRainBars(props: WindRainBarsProps): JSX.Element {
   const layout = {
     hovermode: "closest",
     margin: { t: 10, r: 40, l: 50, b: 50 },
-    paper_bgcolor: "rgba(0,0,0,0)",
-    plot_bgcolor: "rgba(0,0,0,0)",
+    paper_bgcolor: COLORS.transparent,
+    plot_bgcolor: COLORS.transparent,
     font: { size: 16 },
     showlegend: false,
     barmode: "stack",
@@ -120,10 +111,6 @@ function WindRainBars(props: WindRainBarsProps): JSX.Element {
   );
 }
 
-function getTmpColor(celsius: number): string {
-  return tmpBins.filter((d) => d.maxC >= celsius && d.minC < celsius)[0].color;
-}
-
 interface TmpRangesProps {
   tmps: TmpRecord[];
   meta: Meta;
@@ -133,8 +120,8 @@ function TmpRanges(props: TmpRangesProps): JSX.Element {
   const layout: any = {
     hovermode: "closest",
     margin: { t: 10, r: 30, l: 50, b: 50 },
-    paper_bgcolor: "rgba(0,0,0,0)",
-    plot_bgcolor: "rgba(0,0,0,0)",
+    paper_bgcolor: COLORS.transparent,
+    plot_bgcolor: COLORS.transparent,
     font: { size: 16 },
     showlegend: false,
     width: 150,

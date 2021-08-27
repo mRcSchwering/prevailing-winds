@@ -1,4 +1,4 @@
-import { EXCLUSION_ZONES, Tuple } from "./constants";
+import { EXCLUSION_ZONES, Tuple, WindBinType, tmpBins } from "./constants";
 
 /**
  * Some formatting functions for DMS
@@ -124,4 +124,23 @@ export function getMean(arr: number[]): number {
  */
 export function getStdMean(arr: number[]): number {
   return Math.pow(getMean(arr.map((d) => Math.pow(d, 2))), 0.5);
+}
+
+/**
+ * prepare name for a wind bin
+ */
+export function getWindName(windBin: WindBinType): string {
+  let kts = "";
+  if (windBin.minKt && windBin.maxKt)
+    kts = `${windBin.minKt} to ${windBin.maxKt} kt`;
+  else if (windBin.minKt) kts = `>= ${windBin.minKt} kt`;
+  else if (windBin.maxKt) kts = `<= ${windBin.maxKt} kt`;
+  return `BFT ${windBin.bfts.join(" to ")}<br>${kts}`;
+}
+
+/**
+ * get hex color for a certain temperature in degrees celsius
+ */
+export function getTmpColor(celsius: number): string {
+  return tmpBins.filter((d) => d.maxC >= celsius && d.minC < celsius)[0].color;
 }

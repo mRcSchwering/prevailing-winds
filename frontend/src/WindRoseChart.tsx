@@ -1,56 +1,22 @@
 import Plot from "react-plotly.js";
-import { Text } from "grommet";
+import { Text, Box } from "grommet";
 import { WeatherRespType, MetaRespType } from "./queries";
+import { getWindName } from "./util";
+import { COLORS, windBins } from "./constants";
 import Spinner from "./SpinnerBrand";
-
-type WindBinType = {
-  bfts: number[];
-  minKt: null | number;
-  maxKt: null | number;
-  color: string;
-};
-
-// TODO: rather fetch from backend
-const windBins: WindBinType[] = [
-  { bfts: [0, 1], minKt: null, maxKt: 3, color: "#ffffe0" },
-  { bfts: [2, 3], minKt: 4, maxKt: 10, color: "#80a1bf" },
-  { bfts: [4, 5], minKt: 11, maxKt: 21, color: "#00429d" },
-  { bfts: [6, 7], minKt: 22, maxKt: 33, color: "#54479f" },
-  { bfts: [8, 9], minKt: 34, maxKt: 47, color: "#a84da0" },
-  { bfts: [10, 11], minKt: 48, maxKt: 55, color: "#b92650" },
-  { bfts: [12], minKt: 56, maxKt: null, color: "#ca0000" },
-];
-
-function createName(windBin: WindBinType): string {
-  let kts = "";
-  if (windBin.minKt && windBin.maxKt)
-    kts = `${windBin.minKt} to ${windBin.maxKt} kt`;
-  else if (windBin.minKt) kts = `>= ${windBin.minKt} kt`;
-  else if (windBin.maxKt) kts = `<= ${windBin.maxKt} kt`;
-  return `BFT ${windBin.bfts.join(" to ")} (${kts})`;
-}
+import Tooltip from "./Tooltip";
 
 const config = {
   displaylogo: false,
   responsive: true,
-  modeBarButtonsToRemove: [
-    "zoom2d",
-    "lasso2d",
-    "zoomIn2d",
-    "zoomOut2d",
-    "select2d",
-  ],
+  displayModeBar: false,
 };
 
 const layout = {
-  margin: { t: 25 },
-  paper_bgcolor: "rgba(0,0,0,0)",
+  margin: { t: 50, l: 50, r: 50, b: 50 },
+  paper_bgcolor: COLORS.transparent,
   font: { size: 16 },
-  showlegend: true,
-  legend: {
-    x: -0.2,
-    y: -1,
-  },
+  showlegend: false,
   polar: {
     barmode: "stack",
     bargap: 0,
@@ -58,7 +24,8 @@ const layout = {
     angularaxis: { direction: "clockwise" },
   },
   width: 400,
-  height: 500,
+  height: 400,
+  dragmode: false,
 };
 
 type WindRoseChartProps = {
@@ -86,7 +53,7 @@ export default function WindRoseChart(props: WindRoseChartProps): JSX.Element {
   // create series
   const bins = [];
   for (const windBin of windBins) {
-    const name = createName(windBin);
+    const name = getWindName(windBin);
     const bin = {
       marker: { color: windBin.color },
       name: name,
@@ -131,5 +98,12 @@ export default function WindRoseChart(props: WindRoseChartProps): JSX.Element {
     }
   }
 
-  return <Plot data={bins} layout={layout} config={config} />;
+  return (
+    <Box margin={{ vertical: "small" }} align="end">
+      <Box margin="small">
+        <Tooltip text="Hours of all winds during that month. Angle represents wind direction, colour reqpresents wind strength, radius represents frequency." />
+      </Box>
+      <Plot data={bins} layout={layout} config={config} />
+    </Box>
+  );
 }
