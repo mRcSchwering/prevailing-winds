@@ -153,6 +153,10 @@ function TmpRanges(props: TmpRangesProps): JSX.Element {
   const hiColor = getTmpColor(aveHiM);
   const loColor = getTmpColor(aveLoM);
 
+  const tickVals = [Math.round(aveLoM), Math.round(aveHiM)];
+  layout.yaxis.tickvals = tickVals;
+  layout.yaxis.ticktext = tickVals.map((d) => `${d}°C`);
+
   const traces = [
     {
       x: ["high"],
