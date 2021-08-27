@@ -174,12 +174,10 @@ function TmpRanges(props: TmpRangesProps): JSX.Element {
   const aveHiS = getStdMean(props.tmps.map((d) => d.highStd));
   const aveLoS = getStdMean(props.tmps.map((d) => d.lowStd));
 
-  const lo = aveLoM - 1.2 * aveLoS;
-  const hi = aveHiM + 1.2 * aveHiS;
-  const tickVals = [lo, (lo + hi) / 2, hi].map(Math.round);
+  const tickVals = [aveLoM, aveHiM].map(Math.round);
   const tickText = tickVals.map((d) => `${d}°C`);
-  const color = getTmpColor(aveHiM);
-  // TODO: high und low color
+  const hiColor = getTmpColor(aveHiM);
+  const loColor = getTmpColor(aveLoM);
   // TODO: 0 records catchen
 
   const layout = {
@@ -205,7 +203,7 @@ function TmpRanges(props: TmpRangesProps): JSX.Element {
       fixedrange: true,
       tickvals: tickVals,
       ticktext: tickText,
-      range: [lo, hi],
+      range: [aveLoM - 1.2 * aveLoS, aveHiM + 1.2 * aveHiS],
     },
   };
 
@@ -213,11 +211,11 @@ function TmpRanges(props: TmpRangesProps): JSX.Element {
     {
       x: ["high"],
       y: [aveHiM],
-      marker: { color: color },
-      hovertemplate: `${Math.round(aveHiM)}°C<extra></extra>`,
+      marker: { color: hiColor },
+      hovertemplate: "%{y:.1f}°C<extra></extra>",
       error_y: {
         type: "constant",
-        color: color,
+        color: hiColor,
         value: aveHiS,
         thickness: 1.5,
         width: 3,
@@ -228,11 +226,11 @@ function TmpRanges(props: TmpRangesProps): JSX.Element {
     {
       x: ["low"],
       y: [aveLoM],
-      marker: { color: color },
+      marker: { color: loColor },
       hovertemplate: `${Math.round(aveLoM)}°C<extra></extra>`,
       error_y: {
         type: "constant",
-        color: color,
+        color: loColor,
         value: aveLoS,
         thickness: 1.5,
         width: 3,
