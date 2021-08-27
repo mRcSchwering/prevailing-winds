@@ -5,6 +5,7 @@ import { WindRecord, Meta, PrecRecord, TmpRecord } from "./types";
 import { windBins, rainBins, WindBinType, tmpBins } from "./constants";
 import { getMean, getStdMean } from "./util";
 import Spinner from "./SpinnerBrand";
+import Tooltip from "./Tooltip";
 
 function getWindName(windBin: WindBinType): string {
   let kts = "";
@@ -162,14 +163,8 @@ function TmpRanges(props: TmpRangesProps): JSX.Element {
   const aveHiS = getStdMean(props.tmps.map((d) => d.highStd));
   const aveLoS = getStdMean(props.tmps.map((d) => d.lowStd));
 
-  const tickVals = [aveLoM, aveHiM].map(Math.round);
-  const tickText = tickVals.map((d) => `${d}°C`);
   const hiColor = getTmpColor(aveHiM);
   const loColor = getTmpColor(aveLoM);
-
-  layout["tickVals"] = tickVals;
-  layout["ticktext"] = tickText;
-  layout["range"] = [aveLoM - 1.2 * aveLoS, aveHiM + 1.2 * aveHiS];
 
   const traces = [
     {
@@ -227,13 +222,22 @@ export default function WeatherChart(props: WeatherChartProps): JSX.Element {
   }
 
   return (
-    <Box direction="row">
-      <TmpRanges meta={props.meta.data} tmps={props.weather.data.tmpRecords} />
-      <WindRainBars
-        meta={props.meta.data}
-        winds={props.weather.data.windRecords}
-        rains={props.weather.data.precRecords}
-      />
+    <Box direction="row" margin={{ vertical: "medium" }} justify="around">
+      <Box margin="small" align="end">
+        <Tooltip text="Averages of daily max and min temperatures in that month." />
+        <TmpRanges
+          meta={props.meta.data}
+          tmps={props.weather.data.tmpRecords}
+        />
+      </Box>
+      <Box margin="small" align="end">
+        <Tooltip text="Hours of certain rains and winds in that month" />
+        <WindRainBars
+          meta={props.meta.data}
+          winds={props.weather.data.windRecords}
+          rains={props.weather.data.precRecords}
+        />
+      </Box>
     </Box>
   );
 }
