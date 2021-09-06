@@ -46,7 +46,7 @@ type StaticContainerProps = {
 
 function StaticContainer(props: StaticContainerProps): JSX.Element {
   return (
-    <Delayed waitBeforeShow={0}>
+    <Delayed waitBeforeShow={0.1}>
       <Box
         width="400px"
         background="light-2"

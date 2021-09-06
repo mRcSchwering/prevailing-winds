@@ -103,7 +103,9 @@ export default function WindRoseChart(props: WindRoseChartProps): JSX.Element {
       <Box margin="small">
         <Tooltip text="Hours of all winds during that month. Angle represents wind direction, colour reqpresents wind strength, radius represents frequency." />
       </Box>
-      <Plot data={bins} layout={layout} config={config} />
+      <Box width="400px" height="400px">
+        <Plot data={bins} layout={layout} config={config} />
+      </Box>
     </Box>
   );
 }

@@ -216,18 +216,22 @@ export default function WeatherChart(props: WeatherChartProps): JSX.Element {
     <Box direction="row" margin={{ vertical: "medium" }} justify="around">
       <Box margin="small" align="end">
         <Tooltip text="Averages of daily max and min temperatures in that month." />
-        <TmpRanges
-          meta={props.meta.data}
-          tmps={props.weather.data.tmpRecords}
-        />
+        <Box style={{ minWidth: "150px", minHeight: "300px" }}>
+          <TmpRanges
+            meta={props.meta.data}
+            tmps={props.weather.data.tmpRecords}
+          />
+        </Box>
       </Box>
       <Box margin="small" align="end">
         <Tooltip text="Hours of certain rains and winds in that month" />
-        <WindRainBars
-          meta={props.meta.data}
-          winds={props.weather.data.windRecords}
-          rains={props.weather.data.precRecords}
-        />
+        <Box style={{ minWidth: "150px", minHeight: "300px" }}>
+          <WindRainBars
+            meta={props.meta.data}
+            winds={props.weather.data.windRecords}
+            rains={props.weather.data.precRecords}
+          />
+        </Box>
       </Box>
     </Box>
   );
