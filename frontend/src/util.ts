@@ -132,10 +132,15 @@ export function getStdMean(arr: number[]): number {
 export function getWindName(windBin: WindBinType): string {
   let kts = "";
   if (windBin.minKt && windBin.maxKt)
-    kts = `${windBin.minKt} to ${windBin.maxKt} kt`;
+    kts = `${windBin.minKt}-${windBin.maxKt} kt`;
   else if (windBin.minKt) kts = `>= ${windBin.minKt} kt`;
   else if (windBin.maxKt) kts = `<= ${windBin.maxKt} kt`;
-  return `BFT ${windBin.bfts.join(" to ")}<br>${kts}`;
+  let kmhs = "";
+  if (windBin.minKmh && windBin.maxKmh)
+    kmhs = `${windBin.minKmh}-${windBin.maxKmh} km/h`;
+  else if (windBin.minKmh) kmhs = `>= ${windBin.minKmh} km/h`;
+  else if (windBin.maxKmh) kmhs = `<= ${windBin.maxKmh} km/h`;
+  return `BFT ${windBin.bfts.join(" to ")}<br>${kts} or ${kmhs}`;
 }
 
 /**
