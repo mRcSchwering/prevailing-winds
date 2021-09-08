@@ -4,20 +4,23 @@
   "private": true,
   "dependencies": {
     "graphql": "^15.5.0",
-    "grommet": "^2.16.3",
-    "grommet-icons": "^4.5.0",
-    "grommet-theme-hp": "^0.1.2",
+    "grommet": "^2.17.0",
+    "grommet-icons": "^4.6.0",
     "leaflet": "^1.7.1",
     "plotly.js": "1.45.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-leaflet": "^3.1.0",
+    "@react-leaflet/core": "1.0.2",
     "react-plotly.js": "^2.5.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "styled-components": "^5.2.1",
-    "typescript": "^4.1.2",
+    "typescript": "^4.4.2",
     "web-vitals": "^1.0.1"
+  },
+  "resolutions": {
+    "react-leaflet/@react-leaflet/core": "1.0.2"
   },
   "scripts": {
     "start": "react-scripts --max_old_space_size=4096 start",
@@ -32,18 +35,11 @@
       "react-app/jest"
     ]
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
   "devDependencies": {
     "@apollo/client": "^3.3.12",
     "@testing-library/jest-dom": "^5.11.4",

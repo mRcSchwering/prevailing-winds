@@ -122,10 +122,8 @@ export type TmpBinsType = {
 };
 
 export const tmpBins: TmpBinsType[] = [
-  { minC: 40, maxC: Infinity, color: COLORS.red },
-  { minC: 30, maxC: 40, color: COLORS.pinkRed },
-  { minC: 15, maxC: 30, color: COLORS.purplePink },
-  { minC: 0, maxC: 15, color: COLORS.grayBlue },
-  { minC: -15, maxC: 0, color: COLORS.darkBlue },
-  { minC: -Infinity, maxC: -15, color: COLORS.purpleBlue },
+  { minC: 35, maxC: Infinity, color: COLORS.pinkRed },
+  { minC: 15, maxC: 35, color: COLORS.purplePink },
+  { minC: -5, maxC: 15, color: COLORS.purpleBlue },
+  { minC: -Infinity, maxC: -5, color: COLORS.darkBlue },
 ];

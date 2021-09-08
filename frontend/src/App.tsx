@@ -6,8 +6,8 @@ import {
   createHttpLink,
   InMemoryCache,
 } from "@apollo/client";
-import { Grommet } from "grommet";
-import { hp } from "grommet-theme-hp";
+import { Grommet, grommet } from "grommet";
+import { deepMerge } from "grommet/utils";
 import { SelectionContextProvider } from "./SelectionContext";
 import AboutPage from "./AboutPage";
 import MapPage from "./MapPage";
@@ -21,13 +21,41 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-hp.global.colors.brand = "#606061";
+// hp.global.colors.brand = "#606061";
+
+const myTheme = deepMerge(grommet, {
+  global: {
+    colors: { brand: "#606061" },
+  },
+  tabsasd: {
+    header: {
+      border: {
+        side: "bottom",
+        color: "pink",
+        size: "small",
+      },
+    },
+  },
+  tab: {
+    color: "accent-1",
+    border: {
+      side: "bottom",
+      color: "dark-4",
+    },
+    pad: "small",
+    margin: {
+      // bring the overall tabs border behind invidual tab borders
+      vertical: "-2px",
+      horizontal: "none",
+    },
+  },
+});
 
 function App() {
   return (
     <ApolloProvider client={client}>
       <SelectionContextProvider>
-        <Grommet theme={hp} full>
+        <Grommet theme={myTheme} full>
           <Router>
             <Route key="map" path="/" exact component={MapPage} />
             <Route key="about" path="/about" exact component={AboutPage} />
