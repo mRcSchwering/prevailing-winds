@@ -21,33 +21,10 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-// hp.global.colors.brand = "#606061";
-
 const myTheme = deepMerge(grommet, {
   global: {
-    colors: { brand: "#606061" },
-  },
-  tabsasd: {
-    header: {
-      border: {
-        side: "bottom",
-        color: "pink",
-        size: "small",
-      },
-    },
-  },
-  tab: {
-    color: "accent-1",
-    border: {
-      side: "bottom",
-      color: "dark-4",
-    },
-    pad: "small",
-    margin: {
-      // bring the overall tabs border behind invidual tab borders
-      vertical: "-2px",
-      horizontal: "none",
-    },
+    colors: { brand: "#606061", "accent-1": "light-1" },
+    focus: { outline: { size: "none" } },
   },
 });
 
