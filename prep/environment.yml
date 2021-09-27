@@ -6,3 +6,4 @@ dependencies:
   - boto3
   - pandas
   - pyarrow
+  - pupygrib

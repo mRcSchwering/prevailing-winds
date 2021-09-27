@@ -62,6 +62,22 @@ RAINS: List[dict] = [
     {"i": 5, "k": "Violent rain", "s": 50.0},
 ]
 
+# Douglas scale of sea state
+# binning with index "i", lower boundary "s"
+# in m wave height, key "k", Douglas degree "d"
+WAVES: List[dict] = [
+    {"i": 1, "d": 0, "k": "Calm (glassy)", "s": 0.0},
+    {"i": 2, "d": 1, "k": "Calm (rippled)", "s": 0.01},
+    {"i": 3, "d": 2, "k": "Smooth", "s": 0.1},
+    {"i": 4, "d": 3, "k": "Slight", "s": 0.5},
+    {"i": 5, "d": 4, "k": "Moderate", "s": 1.25},
+    {"i": 6, "d": 5, "k": "Rough", "s": 2.5},
+    {"i": 7, "d": 6, "k": "Very rough", "s": 4},
+    {"i": 8, "d": 7, "k": "High", "s": 6},
+    {"i": 9, "d": 8, "k": "Very high", "s": 9},
+    {"i": 10, "d": 9, "k": "Phenomenal", "s": 14},
+]
+
 
 def direction(u: np.array, v: np.array) -> np.array:
     """

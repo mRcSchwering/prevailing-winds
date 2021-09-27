@@ -22,7 +22,7 @@ eventlet.monkey_patch()
 from src.util import read_parquet
 import src.s3 as s3
 
-TIME_RANGES = ["2016-2020"]  # ["2020", "2016-2020"] TODO: back in
+TIME_RANGES = ["2020", "2016-2020"]
 MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 PREFIX = "v2"
 DATA_DIR = Path("data/tmp")
