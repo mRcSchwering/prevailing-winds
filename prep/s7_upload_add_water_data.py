@@ -2,10 +2,10 @@
 Update s3 objects with additional water data
 
 Only consider positions with data:
-- waves: there must be at least one count
+- waves: there must be at least one count (non zero)
 - seatmps: there must not be any NaN
 
-Only go through positions with data, download existing s3 obj,
+Only go through positions with data, get existing s3 obj,
 add new data to it, put new s3 obj.
 As with s4, all natural lats x lngs are objs, decimal lats x lngs
 are combined within single s3 obj.
@@ -18,6 +18,7 @@ With subroutines 7s per 200 => ~9h
 
 """
 from pathlib import Path
+from typing import Dict
 import sys
 from itertools import product
 import eventlet  # type: ignore
@@ -33,11 +34,10 @@ DATA_DIR = Path("data/tmp")
 IS_TEST = "test" in sys.argv[1:]
 
 
-def s3_update_obj(key: str, addobj: dict):
-    orig = s3.get_obj(key=key)
-    for pos in orig:
-        if pos in addobj:
-            orig[pos].update(addobj[pos])
+def s3_update_obj(key: str, addobj: Dict[tuple, dict]):
+    orig: Dict[tuple, dict] = s3.get_obj(key=key)
+    for pos in addobj:
+        orig[pos].update(addobj[pos])
     s3.put_obj(key=key, obj=orig)
 
 
