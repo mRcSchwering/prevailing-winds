@@ -84,6 +84,67 @@ export const windBins: WindBinType[] = [
   },
 ];
 
+export type WaveBinType = {
+  dgs: number[];
+  label: string;
+  minM: null | number;
+  maxM: null | number;
+  color: string;
+};
+
+// pos 0 will be left out in summary (should be "no wind")
+export const waveBins: WaveBinType[] = [
+  {
+    dgs: [0, 1],
+    minM: null,
+    maxM: 0.1,
+    label: "Calm",
+    color: COLORS.transparent,
+  },
+  {
+    dgs: [2, 3],
+    minM: 0.1,
+    maxM: 1.25,
+    label: "Smooth/Slight",
+    color: COLORS.grayBlue,
+  },
+  {
+    dgs: [4],
+    minM: 1.25,
+    maxM: 2.5,
+    label: "Moderate",
+    color: COLORS.darkBlue,
+  },
+  {
+    dgs: [5],
+    minM: 2.5,
+    maxM: 4,
+    label: "Rough",
+    color: COLORS.purpleBlue,
+  },
+  {
+    dgs: [6],
+    minM: 4,
+    maxM: 6,
+    label: "Very rough",
+    color: COLORS.purplePink,
+  },
+  {
+    dgs: [7],
+    minM: 6,
+    maxM: 9,
+    label: "High",
+    color: COLORS.pinkRed,
+  },
+  {
+    dgs: [8, 9],
+    minM: 9,
+    maxM: null,
+    label: "Very high/Phenomenal",
+    color: COLORS.red,
+  },
+];
+
 export type RainBinType = {
   idx: number;
   name: string;
@@ -126,4 +187,10 @@ export const tmpBins: TmpBinsType[] = [
   { minC: 15, maxC: 35, color: COLORS.purplePink },
   { minC: -5, maxC: 15, color: COLORS.purpleBlue },
   { minC: -Infinity, maxC: -5, color: COLORS.darkBlue },
+];
+
+export const seatmpBins: TmpBinsType[] = [
+  { minC: 15, maxC: Infinity, color: COLORS.purplePink },
+  { minC: 5, maxC: 15, color: COLORS.purpleBlue },
+  { minC: -Infinity, maxC: 5, color: COLORS.darkBlue },
 ];

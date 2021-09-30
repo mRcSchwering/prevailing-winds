@@ -24,6 +24,13 @@ const META_QUERY = gql`
         fromMm
         toMm
       }
+      waveHeights {
+        idx
+        douglasName
+        douglasDegree
+        fromM
+        toM
+      }
     }
   }
 `;
@@ -72,6 +79,16 @@ const WEATHER_QUERY = gql`
         lowMean
         highStd
         lowStd
+      }
+      seatmpRecords {
+        highMean
+        lowMean
+        highStd
+        lowStd
+      }
+      waveRecords {
+        height
+        count
       }
     }
   }

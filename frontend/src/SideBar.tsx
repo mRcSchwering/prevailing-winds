@@ -3,6 +3,7 @@ import { Box, Select, Heading, Tabs, Tab } from "grommet";
 import Spinner from "./SpinnerBrand";
 import WindRoseChart from "./WindRoseChart";
 import WeatherChart from "./WeatherChart";
+import WaterChart from "./WaterChart";
 import { convertDMS } from "./util";
 import { useWeather, MetaRespType } from "./queries";
 import { SelectionContext } from "./SelectionContext";
@@ -77,6 +78,11 @@ export default function SideBar(props: SideBarProps): JSX.Element {
           <Tab title="Winds">
             <Box margin={{ vertical: "medium" }}>
               <WindRoseChart weather={weatherResp} meta={meta} />
+            </Box>
+          </Tab>
+          <Tab title="Water">
+            <Box margin={{ vertical: "medium" }}>
+              <WaterChart weather={weatherResp} meta={meta} />
             </Box>
           </Tab>
         </Tabs>

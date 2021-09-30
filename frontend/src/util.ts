@@ -1,4 +1,11 @@
-import { EXCLUSION_ZONES, Tuple, WindBinType, tmpBins } from "./constants";
+import {
+  EXCLUSION_ZONES,
+  Tuple,
+  WindBinType,
+  WaveBinType,
+  tmpBins,
+  seatmpBins,
+} from "./constants";
 
 /**
  * Some formatting functions for DMS
@@ -144,8 +151,29 @@ export function getWindName(windBin: WindBinType): string {
 }
 
 /**
+ * prepare name for a wave bin
+ */
+export function getWaveName(waveBin: WaveBinType): string {
+  let ms = "";
+  if (waveBin.minM && waveBin.maxM) ms = `${waveBin.minM}-${waveBin.maxM} m`;
+  else if (waveBin.minM) ms = `>= ${waveBin.minM} m`;
+  else if (waveBin.maxM) ms = `<= ${waveBin.maxM} m`;
+  return `${waveBin.label}<br>Douglas degree ${waveBin.dgs.join(
+    " to "
+  )}<br>${ms} wave height`;
+}
+
+/**
  * get hex color for a certain temperature in degrees celsius
  */
 export function getTmpColor(celsius: number): string {
   return tmpBins.filter((d) => d.maxC >= celsius && d.minC < celsius)[0].color;
+}
+
+/**
+ * get hex color for a certain sea temperature in degrees celsius
+ */
+export function getSeatmpColor(celsius: number): string {
+  return seatmpBins.filter((d) => d.maxC >= celsius && d.minC < celsius)[0]
+    .color;
 }

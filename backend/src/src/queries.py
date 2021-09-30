@@ -17,7 +17,6 @@ from src.config import (
 import src.s3 as s3
 from src.utils import get_lngs_map, get_lats_map
 
-
 query = QueryType()
 
 
