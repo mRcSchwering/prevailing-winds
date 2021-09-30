@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
             pool = eventlet.GreenPool(200)
 
-            base_ids = set((int(a), int(b)) for a, b in row_ids)
+            base_ids = set((int(a), int(b)) for a, b in row_ids if b != 70)  # didnt use
             parts = (0.0, 0.25, 0.5, 0.75)
             for i, (lng_base, lat_base) in enumerate(base_ids):
                 if IS_TEST and i > 100:

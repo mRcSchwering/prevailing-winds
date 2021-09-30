@@ -163,3 +163,60 @@ RAINS = [
     {"idx": 4, "name": "Heavy rain", "fromMm": "7.6", "toMm": "50.0"},
     {"idx": 5, "name": "Violent rain", "fromMm": "50.0"},
 ]
+
+
+# Douglas scale of sea state
+WAVES = [
+    {
+        "idx": 1,
+        "douglasDegree": 0,
+        "douglasName": "Calm (glassy)",
+        "fromM": "0.0",
+        "toM": "0.01",
+    },
+    {
+        "idx": 2,
+        "douglasDegree": 1,
+        "douglasName": "Calm (rippled)",
+        "fromM": "0.01",
+        "toM": "0.1",
+    },
+    {
+        "idx": 3,
+        "douglasDegree": 2,
+        "douglasName": "Smooth",
+        "fromM": "0.1",
+        "toM": "0.5",
+    },
+    {
+        "idx": 4,
+        "douglasDegree": 3,
+        "douglasName": "Slight",
+        "fromM": "0.5",
+        "toM": "1.25",
+    },
+    {
+        "idx": 5,
+        "douglasDegree": 4,
+        "douglasName": "Moderate",
+        "fromM": "1.25",
+        "toM": "2.5",
+    },
+    {"idx": 6, "douglasDegree": 5, "douglasName": "Rough", "fromM": "2.5", "toM": "4"},
+    {
+        "idx": 7,
+        "douglasDegree": 6,
+        "douglasName": "Very rough",
+        "fromM": "4",
+        "toM": "6",
+    },
+    {"idx": 8, "douglasDegree": 7, "douglasName": "High", "fromM": "6", "toM": "9"},
+    {
+        "idx": 9,
+        "douglasDegree": 8,
+        "douglasName": "Very high",
+        "fromM": "9",
+        "toM": "14",
+    },
+    {"idx": 10, "douglasDegree": 9, "douglasName": "Phenomenal", "fromM": "14"},
+]

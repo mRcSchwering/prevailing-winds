@@ -14,6 +14,7 @@ type Meta {
   windDirections: [WindDirection!]!
   windVelocities: [WindVelocity!]!
   precIntensities: [PrecIntensity!]!
+  waveHeights: [WaveHeight!]!
 }
 
 """
@@ -26,6 +27,18 @@ type WindVelocity {
   beaufortNumber: Int!
   fromKt: String
   toKt: String
+}
+
+"""
+Wave height in Douglas scale of sea state with name and degree.
+From/to m are half closed intervals.
+"""
+type WaveHeight {
+  idx: Int!
+  douglasName: String!
+  douglasDegree: Int!
+  fromM: String
+  toM: String
 }
 
 """

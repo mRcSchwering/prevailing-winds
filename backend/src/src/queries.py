@@ -12,6 +12,7 @@ from src.config import (
     WIND_VEL_IDXS,
     EMERGENCY_BREAK,
     RAINS,
+    WAVES,
 )
 import src.s3 as s3
 from src.utils import get_lngs_map, get_lats_map
@@ -31,6 +32,7 @@ def resolve_meta(*_, **unused):
         "windDirections": WIND_DIRS,
         "windVelocities": WIND_VELS,
         "precIntensities": RAINS,
+        "waveHeights": WAVES,
     }
 
 
