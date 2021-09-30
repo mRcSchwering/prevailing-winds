@@ -60,6 +60,7 @@ def resolve_weather(*_, **kwargs):
 
     winds = {(d, v): 0 for d, v in product(WIND_DIR_IDXS, WIND_VEL_IDXS)}
     prec = {str(d["idx"]): 0 for d in RAINS}
+    waves = {str(d["idx"]): 0 for d in WAVES}
     tmps = []
     seatmps = []
     for lat, lng in product(lats_map, lngs_map):
@@ -73,6 +74,9 @@ def resolve_weather(*_, **kwargs):
                 prec[key] += count
             if "seatmps" in data:
                 seatmps.append(data["seatmps"])
+            if "waves" in data:
+                for key, count in data["waves"].items():
+                    waves[key] += count
 
     return {
         "windRecords": [
@@ -81,6 +85,7 @@ def resolve_weather(*_, **kwargs):
         "precRecords": [{"amt": k, "count": d} for k, d in prec.items()],
         "tmpRecords": tmps,
         "seatmpRecords": seatmps,
+        "waveRecords": [{"height": k, "count": d} for k, d in waves.items()],
     }
 
 

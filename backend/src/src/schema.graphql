@@ -84,6 +84,7 @@ type WeatherResult {
   precRecords: [PrecRecord!]!
   tmpRecords: [TmpRecord!]!
   seatmpRecords: [SeatmpRecord!]!
+  waveRecords: [WaveRecord!]!
 }
 
 """
@@ -94,6 +95,15 @@ See **Meta** for indexes.
 type WindRecord {
   dir: Int!
   vel: Int!
+  count: Int!
+}
+
+"""
+Describes how many times a certain wave height was counted.
+See **Meta** for indexes.
+"""
+type WaveRecord {
+  height: Int!
   count: Int!
 }
 
