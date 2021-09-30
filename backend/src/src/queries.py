@@ -61,6 +61,7 @@ def resolve_weather(*_, **kwargs):
     winds = {(d, v): 0 for d, v in product(WIND_DIR_IDXS, WIND_VEL_IDXS)}
     prec = {str(d["idx"]): 0 for d in RAINS}
     tmps = []
+    seatmps = []
     for lat, lng in product(lats_map, lngs_map):
         obj = s3.get_obj_v2(years=time_range, month=MONTHS[month], lat=lat, lng=lng)
         for pos in product(lats_map[lat], lngs_map[lng]):
@@ -70,6 +71,8 @@ def resolve_weather(*_, **kwargs):
                 winds[key] += count
             for key, count in data["prec"].items():
                 prec[key] += count
+            if "seatmps" in data:
+                seatmps.append(data["seatmps"])
 
     return {
         "windRecords": [
@@ -77,6 +80,7 @@ def resolve_weather(*_, **kwargs):
         ],
         "precRecords": [{"amt": k, "count": d} for k, d in prec.items()],
         "tmpRecords": tmps,
+        "seatmpRecords": seatmps,
     }
 
 

@@ -83,6 +83,7 @@ type WeatherResult {
   windRecords: [WindRecord!]!
   precRecords: [PrecRecord!]!
   tmpRecords: [TmpRecord!]!
+  seatmpRecords: [SeatmpRecord!]!
 }
 
 """
@@ -107,9 +108,20 @@ type PrecRecord {
 
 """
 Describes the days' high and low
-temperatures in C. See **Meta** for indexes.
+temperatures in C.
 """
 type TmpRecord {
+  highMean: Float!
+  lowMean: Float!
+  highStd: Float!
+  lowStd: Float!
+}
+
+"""
+Describes the days' high and low sea surface
+temperatures in C.
+"""
+type SeatmpRecord {
   highMean: Float!
   lowMean: Float!
   highStd: Float!
