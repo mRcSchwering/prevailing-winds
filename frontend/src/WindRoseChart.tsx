@@ -1,5 +1,6 @@
+import React from "react";
 import Plot from "react-plotly.js";
-import { Text, Box } from "grommet";
+import { Text, Box, ResponsiveContext } from "grommet";
 import { WeatherRespType, MetaRespType } from "./queries";
 import { getWindName } from "./util";
 import { COLORS, windBins } from "./constants";
@@ -12,28 +13,14 @@ const config = {
   displayModeBar: false,
 };
 
-const layout = {
-  margin: { t: 50, l: 50, r: 50, b: 50 },
-  paper_bgcolor: COLORS.transparent,
-  font: { size: 16 },
-  showlegend: false,
-  polar: {
-    barmode: "stack",
-    bargap: 0,
-    radialaxis: { visible: false, hovertemplate: "aaaaaaaaaaaa" },
-    angularaxis: { direction: "clockwise" },
-  },
-  width: 400,
-  height: 400,
-  dragmode: false,
-};
-
 type WindRoseChartProps = {
   weather: WeatherRespType;
   meta: MetaRespType;
 };
 
 export default function WindRoseChart(props: WindRoseChartProps): JSX.Element {
+  const size = React.useContext(ResponsiveContext);
+
   if (props.weather.loading || props.meta.loading) return <Spinner />;
 
   if (props.weather.error) {
@@ -98,12 +85,29 @@ export default function WindRoseChart(props: WindRoseChartProps): JSX.Element {
     }
   }
 
+  const L = size === "small" ? 35 : 50;
+  const layout = {
+    margin: { t: L, l: L, r: L, b: L },
+    paper_bgcolor: COLORS.transparent,
+    font: { size: 16 },
+    showlegend: false,
+    polar: {
+      barmode: "stack",
+      bargap: 0,
+      radialaxis: { visible: false, hovertemplate: "aaaaaaaaaaaa" },
+      angularaxis: { direction: "clockwise" },
+    },
+    width: L * 8,
+    height: L * 8,
+    dragmode: false,
+  };
+
   return (
     <Box margin={{ vertical: "small" }} align="end">
       <Box margin="small">
         <Tooltip text="Hours of all winds during that month. Angle represents wind direction, colour reqpresents wind strength, radius represents frequency." />
       </Box>
-      <Box width="400px" height="400px">
+      <Box>
         <Plot data={bins} layout={layout} config={config} />
       </Box>
     </Box>

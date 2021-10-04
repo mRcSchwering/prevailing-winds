@@ -170,7 +170,7 @@ export default function WaterChart(props: WaterChartProps): JSX.Element {
     <Box direction="row" margin={{ vertical: "medium" }} justify="around">
       <Box margin="small" align="end">
         <Tooltip text="Average daily sea surface temperatures in that month." />
-        <Box style={{ minWidth: "150px", minHeight: "300px" }}>
+        <Box>
           <SeatmpRanges
             meta={props.meta.data}
             seatmps={props.weather.data.seatmpRecords}
@@ -179,7 +179,7 @@ export default function WaterChart(props: WaterChartProps): JSX.Element {
       </Box>
       <Box margin="small" align="end">
         <Tooltip text="Hours of certain wave heights in that month. Combined wind waves and swell." />
-        <Box style={{ minWidth: "150px", minHeight: "300px" }}>
+        <Box>
           <WaveBars
             meta={props.meta.data}
             waves={props.weather.data.waveRecords}

@@ -216,7 +216,7 @@ export default function WeatherChart(props: WeatherChartProps): JSX.Element {
     <Box direction="row" margin={{ vertical: "medium" }} justify="around">
       <Box margin="small" align="end">
         <Tooltip text="Averages of daily max and min temperatures in that month." />
-        <Box style={{ minWidth: "150px", minHeight: "300px" }}>
+        <Box>
           <TmpRanges
             meta={props.meta.data}
             tmps={props.weather.data.tmpRecords}
@@ -225,7 +225,7 @@ export default function WeatherChart(props: WeatherChartProps): JSX.Element {
       </Box>
       <Box margin="small" align="end">
         <Tooltip text="Hours of certain rains and winds in that month" />
-        <Box style={{ minWidth: "150px", minHeight: "300px" }}>
+        <Box>
           <WindRainBars
             meta={props.meta.data}
             winds={props.weather.data.windRecords}
