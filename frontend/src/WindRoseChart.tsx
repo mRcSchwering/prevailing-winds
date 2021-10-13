@@ -105,7 +105,7 @@ export default function WindRoseChart(props: WindRoseChartProps): JSX.Element {
   return (
     <Box margin={{ vertical: "small" }} align="end">
       <Box margin="small">
-        <Tooltip text="Hours of all winds during that month. Angle represents wind direction, colour reqpresents wind strength, radius represents frequency." />
+        <Tooltip text="Hours of all winds during that month. Angle represents wind direction (from which the wind is blowing), colour reqpresents wind strength, radius represents frequency." />
       </Box>
       <Box>
         <Plot data={bins} layout={layout} config={config} />
