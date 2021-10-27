@@ -5,6 +5,7 @@
 codeuri = "/home/marc/prevailing-winds/backend/src"
 runtime = "python3.8"
 source_md5 = ""
+architecture = "x86_64"
 packagetype = "Zip"
 functions = ["GqlGetFunction", "GqlPostFunction"]
 
