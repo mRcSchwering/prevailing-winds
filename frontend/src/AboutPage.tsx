@@ -64,14 +64,6 @@ export default function AboutPage(): JSX.Element {
           The code is all on {repoLink}. The data is derived from{" "}
           {copernicusLink} datasets.
         </Paragraph>
-        <Heading level="3">Cookie Policy</Heading>
-        <Paragraph>
-          You might have noticed there was no <b>cookie banner</b> you had to
-          click away ({gdprLink}). This is because I don't track any information
-          about you and don't give anything to third-party vendors. There are
-          some cookies from {cloudflareLink}. These are technically necessary
-          for delivering this website though.
-        </Paragraph>
         <Heading level="4">Data</Heading>
         <Paragraph>
           I used {era5Link} as a basis for calculating weather data. This
@@ -82,6 +74,14 @@ export default function AboutPage(): JSX.Element {
           and exluded 20° from the poles (70°S to 70°N). For details about data
           preparation see {dataprepLink}. When you select an area on the map you
           always see aggregated data for this particular area, month, and years.
+        </Paragraph>
+        <Heading level="3">Cookie Policy</Heading>
+        <Paragraph>
+          You might have noticed there was no <b>cookie banner</b> you had to
+          click away ({gdprLink}). This is because I don't track any information
+          about you and don't give anything to third-party vendors. There are
+          some cookies from {cloudflareLink}. These are technically necessary
+          for delivering this website though.
         </Paragraph>
       </Box>
     </Box>
