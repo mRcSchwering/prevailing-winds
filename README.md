@@ -1,5 +1,6 @@
 # Prevailing Winds
 
+
 Webapp for showing windroses of historical wind data: [prevailing-winds.de](https://prevailing-winds.de)
 
 - [prep](./prep/) preparing wind data for S3 upload
