@@ -1,6 +1,9 @@
 import React from "react";
 import { Box, Heading, Paragraph, Anchor } from "grommet";
 import AppBar from "./AppBar";
+import { donateSrc } from "./constants";
+
+const donateLink = <Anchor href={donateSrc} label="donate" target="_blank" />;
 
 const windyLink = (
   <Anchor href="https://www.windy.com/" label="windy.com" target="_blank" />
@@ -82,6 +85,12 @@ export default function AboutPage(): JSX.Element {
           about you and don't give anything to third-party vendors. There are
           some cookies from {cloudflareLink}. These are technically necessary
           for delivering this website though.
+        </Paragraph>
+        <Heading level="3">Donate</Heading>
+        <Paragraph>
+          All my apps are free, I never use ads, or sell data to third parties.
+          If you still want to support me somehow, you can donate with this
+          link: {donateLink}. Thanks in advance.
         </Paragraph>
       </Box>
     </Box>

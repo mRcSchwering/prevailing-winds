@@ -2,6 +2,9 @@ export const INIT_ZOOM = 6;
 export const EXCLUSION_ZONES: [number, number] = [-70, 70];
 export const INIT_POS: [number, number] = [46.0, -6.0];
 
+export const donateSrc =
+  "https://www.paypal.com/donate/?hosted_button_id=W9R9KQYFCESAS";
+
 export const COLORS = {
   boneWhite: "#ffffe0",
   grayBlue: "#80a1bf",
