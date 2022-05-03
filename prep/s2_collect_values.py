@@ -9,8 +9,8 @@ Column names in that DataFrame contain the day of the month (<day>-<hash>).
 Set `DATA_DIR` and run directly.
 `test` only runs 1 year, 1 month.
 
-    my/data/dir python s2_collect_values.py test
-    my/data/dir python s2_collect_values.py
+    DATA_DIR=my/data/dir python s2_collect_values.py test
+    DATA_DIR=my/data/dir python s2_collect_values.py
 
 - messages for each file start at year-01-01 00:00:00 and are ordered by time
 - lat-lon grid has 1/4 miles mesh

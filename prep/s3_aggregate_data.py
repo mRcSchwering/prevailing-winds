@@ -8,8 +8,8 @@ Waves: bin height, value counts for bins
 Sea surface temperatures: calculate daily max and min, calculate means and SDs of these
 Set `DATA_DIR` and `test` to try out.
     
-    my/data/dir python s3_aggregate_data.py test
-    my/data/dir python s3_aggregate_data.py
+    DATA_DIR=my/data/dir python s3_aggregate_data.py test
+    DATA_DIR=my/data/dir python s3_aggregate_data.py
 
 """
 from typing import List

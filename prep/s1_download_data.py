@@ -7,8 +7,8 @@ This can run for really long because each file needs to get approved first
 (which can take several hours).
 Add pos arg `test` for a test run.
 
-    my/data/dir python s1_download_data.py test
-    my/data/dir python s1_download_data.py
+    DATA_DIR=my/data/dir python s1_download_data.py test
+    DATA_DIR=my/data/dir python s1_download_data.py
 
 """
 import src.cds as cds
