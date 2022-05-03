@@ -1,17 +1,18 @@
 """
-Here are some sanity checks before uploading the data to s3
+Here are some interactive sanity checks before uploading the data to s3
 """
-from pathlib import Path
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
+from src.config import DATA_DIR
 from src.util import (
     read_parquet,
     WIND_DIRS,
     WIND_VELS,
 )
 
-DATA_DIR = Path("/media/marc/Elements/copernicus/tmp")
+# TODO: remove?
+
 WIND_VEL_I2B = {str(d["i"]): d["b"] for d in WIND_VELS}
 WIND_VEL_I2K = {str(d["i"]): d["k"] for d in WIND_VELS}
 WIND_DIR_I2K = {str(d["i"]): d["k"] for d in WIND_DIRS}

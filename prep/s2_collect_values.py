@@ -9,37 +9,37 @@ Column names in that DataFrame contain the day of the month (<day>-<hash>).
 Set `DATA_DIR` and run directly.
 `test` only runs 1 year, 1 month.
 
-    python s2_collect_values.py test
-    python s2_collect_values.py
+    my/data/dir python s2_collect_values.py test
+    my/data/dir python s2_collect_values.py
 
 - messages for each file start at year-01-01 00:00:00 and are ordered by time
 - lat-lon grid has 1/4 miles mesh
 - lats go from -70 to 70
 - lons go from -180 to 179.75
+- there are missing values
 """
-from pathlib import Path
-import sys
 from typing import BinaryIO, Tuple
 import pupygrib
 import pandas as pd  # type: ignore
 from src.util import velocity, direction, randstr, write_parquet
-
-YEARS = [2020, 2019, 2018, 2017, 2016]
-MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-DATA_DIR = Path("/media/marc/Elements/copernicus")
-IS_TEST = "test" in sys.argv[1:]
+from src.config import IS_TEST, DATA_DIR, ALL_YEARS, ALL_MONTHS
 
 
-def collect_scalars(year: int, month: int, grib_file: BinaryIO) -> pd.DataFrame:
+def _collect_scalars(y: int, m: int, grib_file: BinaryIO) -> pd.DataFrame:
     """
     Collect in DataFrame with lat-lng index
     """
-    print(f"Processing {year}-{month}...")
+    print(f"Processing {y}-{m}...")
     dfs = []
     for msg in pupygrib.read(grib_file):
         time = msg.get_time()
-        if time.year != year or time.month != month:
+        if time.year != y or time.month != m:
             continue
+
+        # TODO: this hack should be unnecessary by now
+        # hack because issue: https://gitlab.com/gorilladev/pupygrib/-/issues/1
+        # bm = np.frombuffer(msg.bitmap.buf, dtype="u1", offset=6)  # type: ignore
+        # msg.bitmap.bitmap = np.unpackbits(bm)  # type: ignore
 
         lons, lats = msg.get_coordinates()
         values = msg.get_values()
@@ -57,19 +57,19 @@ def collect_scalars(year: int, month: int, grib_file: BinaryIO) -> pd.DataFrame:
     return pd.concat(dfs, axis=1)
 
 
-def collect_winds(
-    year: int, month: int, grib_file_u: BinaryIO, grib_file_v: BinaryIO
+def _collect_winds(
+    y: int, m: int, grib_file_u: BinaryIO, grib_file_v: BinaryIO
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Calculate directions and velocities and collect in 2 DataFrames
     with lat-lng index each
     """
-    print(f"Processing {year}-{month}...")
+    print(f"Processing {y}-{m}...")
     dirs_dfs = []
     vels_dfs = []
     for u, v in zip(pupygrib.read(grib_file_u), pupygrib.read(grib_file_v)):
         time = u.get_time()
-        if time.year != year or month != time.month:
+        if time.year != y or m != time.month:
             continue
         assert time == v.get_time()
 
@@ -103,45 +103,71 @@ def collect_winds(
 if __name__ == "__main__":
 
     print("\nProcessing prec...")
-    for year in YEARS[:1] if IS_TEST else YEARS:
+    for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
         infile = DATA_DIR / f"total_precipitation_{year}.grib"
-        for month in MONTHS[:1] if IS_TEST else MONTHS:
+        for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
             outfile = DATA_DIR / "tmp" / f"s2_prec_{year}-{month}.pq"
 
             with open(infile, "rb") as fh:
-                prec = collect_scalars(year=year, month=month, grib_file=fh)
+                prec = _collect_scalars(y=year, m=month, grib_file=fh)
 
             write_parquet(data=prec, file=outfile)
     del prec
 
     print("\nProcessing tmps...")
-    for year in YEARS[:1] if IS_TEST else YEARS:
+    for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
         infile = DATA_DIR / f"2m_temperature_{year}.grib"
-        for month in MONTHS[:1] if IS_TEST else MONTHS:
+        for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
             outfile = DATA_DIR / "tmp" / f"s2_tmps_{year}-{month}.pq"
 
             with open(infile, "rb") as fh:
-                tmps = collect_scalars(year=year, month=month, grib_file=fh)
+                tmps = _collect_scalars(y=year, m=month, grib_file=fh)
 
             write_parquet(data=tmps, file=outfile)
     del tmps
 
     print("\nProcessing winds...")
-    for year in YEARS[:1] if IS_TEST else YEARS:
+    for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
         u_file = DATA_DIR / f"10m_u_component_of_wind_{year}.grib"
         v_file = DATA_DIR / f"10m_v_component_of_wind_{year}.grib"
-        for month in MONTHS[:1] if IS_TEST else MONTHS:
+        for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
             dirs_outfile = DATA_DIR / "tmp" / f"s2_wind_dirs_{year}-{month}.pq"
             vels_outfile = DATA_DIR / "tmp" / f"s2_wind_vels_{year}-{month}.pq"
 
             with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
-                dirs, vels = collect_winds(
-                    year=year, month=month, grib_file_u=fh_u, grib_file_v=fh_v
+                dirs, vels = _collect_winds(
+                    y=year, m=month, grib_file_u=fh_u, grib_file_v=fh_v
                 )
 
             write_parquet(data=dirs, file=dirs_outfile)
             write_parquet(data=vels, file=vels_outfile)
     del dirs, vels
 
-    print("done")
+    print("\nProcessing waves...")
+    for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
+        infile = (
+            DATA_DIR
+            / f"significant_height_of_combined_wind_waves_and_swell_{year}.grib"
+        )
+        for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
+            outfile = DATA_DIR / "tmp" / f"s2_waves_{year}-{month}.pq"
 
+            with open(infile, "rb") as fh:
+                waves = _collect_scalars(y=year, m=month, grib_file=fh)
+
+            write_parquet(data=waves, file=outfile)
+    del waves
+
+    print("\nProcessing seatmps...")
+    for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
+        infile = DATA_DIR / f"sea_surface_temperature_{year}.grib"
+        for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
+            outfile = DATA_DIR / "tmp" / f"s2_seatmps_{year}-{month}.pq"
+
+            with open(infile, "rb") as fh:
+                seatmps = _collect_scalars(y=year, m=month, grib_file=fh)
+
+            write_parquet(data=seatmps, file=outfile)
+    del seatmps
+
+    print("done")

@@ -9,34 +9,53 @@ That's 1.2M objects.
 Vanilla 2 time ranges, 1 month, 100 records: 18s => 30h
 Subroutines 2 time ranges, 1 month, 100 records: 7s => 12h
 
-    python s4_upload_objs.py test
-    python s4_upload_objs.py
+    my/data/dir python s4_upload_objs.py test
+    my/data/dir python s4_upload_objs.py
 
 """
-from pathlib import Path
-import sys
+from typing import Iterable
 from itertools import product
+import pandas as pd
 import eventlet  # type: ignore
 
 eventlet.monkey_patch()
+from src.config import IS_TEST, DATA_DIR, TIME_RANGES, ALL_MONTHS, VERSION_PREFIX
 from src.util import read_parquet
 import src.s3 as s3
 
-TIME_RANGES = ["2020", "2016-2020"]
-MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-PREFIX = "v2"
-DATA_DIR = Path("data/tmp")
-IS_TEST = "test" in sys.argv[1:]
+
+def _get_df(filename: str) -> pd.DataFrame:
+    df = read_parquet(DATA_DIR / filename)
+    df.columns = [str(d) for d in df.columns]
+    return df
+
+
+def _lat_lng_grid() -> Iterable:
+    lngs = prec.index.get_level_values("lon").astype(int)
+    lngs = list(range(lngs.min(), lngs.max() + 1))
+    lats = prec.index.get_level_values("lat").astype(int)
+    lats = list(range(lats.min(), lats.max()))  # ignore lat=70.00
+    return product(lngs, lats)
+
+
+def _qrtr_mile_grid() -> Iterable:
+    parts = (0.0, 0.25, 0.5, 0.75)
+    return product(parts, parts)
 
 
 if __name__ == "__main__":
     for time_range in TIME_RANGES:
-        for month in MONTHS[:1] if IS_TEST else MONTHS:
+        for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
             print(f"Processing {time_range}/{month}...")
+            pool = eventlet.GreenPool(200)
 
-            prec = read_parquet(DATA_DIR / f"s3_prec_{time_range}_{month}.pq")
-            prec.columns = [str(d) for d in prec.columns]
-            tmps = read_parquet(DATA_DIR / f"s3_tmps_{time_range}_{month}.pq")
+            prec = _get_df(filename=f"s3_prec_{time_range}_{month}.pq")
+            tmps = _get_df(filename=f"s3_tmps_{time_range}_{month}.pq")
+            winds = _get_df(filename=f"s3_winds_{time_range}_{month}.pq")
+            waves = _get_df(filename=f"s3_waves_{time_range}_{month}.pq")
+            seatmps = _get_df(filename=f"s3_seatmps_{time_range}_{month}.pq")
+
+            winds.columns = [tuple(d.split("|")) for d in winds.columns]
             tmps.rename(
                 columns={
                     "high_mean": "highMean",
@@ -46,37 +65,45 @@ if __name__ == "__main__":
                 },
                 inplace=True,
             )
-            winds = read_parquet(DATA_DIR / f"s3_winds_{time_range}_{month}.pq")
-            winds.columns = [tuple(d.split("|")) for d in winds.columns]
+            seatmps.rename(
+                columns={
+                    "high_mean": "highMean",
+                    "high_std": "highStd",
+                    "low_mean": "lowMean",
+                    "low_std": "lowStd",
+                },
+                inplace=True,
+            )
 
             assert prec.index.equals(tmps.index)
             assert tmps.index.equals(winds.index)
-            n = len(prec.index)
 
-            pool = eventlet.GreenPool(200)
-
-            lngs = prec.index.get_level_values("lon").astype(int)
-            lngs = list(range(lngs.min(), lngs.max() + 1))
-            lats = prec.index.get_level_values("lat").astype(int)
-            lats = list(range(lats.min(), lats.max()))  # ignore lat=70.00
-
-            parts = (0.0, 0.25, 0.5, 0.75)
-            for i, (lng_base, lat_base) in enumerate(product(lngs, lats)):
+            for i, (lng_base, lat_base) in enumerate(_lat_lng_grid()):
                 if IS_TEST and i > 100:
                     break
 
                 data = {}
-                for lat_add, lng_add in product(parts, parts):
+                for lat_add, lng_add in _qrtr_mile_grid():
                     lat = lat_base + lat_add
                     lng = lng_base + lng_add
-                    data[(lat, lng)] = {
+
+                    values = {
                         "prec": prec.loc[(lng, lat)].to_dict(),
                         "tmps": tmps.loc[(lng, lat)].to_dict(),
                         "winds": winds.loc[(lng, lat)].to_dict(),
                     }
-                key = (
-                    f"{PREFIX}/{time_range}/{month}/{lat_base:d}/{lng_base:d}/data.pkl"
-                )
+
+                    if (lng, lat) in seatmps.index:
+                        if not seatmps.loc[(lng, lat)].isna().any():
+                            values["seatmps"] = seatmps.loc[(lng, lat)].to_dict()
+
+                    if (lng, lat) in waves.index:
+                        if waves.loc[(lng, lat)].sum() > 0:
+                            values["waves"] = waves.loc[(lng, lat)].to_dict()
+
+                    data[(lat, lng)] = values
+
+                key = f"{VERSION_PREFIX}/{time_range}/{month}/{lat_base:d}/{lng_base:d}/data.pkl"
                 pool.spawn_n(s3.put_obj, key, data)
             pool.waitall()
 

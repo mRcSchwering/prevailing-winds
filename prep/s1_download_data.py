@@ -7,17 +7,12 @@ This can run for really long because each file needs to get approved first
 (which can take several hours).
 Add pos arg `test` for a test run.
 
-    python s1_download_data.py test
-    python s1_download_data.py
+    my/data/dir python s1_download_data.py test
+    my/data/dir python s1_download_data.py
 
 """
-import sys
-from pathlib import Path
-from src.cds import download_reanalysis
-
-DATA_DIR = Path("/media/marc/Elements/copernicus")
-YEARS = [2020, 2019, 2018, 2017, 2016]
-IS_TEST = "test" in sys.argv[1:]
+import src.cds as cds
+from src.config import DATA_DIR, IS_TEST, ALL_YEARS
 
 
 if __name__ == "__main__":
@@ -34,10 +29,10 @@ if __name__ == "__main__":
         "total_precipitation",
     ]
 
-    for year in YEARS[:1] if IS_TEST else YEARS:
+    for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
         for var in variables:
             print(f"downloading {var} for {year}...")
-            download_reanalysis(
+            cds.download_reanalysis(
                 outfile=DATA_DIR / f"{var}_{year}.grib",
                 variable=var,
                 year=str(year),
