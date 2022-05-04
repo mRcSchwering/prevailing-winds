@@ -6,4 +6,6 @@ dependencies:
   - boto3
   - pandas
   - pyarrow
-  - pupygrib
+  - pip:
+      - pupygrib
+      - cdsapi
