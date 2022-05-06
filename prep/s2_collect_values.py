@@ -106,7 +106,7 @@ if __name__ == "__main__":
     for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
         infile = DATA_DIR / f"total_precipitation_{year}.grib"
         for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
-            outfile = DATA_DIR / "tmp" / f"s2_prec_{year}-{month}.pq"
+            outfile = DATA_DIR / f"s2_prec_{year}-{month}.pq"
 
             with open(infile, "rb") as fh:
                 prec = _collect_scalars(y=year, m=month, grib_file=fh)
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
         infile = DATA_DIR / f"2m_temperature_{year}.grib"
         for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
-            outfile = DATA_DIR / "tmp" / f"s2_tmps_{year}-{month}.pq"
+            outfile = DATA_DIR / f"s2_tmps_{year}-{month}.pq"
 
             with open(infile, "rb") as fh:
                 tmps = _collect_scalars(y=year, m=month, grib_file=fh)
@@ -131,8 +131,8 @@ if __name__ == "__main__":
         u_file = DATA_DIR / f"10m_u_component_of_wind_{year}.grib"
         v_file = DATA_DIR / f"10m_v_component_of_wind_{year}.grib"
         for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
-            dirs_outfile = DATA_DIR / "tmp" / f"s2_wind_dirs_{year}-{month}.pq"
-            vels_outfile = DATA_DIR / "tmp" / f"s2_wind_vels_{year}-{month}.pq"
+            dirs_outfile = DATA_DIR / f"s2_wind_dirs_{year}-{month}.pq"
+            vels_outfile = DATA_DIR / f"s2_wind_vels_{year}-{month}.pq"
 
             with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
                 dirs, vels = _collect_winds(
@@ -150,7 +150,7 @@ if __name__ == "__main__":
             / f"significant_height_of_combined_wind_waves_and_swell_{year}.grib"
         )
         for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
-            outfile = DATA_DIR / "tmp" / f"s2_waves_{year}-{month}.pq"
+            outfile = DATA_DIR / f"s2_waves_{year}-{month}.pq"
 
             with open(infile, "rb") as fh:
                 waves = _collect_scalars(y=year, m=month, grib_file=fh)
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
         infile = DATA_DIR / f"sea_surface_temperature_{year}.grib"
         for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
-            outfile = DATA_DIR / "tmp" / f"s2_seatmps_{year}-{month}.pq"
+            outfile = DATA_DIR / f"s2_seatmps_{year}-{month}.pq"
 
             with open(infile, "rb") as fh:
                 seatmps = _collect_scalars(y=year, m=month, grib_file=fh)
