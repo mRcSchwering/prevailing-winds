@@ -63,7 +63,7 @@ def resolve_weather(*_, **kwargs):
     tmps = []
     seatmps = []
     for lat, lng in product(lats_map, lngs_map):
-        obj = s3.get_obj_v2(years=time_range, month=MONTHS[month], lat=lat, lng=lng)
+        obj = s3.get_obj(years=time_range, month=MONTHS[month], lat=lat, lng=lng)
         for pos in product(lats_map[lat], lngs_map[lng]):
             data = obj[pos]
             tmps.append(data["tmps"])
