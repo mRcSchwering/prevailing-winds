@@ -6,7 +6,7 @@ This dataset is a ECMWF reanalysis which holds hourly data of a lot of variables
 Data points were regridded to a regular lat-lon grid of 0.25 degrees.
 To reduce the download sizes I only took every 3rd hour (00:00, 03:00, 06:00, ...) and exluded 20° from the poles (70°S to 70°N).
 
-> last download 02.08.2021
+> last download 11.05.2022
 
 I aggregated data into certain time ranges.
 Usually, I am interested in a certain month of a year.
@@ -14,8 +14,8 @@ Last year's data would give a very recent reading.
 Last 10 year's data would give a more robust reading.
 Currently I have:
 
-- each month over year 2020
-- each month over years 2016-2020
+- each month over year 2021
+- each month over years 2017-2021
 
 **Winds**
 Winds are given in _u_ and _v_ vectors in m/s where _u_ describes the component blowing eastwards and _v_ describes the component blowing northwards.
@@ -49,9 +49,6 @@ For each time range I counted wave heights.
 ## Steps to Reproduce
 
 - [s1_download_data.py](./s1_download_data.py) download all necessary grib files
-- [s2_collect_values.py](./s2_collect_values.py) collect air temperatures, precipitation and wind vectors from grib files
-- [s3_aggregate_data.py](./s3_aggregate_data.py) aggregate air temperatures, precipitation and winds over time ranges
+- [s2_collect_values.py](./s2_collect_values.py) collect relevant records from grib files
+- [s3_aggregate_data.py](./s3_aggregate_data.py) aggregate data over time ranges
 - [s4_upload_objs.py](./s4_upload_objs.py) upload objects to s3 bucket
-- [s5_collect_water_data.py](./s5_collect_water_data.py) collect sea surface temperatures and wave heights from grib files
-- [s6_aggregate_water_data.py](./s6_aggregate_water_data.py) aggregate sea surface temperatures and wave heights over time ranges
-- [s7_upload_add_water_data.py](./s7_upload_add_water_data.py) update existing s3 objects with sea surface temperatures and wave heights

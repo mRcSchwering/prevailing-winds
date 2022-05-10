@@ -12,6 +12,9 @@ Set `DATA_DIR` and `test` to try out.
     DATA_DIR=my/data/dir python s3_aggregate_data.py
 
 """
+# TODO: this one needs slightly more than 16GB RAM for wind calculations
+#       thus it must run on a 32GB machine
+#       but after winds it only runs with <4GB, I should use multiproc then
 from typing import List
 from itertools import product
 import numpy as np  # type: ignore

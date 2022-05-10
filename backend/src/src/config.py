@@ -24,6 +24,7 @@ CORS_ALLOW_ORIGIN = "*"
 EMERGENCY_BREAK = 100
 
 # check which are already prepared
+VERSION_PREFIX = "v2"
 TIME_RANGES = ("2016-2020", "2020")
 
 MONTHS = {
