@@ -19,13 +19,13 @@ Globals:
       AllowOrigin: "'*'"
     Auth:
       UsagePlan:
-      CreateUsagePlan: PER_API
-      Quota:
-        Limit: 5000
-        Period: DAY
-      Throttle:
-        BurstLimit: 100
-        RateLimit: 50
+        CreateUsagePlan: PER_API
+        Quota:
+          Limit: 5000
+          Period: DAY
+        Throttle:
+          BurstLimit: 100
+          RateLimit: 50
 
 Resources:
   GqlGetFunction:
