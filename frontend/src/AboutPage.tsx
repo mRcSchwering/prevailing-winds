@@ -1,9 +1,19 @@
 import React from "react";
-import { Box, Heading, Paragraph, Anchor } from "grommet";
+import { Box, Heading, Paragraph, Anchor, Image } from "grommet";
 import AppBar from "./AppBar";
 import { donateSrc } from "./constants";
 
-const donateLink = <Anchor href={donateSrc} label="donate" target="_blank" />;
+const donateLink = (
+  <Anchor href={donateSrc} label="bymeacoffee.com" target="_blank" />
+);
+
+const donateBtn = (
+  <Anchor href={donateSrc} target="_blank">
+    <Box width="small">
+      <Image src="https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-1.svg" />
+    </Box>
+  </Anchor>
+);
 
 const windyLink = (
   <Anchor href="https://www.windy.com/" label="windy.com" target="_blank" />
@@ -89,9 +99,12 @@ export default function AboutPage(): JSX.Element {
         <Heading level="3">Donate</Heading>
         <Paragraph>
           All my apps are free, I never use ads, or sell data to third parties.
-          If you still want to support me somehow, you can donate with this
-          link: {donateLink}. Thanks in advance.
+          If you want to support me somehow, you can donate with this on{" "}
+          {donateLink}. Thanks in advance.
         </Paragraph>
+        <Box pad="medium" style={{ minHeight: "100px" }}>
+          {donateBtn}
+        </Box>
       </Box>
     </Box>
   );
