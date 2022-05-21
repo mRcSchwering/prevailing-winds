@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, ResponsiveContext, Layer } from "grommet";
-import { FormClose } from "grommet-icons";
+import { FormClose, Add } from "grommet-icons";
 import { useMeta } from "./queries";
 import Map from "./Map";
 import SideBar from "./SideBar";
@@ -77,7 +77,7 @@ function LayerContainer(props: LayerContainerProps): JSX.Element | null {
         align="center"
         direction="row"
       >
-        <Button icon={<FormClose />} onClick={props.hide} />
+        <Button icon={<Add />} onClick={props.hide} />
       </Box>
       <Box fill background="light-2" align="center" justify="start">
         {props.children}

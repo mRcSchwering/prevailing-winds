@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@paypal/react-paypal-js": "^7.6.0",
     "@react-leaflet/core": "1.0.2",
     "graphql": "^15.5.0",
     "grommet": "^2.17.0",
