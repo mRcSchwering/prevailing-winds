@@ -22,7 +22,7 @@ I followed the [getting startet tutorial](https://developers.cloudflare.com/page
 almost exactly:
 
 1. Connect github account to cloudflare pages
-2. Configured the deployment (I used `/frontend` as root dir and `yarn build` as build command)
+2. Configured the deployment (I used `/frontend` as root dir and `yarn build` as build command and set environment variable `NODE_VERSION=16.15.0`)
 3. Run first deploy (>4min)
 4. Add custom domains (prevailing-winds.de, www.prevailing-winds.de). Will enter CNAMEs automatically.
 5. Set TLS policy to _strict_
