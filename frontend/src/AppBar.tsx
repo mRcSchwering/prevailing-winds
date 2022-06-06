@@ -23,7 +23,7 @@ export default function AppBar(props: AppBarProps): JSX.Element {
         <Box direction="row">
           <Anchor href="/" label="Map" margin="xsmall" />
           <Anchor href="/about" label="About" margin="xsmall" />
-          <Anchor href={donateSrc}>
+          <Anchor href={donateSrc} target="_blank">
             <Box width="20px" margin="5px">
               <Image src="https://raw.githubusercontent.com/mRcSchwering/prevailing-winds/main/frontend/bmac-optimized.svg" />
             </Box>
