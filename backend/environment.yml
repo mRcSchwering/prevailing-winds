@@ -5,6 +5,7 @@ dependencies:
   - pylint
   - black
   - mypy
+  - types-pytz
   - pip:
       - -r src/requirements.txt
       - -r tests/requirements.txt

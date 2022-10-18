@@ -5,8 +5,9 @@ Environment variables have to be defined in template.yaml
 as environment variables for Lambda functions.
 """
 import datetime as dt
+import pytz
 
-UTC_NOW = dt.datetime.utcnow()
+UTC_NOW = dt.datetime.now(tz=pytz.utc)
 UTC_NOW_TS = UTC_NOW.timestamp()
 
 # AWS

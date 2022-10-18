@@ -10,5 +10,5 @@ resource = boto3.resource("s3", region_name=AWS_REGION)
 
 def get_obj(years: str, month: int, lat: int, lng: int) -> dict:
     key = f"{VERSION_PREFIX}/{years}/{month}/{lat}/{lng}/data.pkl"
-    bkt_obj = resource.Bucket(CONTENT_BUCKET_NAME).Object(key).get()
+    bkt_obj = resource.Bucket(CONTENT_BUCKET_NAME).Object(key).get()  # type: ignore
     return pickle.loads(bkt_obj["Body"].read())
