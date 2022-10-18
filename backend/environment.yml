@@ -7,5 +7,6 @@ dependencies:
   - mypy
   - types-pytz
   - pip:
+      - aws-sam-cli
       - -r src/requirements.txt
       - -r tests/requirements.txt
