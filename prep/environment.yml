@@ -1,4 +1,4 @@
-name: prevailing-winds-prep
+name: prevwinds_prep
 
 dependencies:
   - python=3.8

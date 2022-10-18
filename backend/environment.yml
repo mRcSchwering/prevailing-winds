@@ -1,0 +1,10 @@
+name: prevwinds_backend
+
+dependencies:
+  - python=3.8
+  - pylint
+  - black
+  - mypy
+  - pip:
+      - -r src/requirements.txt
+      - -r tests/requirements.txt
