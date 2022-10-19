@@ -1,5 +1,6 @@
 import React from "react";
 import { Box } from "grommet";
+import {COLORS} from "./constants"
 
 const spinning = (
   <svg
@@ -7,7 +8,7 @@ const spinning = (
     viewBox="0 0 32 32"
     width="28px"
     height="28px"
-    fill="#7D4CDB"
+    fill={COLORS.primary}
   >
     <path
       opacity=".25"

@@ -49,7 +49,7 @@ function StaticContainer(props: StaticContainerProps): JSX.Element {
     <Delayed waitBeforeShow={0.1}>
       <Box
         width="400px"
-        background="light-2"
+        background="white"
         elevation="small"
         align="center"
         justify="start"
@@ -71,7 +71,7 @@ function LayerContainer(props: LayerContainerProps): JSX.Element | null {
   return (
     <Layer>
       <Box
-        background="light-2"
+        background="white"
         tag="header"
         justify="end"
         align="center"
@@ -79,7 +79,7 @@ function LayerContainer(props: LayerContainerProps): JSX.Element | null {
       >
         <Button icon={<FormClose />} onClick={props.hide} />
       </Box>
-      <Box fill background="light-2" align="center" justify="start">
+      <Box fill background="white" align="center" justify="start">
         {props.children}
       </Box>
     </Layer>

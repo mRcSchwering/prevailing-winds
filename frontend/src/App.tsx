@@ -11,6 +11,7 @@ import { deepMerge } from "grommet/utils";
 import { SelectionContextProvider } from "./SelectionContext";
 import AboutPage from "./AboutPage";
 import MapPage from "./MapPage";
+import { COLORS } from "./constants";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_BACKEND_URL || "http://localhost:8000/",
@@ -23,7 +24,11 @@ const client = new ApolloClient({
 
 const myTheme = deepMerge(grommet, {
   global: {
-    colors: { brand: "#606061", "accent-1": "light-1" },
+    colors: {
+      brand: COLORS.darkGray,
+      "accent-1": "white",
+      background: "white",
+    },
     focus: { outline: { size: "none" } },
   },
 });

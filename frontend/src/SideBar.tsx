@@ -4,6 +4,7 @@ import Spinner from "./SpinnerBrand";
 import WindRoseChart from "./WindRoseChart";
 import WeatherChart from "./WeatherChart";
 import WaterChart from "./WaterChart";
+import WindChart from "./WindChart";
 import { convertDMS } from "./util";
 import { useWeather, MetaRespType } from "./queries";
 import { SelectionContext } from "./SelectionContext";
@@ -83,6 +84,11 @@ export default function SideBar(props: SideBarProps): JSX.Element {
           <Tab title="Water">
             <Box margin={{ vertical: "medium" }}>
               <WaterChart weather={weatherResp} meta={meta} />
+            </Box>
+          </Tab>
+          <Tab title="Wind">
+            <Box margin={{ vertical: "medium" }}>
+              <WindChart weather={weatherResp} meta={meta} />
             </Box>
           </Tab>
         </Tabs>
