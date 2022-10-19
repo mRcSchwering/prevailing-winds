@@ -88,6 +88,13 @@ function WindRainBars(props: WindRainBarsProps): JSX.Element {
     })
     .filter((d) => d.y[0] > 0);
 
+  // TODO: rm chunk
+  const idx2mm = [0, 1.3, 5, 28, 50];
+  const totalRain = idx2mm
+    .map((d, i) => d * rainFreqs[i])
+    .reduce((a, b) => a + b);
+  console.log("total rain in mm/day: ", totalRain * 24);
+
   const rainTraces = rainBins
     .map((bin, i) => {
       const pct = Math.round(rainFreqs[i] * 100);

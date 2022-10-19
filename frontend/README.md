@@ -15,6 +15,12 @@ at -0.5° to +0.5° lat-lng from where the user clicked.
 Further away from the equator meridians move closer together.
 I compensate for that when drawing the rectangle with factor _cos(lat)_.
 
+Currently got [this problem](https://stackoverflow.com/questions/69394632/webpack-build-failing-with-err-ossl-evp-unsupported), so:
+
+```
+NODE_OPTIONS=--openssl-legacy-provider yarn start
+```
+
 ## Deploy
 
 Currently trying out [cloudflare pages](https://pages.cloudflare.com/) for deployment.
