@@ -1,9 +1,27 @@
 import Plot from "react-plotly.js";
-import { Text, Box } from "grommet";
+import { Text, Box, Tip } from "grommet";
+import { Sun, Moon, Cloud } from "grommet-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCloudShowersHeavy,
+  faSun,
+  faMoon,
+  faWind,
+  faWater,
+  faTemperatureHigh,
+  faTemperatureLow,
+  faTemperatureHalf,
+} from "@fortawesome/free-solid-svg-icons";
 import { WeatherRespType, MetaRespType } from "./queries";
 import { WindRecord, Meta, PrecRecord, TmpRecord } from "./types";
 import { windBins, rainBins, COLORS } from "./constants";
-import { getMean, getStdMean, getWindName, getTmpColor } from "./util";
+import {
+  getMean,
+  getStdMean,
+  getWindName,
+  getTmpColor,
+  celsius2Fahrenheit,
+} from "./util";
 import Spinner from "./SpinnerBrand";
 import Tooltip from "./Tooltip";
 
@@ -88,13 +106,6 @@ function WindRainBars(props: WindRainBarsProps): JSX.Element {
     })
     .filter((d) => d.y[0] > 0);
 
-  // TODO: rm chunk
-  const idx2mm = [0, 1.3, 5, 28, 50];
-  const totalRain = idx2mm
-    .map((d, i) => d * rainFreqs[i])
-    .reduce((a, b) => a + b);
-  console.log("total rain in mm/day: ", totalRain * 24);
-
   const rainTraces = rainBins
     .map((bin, i) => {
       const pct = Math.round(rainFreqs[i] * 100);
@@ -119,85 +130,67 @@ function WindRainBars(props: WindRainBarsProps): JSX.Element {
 }
 
 interface TmpRangesProps {
+  rains: PrecRecord[];
   tmps: TmpRecord[];
   meta: Meta;
 }
 
 function TmpRanges(props: TmpRangesProps): JSX.Element {
-  const layout: any = {
-    hovermode: "closest",
-    margin: { t: 10, r: 30, l: 50, b: 50 },
-    paper_bgcolor: COLORS.transparent,
-    plot_bgcolor: COLORS.transparent,
-    font: { size: 16 },
-    showlegend: false,
-    width: 150,
-    height: 300,
-    xaxis: {
-      fixedrange: true,
-      showgrid: false,
-      showline: false,
-      range: [-0.4, 1.5],
-    },
-    yaxis: {
-      showgrid: false,
-      zeroline: false,
-      showline: true,
-      showticklabels: true,
-      fixedrange: true,
-    },
-  };
-
-  if (props.tmps.length < 1) {
-    return <Plot data={[]} layout={layout} config={config} />;
-  }
-
   const aveHiM = getMean(props.tmps.map((d) => d.highMean));
   const aveLoM = getMean(props.tmps.map((d) => d.lowMean));
   const aveHiS = getStdMean(props.tmps.map((d) => d.highStd));
   const aveLoS = getStdMean(props.tmps.map((d) => d.lowStd));
 
-  const hiColor = getTmpColor(aveHiM);
-  const loColor = getTmpColor(aveLoM);
+  const errorFactor = Math.pow(props.tmps.length, 0.5);
+  const highC = Math.round(aveHiM + aveHiS / errorFactor);
+  const lowC = Math.round(aveLoM - aveLoS / errorFactor);
+  const highF = Math.round(celsius2Fahrenheit(highC));
+  const lowF = Math.round(celsius2Fahrenheit(lowC));
 
-  const tickVals = [Math.round(aveLoM), Math.round(aveHiM)];
-  layout.yaxis.tickvals = tickVals;
-  layout.yaxis.ticktext = tickVals.map((d) => `${d}°C`);
+  const highStr = `${highC}°C or ${highF}°F`;
+  const lowStr = `${lowC}°C or ${lowF}°F`;
+  const hiColor = getTmpColor(highC);
+  const loColor = getTmpColor(highC);
 
-  const traces = [
-    {
-      x: ["high"],
-      y: [aveHiM],
-      marker: { color: hiColor },
-      hovertemplate: "%{y:.1f}°C<extra></extra>",
-      error_y: {
-        type: "constant",
-        color: hiColor,
-        value: aveHiS,
-        thickness: 1.5,
-        width: 3,
-        opacity: 1,
-      },
-      type: "scatter",
-    },
-    {
-      x: ["low"],
-      y: [aveLoM],
-      marker: { color: loColor },
-      hovertemplate: `${Math.round(aveLoM)}°C<extra></extra>`,
-      error_y: {
-        type: "constant",
-        color: loColor,
-        value: aveLoS,
-        thickness: 1.5,
-        width: 3,
-        opacity: 1,
-      },
-      type: "scatter",
-    },
-  ];
+  const rainBinSums = rainBins.map((bin) => {
+    const cnts = props.rains
+      .filter((d) => d.amt === bin.idx)
+      .map((d) => d.count);
+    return cnts.length > 0 ? cnts.reduce((a, b) => a + b) : 0;
+  });
 
-  return <Plot data={traces} layout={layout} config={config} />;
+  const totalRain = rainBinSums.reduce((a, b) => a + b);
+  const aveRainMm = rainBins.map((bin, i) => {
+    const freq = rainBinSums[i] > 0 ? rainBinSums[i] / totalRain : 0;
+    return freq * bin.avgMm;
+  });
+  const aveRainMmDaily = Math.round(aveRainMm.reduce((a, b) => a + b) * 24);
+  const aveRainMonthly = Math.round(aveRainMmDaily * 30);
+
+  return (
+    <Box gap="medium" margin="medium">
+      <Tip content={`${highStr} during the day`}>
+        <Box direction="row" align="center">
+          <Sun color={hiColor} size="large" />
+          <Text>{highC}°C</Text>
+        </Box>
+      </Tip>
+      <Tip content={`${lowStr} during the night`}>
+        <Box direction="row" align="center">
+          <Moon color={loColor} size="large" />
+          <Text>{lowC}°C</Text>
+        </Box>
+      </Tip>
+      <Tip
+        content={`${aveRainMmDaily} mm rain daily and ${aveRainMonthly} mm the whole month`}
+      >
+        <Box direction="row" align="center">
+          <Cloud color={COLORS.darkBlue} size="large" />
+          <Text>{aveRainMmDaily} mm</Text>
+        </Box>
+      </Tip>
+    </Box>
+  );
 }
 
 type WeatherChartProps = {
@@ -216,19 +209,75 @@ export default function WeatherChart(props: WeatherChartProps): JSX.Element {
   }
 
   if (!props.meta.data || !props.weather.data) {
+    return (
+      <Box direction="column" margin="medium">
+        <Box direction="row" justify="around">
+          <Box
+            gap="small"
+            direction="row"
+            align="center"
+            margin="medium"
+            width="100px"
+            height="50px"
+          >
+            <FontAwesomeIcon icon={faTemperatureHalf} size="xl" />
+            <Box direction="column">
+              <Text>22 °C</Text>
+              <Text>18 °C</Text>
+            </Box>
+          </Box>
+          <Box
+            gap="small"
+            direction="row"
+            align="center"
+            margin="medium"
+            width="100px"
+            height="50px"
+          >
+            <FontAwesomeIcon icon={faCloudShowersHeavy} size="xl" />
+            <Text>22 mm</Text>
+          </Box>
+        </Box>
+        <Box direction="row" justify="around">
+          <Box
+            gap="small"
+            direction="row"
+            align="center"
+            margin="medium"
+            width="100px"
+            height="50px"
+          >
+            <FontAwesomeIcon icon={faWind} size="xl" />
+            <Text>15 kt</Text>
+          </Box>
+          <Box
+            gap="small"
+            direction="row"
+            align="center"
+            margin="medium"
+            width="100px"
+            height="50px"
+          >
+            <FontAwesomeIcon icon={faWater} size="xl" />
+            <Text>2-3 m</Text>
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
+  if (!props.meta.data || !props.weather.data) {
     return <Text>click somewhere on the chart</Text>;
   }
 
   return (
     <Box direction="row" margin={{ vertical: "medium" }} justify="around">
       <Box margin="small" align="end">
-        <Tooltip text="Averages of daily max and min temperatures in that month." />
-        <Box>
-          <TmpRanges
-            meta={props.meta.data}
-            tmps={props.weather.data.tmpRecords}
-          />
-        </Box>
+        <TmpRanges
+          meta={props.meta.data}
+          tmps={props.weather.data.tmpRecords}
+          rains={props.weather.data.precRecords}
+        />
       </Box>
       <Box margin="small" align="end">
         <Tooltip text="Hours of certain rains and winds in that month" />

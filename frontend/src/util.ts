@@ -134,6 +134,13 @@ export function getStdMean(arr: number[]): number {
 }
 
 /**
+ * Convert temperature from Celsius to Fahrenheit
+ */
+export function celsius2Fahrenheit(cel: number): number {
+  return (cel * 9) / 5 + 32;
+}
+
+/**
  * prepare name for a wind bin
  */
 export function getWindName(windBin: WindBinType): string {

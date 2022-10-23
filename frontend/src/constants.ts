@@ -174,30 +174,40 @@ export type RainBinType = {
   idx: number;
   name: string;
   color: string;
+  avgMm: number;
 };
 
 // pos 0 will be left out in summary (should be "no rain")
 export const rainBins: RainBinType[] = [
-  { idx: 1, name: "Dry<br>< 0.1 mm<br>< 0.004 in", color: COLORS.transparent },
+  {
+    idx: 1,
+    name: "Dry<br>< 0.1 mm<br>< 0.004 in",
+    color: COLORS.transparent,
+    avgMm: 0,
+  },
   {
     idx: 2,
     name: "Light rain<br>0.1-2.5 mm<br>0.004-0.098 in",
     color: COLORS.grayBlue,
+    avgMm: 1.3,
   },
   {
     idx: 3,
     name: "Moderate rain<br>2.5-7.6 mm<br>0.098-0.30 in",
     color: COLORS.darkBlue,
+    avgMm: 5,
   },
   {
     idx: 4,
     name: "Heavy rain<br>7.6-50 mm<br>0.30-2.0 in",
     color: COLORS.purplePink,
+    avgMm: 28,
   },
   {
     idx: 5,
     name: "Violent rain<br>> 50 mm<br>> 2.0 in",
     color: COLORS.pinkRed,
+    avgMm: 50,
   },
 ];
 
