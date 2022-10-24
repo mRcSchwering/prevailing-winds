@@ -1,8 +1,7 @@
 import React from "react";
 import { Box, Select, Heading, Tabs, Tab } from "grommet";
 import Spinner from "./SpinnerBrand";
-import WindRoseChart from "./WindRoseChart";
-import WeatherChart from "./WeatherChart";
+import SummaryChart from "./SummaryChart";
 import WaterChart from "./WaterChart";
 import WindChart from "./WindChart";
 import { convertDMS } from "./util";
@@ -71,24 +70,19 @@ export default function SideBar(props: SideBarProps): JSX.Element {
           {pos ? convertDMS(pos.lat, pos.lng) : "-"}
         </Heading>
         <Tabs>
-          <Tab title="Weather">
+          <Tab title="Summary">
             <Box margin={{ vertical: "medium" }}>
-              <WeatherChart weather={weatherResp} meta={meta} />
+              <SummaryChart weather={weatherResp} meta={meta} />
             </Box>
           </Tab>
           <Tab title="Winds">
             <Box margin={{ vertical: "medium" }}>
-              <WindRoseChart weather={weatherResp} meta={meta} />
+              <WindChart weather={weatherResp} meta={meta} />
             </Box>
           </Tab>
-          <Tab title="Water">
+          <Tab title="Waves">
             <Box margin={{ vertical: "medium" }}>
               <WaterChart weather={weatherResp} meta={meta} />
-            </Box>
-          </Tab>
-          <Tab title="Wind">
-            <Box margin={{ vertical: "medium" }}>
-              <WindChart weather={weatherResp} meta={meta} />
             </Box>
           </Tab>
         </Tabs>

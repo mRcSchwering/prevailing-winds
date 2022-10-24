@@ -31,24 +31,7 @@ import {
   m2ft,
 } from "./util";
 import Spinner from "./SpinnerBrand";
-
-function Tooltip(props: {
-  text: string;
-  children: React.ReactNode;
-}): JSX.Element {
-  return (
-    <Tip
-      plain
-      content={
-        <Box width="small" background="light-1" pad="xsmall" round="xsmall">
-          <Text>{props.text}</Text>
-        </Box>
-      }
-    >
-      {props.children}
-    </Tip>
-  );
-}
+import Tooltip from "./Tooltip";
 
 const iconContainerConfig: any = {
   gap: "small",
@@ -59,11 +42,7 @@ const iconContainerConfig: any = {
   height: "50px",
 };
 
-interface AirTmpsProps {
-  tmps: TmpRecord[];
-}
-
-function AirTmps(props: AirTmpsProps): JSX.Element {
+function AirTmps(props: { tmps: TmpRecord[] }): JSX.Element {
   const aveHiM = getMean(props.tmps.map((d) => d.highMean));
   const aveLoM = getMean(props.tmps.map((d) => d.lowMean));
   const aveHiS = getStdMean(props.tmps.map((d) => d.highStd));
@@ -93,11 +72,7 @@ function AirTmps(props: AirTmpsProps): JSX.Element {
   );
 }
 
-interface RainProps {
-  rains: PrecRecord[];
-}
-
-function Rain(props: RainProps): JSX.Element {
+function Rain(props: { rains: PrecRecord[] }): JSX.Element {
   const rainBinSums = rainBins.map((bin) => {
     const cnts = props.rains
       .filter((d) => d.amt === bin.idx)
@@ -138,11 +113,7 @@ function fmtKtRange(lo: number | null, hi: number | null): string {
   return "";
 }
 
-interface WindProps {
-  winds: WindRecord[];
-}
-
-function Wind(props: WindProps): JSX.Element {
+function Wind(props: { winds: WindRecord[] }): JSX.Element {
   const totalWind = props.winds.map((d) => d.count).reduce((a, b) => a + b);
   const winds = windBins.map((bin) => {
     const cnts = props.winds
@@ -201,12 +172,10 @@ function fmtWaveRangeFt(lo: number | null, hi: number | null): string {
   return "";
 }
 
-interface WaterProps {
+function Water(props: {
   tmps: SeatmpRecord[];
   waves: WaveRecord[];
-}
-
-function Water(props: WaterProps): JSX.Element {
+}): JSX.Element {
   const totalWaves = props.waves.map((d) => d.count).reduce((a, b) => a + b);
   const waves = waveBins.map((bin) => {
     const cnts = props.waves
@@ -254,12 +223,10 @@ function Water(props: WaterProps): JSX.Element {
   );
 }
 
-type WeatherChartProps = {
+export default function SummaryChart(props: {
   weather: WeatherRespType;
   meta: MetaRespType;
-};
-
-export default function WeatherChart(props: WeatherChartProps): JSX.Element {
+}): JSX.Element {
   if (props.weather.loading || props.meta.loading) return <Spinner />;
 
   if (props.weather.error) {
