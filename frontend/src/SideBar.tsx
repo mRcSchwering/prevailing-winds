@@ -1,12 +1,85 @@
 import React from "react";
-import { Box, Select, Heading, Tabs, Tab } from "grommet";
+import { Box, Select, Heading, Tabs, Tab, Text } from "grommet";
 import Spinner from "./SpinnerBrand";
 import SummaryChart from "./SummaryChart";
 import WaterChart from "./WaterChart";
-import WindChart from "./WindChart";
+import WindsChart from "./WindsChart";
 import { convertDMS } from "./util";
 import { useWeather, MetaRespType } from "./queries";
 import { SelectionContext } from "./SelectionContext";
+
+// TODO: rm water chart?
+
+// TODO: refactor formatting functions
+
+// TODO: rm unused stuff
+
+interface TimeRangeInputsProps {
+  metaResp: MetaRespType;
+  timeRange: string;
+  month: string;
+  onTimeRangeChange: (timeRange: string) => void;
+  onMonthChange: (month: string) => void;
+}
+
+function TimeRangeInputs(props: TimeRangeInputsProps): JSX.Element {
+  if (props.metaResp.loading) return <Spinner />;
+  if (!props.metaResp.data)
+    return <Text color="status-critical">{props.metaResp.error?.message}</Text>;
+
+  const timeRanges = props.metaResp.data.timeRanges;
+  const months = props.metaResp.data.months;
+
+  return (
+    <Box direction="row">
+      <Select
+        margin="xsmall"
+        options={timeRanges}
+        value={props.timeRange}
+        onChange={({ option }) => props.onTimeRangeChange(option)}
+      />
+      <Select
+        margin="xsmall"
+        options={months}
+        value={props.month}
+        onChange={({ option }) => props.onMonthChange(option)}
+      />
+    </Box>
+  );
+}
+
+function ChartContainer(props: {
+  isLoading: boolean;
+  hasError: boolean;
+  hasData: boolean;
+  children: React.ReactNode;
+}): JSX.Element {
+  if (props.isLoading) {
+    return (
+      <Box margin="medium">
+        <Spinner />
+      </Box>
+    );
+  }
+
+  if (props.hasError) {
+    return (
+      <Box margin="medium">
+        <Text color="status-critical">Failed to load weather data :(</Text>
+      </Box>
+    );
+  }
+
+  if (!props.hasData) {
+    return (
+      <Box margin="medium">
+        <Text>click somewhere on the chart</Text>
+      </Box>
+    );
+  }
+
+  return <Box>{props.children}</Box>;
+}
 
 type SideBarProps = {
   timeRange: string;
@@ -19,7 +92,6 @@ type SideBarProps = {
 export default function SideBar(props: SideBarProps): JSX.Element {
   const { pos, rect } = React.useContext(SelectionContext);
   const [loadWeather, weatherResp] = useWeather();
-  const meta = props.metaResp;
 
   React.useEffect(() => {
     if (rect) {
@@ -36,34 +108,49 @@ export default function SideBar(props: SideBarProps): JSX.Element {
     }
   }, [rect, props.timeRange, props.month, loadWeather]);
 
-  let inputs = <Spinner />;
-  if (!meta.loading) {
-    if (meta.data) {
-      const timeRanges = meta.data.timeRanges;
-      const months = meta.data.months;
-      inputs = (
-        <>
-          <Select
-            margin="xsmall"
-            options={timeRanges}
-            value={props.timeRange}
-            onChange={({ option }) => props.onTimeRangeChange(option)}
+  if (!props.metaResp.data) {
+    return (
+      <>
+        <Box pad="medium">
+          <TimeRangeInputs
+            metaResp={props.metaResp}
+            timeRange={props.timeRange}
+            month={props.month}
+            onTimeRangeChange={props.onTimeRangeChange}
+            onMonthChange={props.onMonthChange}
           />
-          <Select
-            margin="xsmall"
-            options={months}
-            value={props.month}
-            onChange={({ option }) => props.onMonthChange(option)}
-          />
-        </>
-      );
-    }
+        </Box>
+        <Box align="center">
+          <Heading level={4} margin={{ vertical: "20px" }}>
+            {pos ? convertDMS(pos.lat, pos.lng) : "-"}
+          </Heading>
+        </Box>
+      </>
+    );
   }
+
+  const height2dgs: { [key: number]: number } =
+    props.metaResp.data.waveHeights.reduce(
+      (o, d) => ({ ...o, [d.idx]: d.douglasDegree }),
+      {}
+    );
+
+  const vel2bft: { [key: number]: number } =
+    props.metaResp.data.windVelocities.reduce(
+      (o, d) => ({ ...o, [d.idx]: d.beaufortNumber }),
+      {}
+    );
 
   return (
     <>
       <Box pad="medium">
-        <Box direction="row">{inputs}</Box>
+        <TimeRangeInputs
+          metaResp={props.metaResp}
+          timeRange={props.timeRange}
+          month={props.month}
+          onTimeRangeChange={props.onTimeRangeChange}
+          onMonthChange={props.onMonthChange}
+        />
       </Box>
       <Box align="center">
         <Heading level={4} margin={{ vertical: "20px" }}>
@@ -71,19 +158,44 @@ export default function SideBar(props: SideBarProps): JSX.Element {
         </Heading>
         <Tabs>
           <Tab title="Summary">
-            <Box margin={{ vertical: "medium" }}>
-              <SummaryChart weather={weatherResp} meta={meta} />
-            </Box>
+            <ChartContainer
+              isLoading={weatherResp.loading}
+              hasError={!!weatherResp.error}
+              hasData={!!weatherResp.data}
+            >
+              {weatherResp.data && (
+                <SummaryChart
+                  weather={weatherResp.data}
+                  height2dgs={height2dgs}
+                  vel2bft={vel2bft}
+                />
+              )}
+            </ChartContainer>
           </Tab>
           <Tab title="Winds">
-            <Box margin={{ vertical: "medium" }}>
-              <WindChart weather={weatherResp} meta={meta} />
-            </Box>
+            <ChartContainer
+              isLoading={weatherResp.loading}
+              hasError={!!weatherResp.error}
+              hasData={!!weatherResp.data}
+            >
+              {weatherResp.data && (
+                <WindsChart weather={weatherResp.data} vel2bft={vel2bft} />
+              )}
+            </ChartContainer>
           </Tab>
           <Tab title="Waves">
-            <Box margin={{ vertical: "medium" }}>
-              <WaterChart weather={weatherResp} meta={meta} />
-            </Box>
+            <ChartContainer
+              isLoading={weatherResp.loading}
+              hasError={!!weatherResp.error}
+              hasData={!!weatherResp.data}
+            >
+              {weatherResp.data && (
+                <WaterChart
+                  weather={weatherResp.data}
+                  height2dgs={height2dgs}
+                />
+              )}
+            </ChartContainer>
           </Tab>
         </Tabs>
       </Box>

@@ -1,12 +1,10 @@
 import React from "react";
 import Plot from "react-plotly.js";
-import { Text, Box, ResponsiveContext } from "grommet";
-import { WeatherRespType, MetaRespType } from "./queries";
+import { Box, ResponsiveContext } from "grommet";
 import { getWindName } from "./util";
-import { COLORS, windBins } from "./constants";
-import Spinner from "./SpinnerBrand";
+import { COLORS, windBins, dirBins } from "./constants";
 import { TooltipIcon } from "./Tooltip";
-import { Meta, WindRecord } from "./types";
+import { WeatherResult, WindRecord } from "./types";
 
 const config = {
   displaylogo: false,
@@ -15,9 +13,9 @@ const config = {
 };
 
 type WindRoseProps = {
-  meta: Meta;
   winds: WindRecord[];
   size: string;
+  vel2bft: { [key: number]: number };
 };
 
 function WindRose(props: WindRoseProps): JSX.Element {
@@ -34,26 +32,14 @@ function WindRose(props: WindRoseProps): JSX.Element {
       hovertemplate: `%{r:.2f}% %{theta}-winds<br>${name}<extra></extra>`,
     };
 
-    const vels = props.meta.windVelocities.filter((d) =>
-      windBin.bfts.includes(d.beaufortNumber)
-    );
-    for (const vel of vels) {
-      for (const dir of props.meta.windDirections) {
-        const filtered = props.winds.filter(
-          (d) => d.dir === dir.idx && d.vel === vel.idx
-        );
-        let count = 0;
-        if (filtered.length > 0) {
-          count = filtered.map((d) => d.count).reduce((a, b) => a + b);
-        }
-        const thetaIdx = bin.theta.indexOf(dir.name);
-        if (bin.theta.indexOf(dir.name) === -1) {
-          bin.r.push(count);
-          bin.theta.push(dir.name);
-        } else {
-          bin.r[thetaIdx] = bin.r[thetaIdx] + count;
-        }
-      }
+    for (const dir of dirBins) {
+      const fltrd = props.winds.filter(
+        (d) => d.dir === dir.idx && windBin.bfts.includes(props.vel2bft[d.vel])
+      );
+      bin.r.push(
+        fltrd.length > 0 ? fltrd.map((d) => d.count).reduce((a, b) => a + b) : 0
+      );
+      bin.theta.push(dir.name);
     }
     bins.push(bin);
   }
@@ -90,36 +76,22 @@ function WindRose(props: WindRoseProps): JSX.Element {
 }
 
 type WindChartProps = {
-  weather: WeatherRespType;
-  meta: MetaRespType;
+  weather: WeatherResult;
+  vel2bft: { [key: number]: number };
 };
 
 export default function WindChart(props: WindChartProps): JSX.Element {
   const size = React.useContext(ResponsiveContext);
-
-  if (props.weather.loading || props.meta.loading) return <Spinner />;
-
-  if (props.weather.error) {
-    return <Text color="status-critical">{props.weather.error.message}</Text>;
-  }
-  if (props.meta.error) {
-    return <Text color="status-critical">{props.meta.error.message}</Text>;
-  }
-
-  if (!props.meta.data || !props.weather.data) {
-    return <Text>click somewhere on the chart</Text>;
-  }
-
   return (
     <Box margin={{ vertical: "small" }} align="end">
-      <Box margin="small" align="end" width="100%">
+      <Box margin="small" align="end">
         <TooltipIcon text="Hours of all winds during that month. Angle represents wind direction (from which the wind is blowing), colour reqpresents wind strength, radius represents frequency." />
       </Box>
       <Box>
         <WindRose
-          meta={props.meta.data}
-          winds={props.weather.data.windRecords}
+          winds={props.weather.windRecords}
           size={size}
+          vel2bft={props.vel2bft}
         />
       </Box>
     </Box>

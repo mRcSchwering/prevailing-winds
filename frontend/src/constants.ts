@@ -32,6 +32,30 @@ export const COLORS = {
 
 export type Tuple = [number, number];
 
+export type DirBinType = {
+  idx: number;
+  name: string;
+};
+
+export const dirBins: DirBinType[] = [
+  { idx: 1, name: "N" },
+  { idx: 2, name: "NNE" },
+  { idx: 3, name: "NE" },
+  { idx: 4, name: "ENE" },
+  { idx: 5, name: "E" },
+  { idx: 6, name: "ESE" },
+  { idx: 7, name: "SE" },
+  { idx: 8, name: "SSE" },
+  { idx: 9, name: "S" },
+  { idx: 10, name: "SSW" },
+  { idx: 11, name: "SW" },
+  { idx: 12, name: "WSW" },
+  { idx: 13, name: "W" },
+  { idx: 14, name: "WNW" },
+  { idx: 15, name: "NW" },
+  { idx: 16, name: "NNW" },
+];
+
 export type WindBinType = {
   bfts: number[];
   minKt: null | number;
@@ -117,7 +141,7 @@ export type WaveBinType = {
   color: string;
 };
 
-// pos 0 will be left out in summary (should be "no wind")
+// pos 0 will be left out in summary (should be "no waves")
 export const waveBins: WaveBinType[] = [
   {
     dgs: [0, 1, 2],

@@ -1,4 +1,4 @@
-import { Text, Box, Tip } from "grommet";
+import { Text, Box } from "grommet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCloudShowersHeavy,
@@ -6,13 +6,13 @@ import {
   faWater,
   faTemperatureHalf,
 } from "@fortawesome/free-solid-svg-icons";
-import { WeatherRespType, MetaRespType } from "./queries";
 import {
   WindRecord,
   WaveRecord,
   SeatmpRecord,
   PrecRecord,
   TmpRecord,
+  WeatherResult,
 } from "./types";
 import { windBins, rainBins, waveBins } from "./constants";
 import {
@@ -30,7 +30,6 @@ import {
   fmtM,
   m2ft,
 } from "./util";
-import Spinner from "./SpinnerBrand";
 import Tooltip from "./Tooltip";
 
 const iconContainerConfig: any = {
@@ -113,11 +112,14 @@ function fmtKtRange(lo: number | null, hi: number | null): string {
   return "";
 }
 
-function Wind(props: { winds: WindRecord[] }): JSX.Element {
+function Wind(props: {
+  winds: WindRecord[];
+  vel2bft: { [key: number]: number };
+}): JSX.Element {
   const totalWind = props.winds.map((d) => d.count).reduce((a, b) => a + b);
   const winds = windBins.map((bin) => {
     const cnts = props.winds
-      .filter((d) => bin.bfts.includes(d.vel))
+      .filter((d) => bin.bfts.includes(props.vel2bft[d.vel]))
       .map((d) => d.count);
     const cnt = cnts.length > 0 ? cnts.reduce((a, b) => a + b) : 0;
     return {
@@ -137,7 +139,10 @@ function Wind(props: { winds: WindRecord[] }): JSX.Element {
 
   return (
     <Tooltip
-      text={`Winds of ${bftRange1} (${ktRange1}) encountered most of the time with ${freq1}`}
+      text={
+        `Winds of ${bftRange1} (${ktRange1}) are most often encountered ` +
+        ` making up ${freq1}`
+      }
     >
       <Box {...iconContainerConfig}>
         <FontAwesomeIcon icon={faWind} size="xl" />
@@ -151,9 +156,9 @@ function Wind(props: { winds: WindRecord[] }): JSX.Element {
 }
 
 function fmtAvgWaveHeight(lo: number | null, hi: number | null): string {
-  if (lo !== null && hi !== null) return `${Math.round((lo + hi) / 2)} m`;
-  if (lo !== null && hi === null) return `> ${Math.round(lo)} m`;
-  if (lo === null && hi !== null) return `< ${Math.round(hi)} m`;
+  if (lo !== null && hi !== null) return `${Math.round((lo + hi) / 2)}m`;
+  if (lo !== null && hi === null) return `> ${Math.round(lo)}m`;
+  if (lo === null && hi !== null) return `< ${Math.round(hi)}m`;
   return "-";
 }
 
@@ -175,11 +180,12 @@ function fmtWaveRangeFt(lo: number | null, hi: number | null): string {
 function Water(props: {
   tmps: SeatmpRecord[];
   waves: WaveRecord[];
+  height2dgs: { [key: number]: number };
 }): JSX.Element {
   const totalWaves = props.waves.map((d) => d.count).reduce((a, b) => a + b);
   const waves = waveBins.map((bin) => {
     const cnts = props.waves
-      .filter((d) => bin.dgs.includes(d.height))
+      .filter((d) => bin.dgs.includes(props.height2dgs[d.height]))
       .map((d) => d.count);
     const cnt = cnts.length > 0 ? cnts.reduce((a, b) => a + b) : 0;
     return {
@@ -209,7 +215,8 @@ function Water(props: {
     <Tooltip
       text={
         `Average water temperature is ${tmpCfmtd} (${tmpFfmtd}). ` +
-        `Wave heights of ${waveRange1MFmtd} (${waveRange1FtFmtd}) are most often encoutered with ${freq1}`
+        `Wave heights of ${waveRange1MFmtd} (${waveRange1FtFmtd}) are most often encoutered ` +
+        `making up ${freq1}`
       }
     >
       <Box {...iconContainerConfig}>
@@ -224,33 +231,22 @@ function Water(props: {
 }
 
 export default function SummaryChart(props: {
-  weather: WeatherRespType;
-  meta: MetaRespType;
+  weather: WeatherResult;
+  height2dgs: { [key: number]: number };
+  vel2bft: { [key: number]: number };
 }): JSX.Element {
-  if (props.weather.loading || props.meta.loading) return <Spinner />;
-
-  if (props.weather.error) {
-    return <Text color="status-critical">{props.weather.error.message}</Text>;
-  }
-  if (props.meta.error) {
-    return <Text color="status-critical">{props.meta.error.message}</Text>;
-  }
-
-  if (!props.meta.data || !props.weather.data) {
-    return <Text>click somewhere on the chart</Text>;
-  }
-
   return (
     <Box direction="column" margin="medium">
       <Box direction="row" justify="around">
-        <AirTmps tmps={props.weather.data.tmpRecords} />
-        <Rain rains={props.weather.data.precRecords} />
+        <AirTmps tmps={props.weather.tmpRecords} />
+        <Rain rains={props.weather.precRecords} />
       </Box>
       <Box direction="row" justify="around">
-        <Wind winds={props.weather.data.windRecords} />
+        <Wind winds={props.weather.windRecords} vel2bft={props.vel2bft} />
         <Water
-          tmps={props.weather.data.seatmpRecords}
-          waves={props.weather.data.waveRecords}
+          tmps={props.weather.seatmpRecords}
+          waves={props.weather.waveRecords}
+          height2dgs={props.height2dgs}
         />
       </Box>
     </Box>
