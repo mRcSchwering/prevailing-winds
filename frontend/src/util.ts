@@ -141,6 +141,76 @@ export function celsius2Fahrenheit(cel: number): number {
 }
 
 /**
+ * Convert length in mm to inch
+ */
+export function mm2inch(mm: number): number {
+  return mm / 25.4;
+}
+
+/**
+ * Convert meter to feet
+ */
+export function m2ft(m: number): number {
+  return m * 3.281;
+}
+
+/**
+ * Format temperature in degrees Celsius
+ */
+export function fmtCelsius(d: number | null): string {
+  return `${d ? Math.round(d) : "-"}°C`;
+}
+
+/**
+ * Format temperature in degrees Fahrenheit
+ */
+export function fmtFahrenheit(d: number | null): string {
+  return `${d ? Math.round(d) : "-"}°F`;
+}
+
+/**
+ * Format length as mm
+ */
+export function fmtMm(d: number | null): string {
+  return `${d ? Math.round(d) : "-"}mm`;
+}
+
+/**
+ * Format length as inch
+ */
+export function fmtIn(d: number | null): string {
+  return `${d ? Math.round(d) : "-"}in`;
+}
+
+/**
+ * Format velocity as knots
+ */
+export function fmtKt(d: number | null): string {
+  return `${d ? Math.round(d) : "-"}kt`;
+}
+
+/**
+ * Format frequency as percentage (will be multiplied by 100)
+ */
+export function fmtFreq(d: number | null): string {
+  return `${d ? Math.round(d * 100) : "-"}%`;
+}
+
+/**
+ * Format length as meter
+ */
+export function fmtM(d: number | null): string {
+  return `${d ? Math.round(d * 10) / 10 : "-"}m`;
+}
+
+/**
+ * Format length as foot
+ */
+export function fmtFt(d: number | null): string {
+  return `${d ? Math.round(d) : "-"}ft`;
+}
+
+/**
  * prepare name for a wind bin
  */
 export function getWindName(windBin: WindBinType): string {
