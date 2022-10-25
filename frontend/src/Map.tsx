@@ -6,17 +6,8 @@ import {
   Rectangle,
 } from "react-leaflet";
 import Leaflet from "leaflet";
-import {
-  getLngFloor,
-  getLngCeil,
-  getLatFloor,
-  getLatCeil,
-  excludePoles,
-  suggestPadFactor,
-  cosine,
-} from "./util";
 import { SelectionContext } from "./SelectionContext";
-import { INIT_ZOOM, INIT_POS, Tuple } from "./constants";
+import { INIT_ZOOM, INIT_POS, Tuple, EXCLUSION_ZONES } from "./constants";
 
 // from https://leaflet-extras.github.io/leaflet-providers/preview/
 const PROVIDERS = {
@@ -33,6 +24,20 @@ const PROVIDERS = {
     maxZoom: 12,
   },
 };
+
+const cosine = (d: number) => Math.cos((d * Math.PI) / 180);
+const getFloor = (d: number, p: number) => d - 0.5 * p;
+const getCeil = (d: number, p: number) => d + 0.5 * p;
+const exclPoles = (d: number) =>
+  Math.min(Math.max(d, EXCLUSION_ZONES[0]), EXCLUSION_ZONES[1]);
+
+function suggestPadFactor(zoomLvl: number): number {
+  if (zoomLvl <= 5) return 4;
+  if (zoomLvl <= 6) return 3;
+  if (zoomLvl <= 7) return 2;
+  if (zoomLvl <= 8) return 1;
+  return 0.5;
+}
 
 function ZoomEndEvent(props: { trigger: () => void }): null {
   useMapEvents({
@@ -66,10 +71,10 @@ function AreaMarker(): JSX.Element | null {
       const pad = suggestPadFactor(zoomLvl);
       const adjPad = pad / cosine(lat);
       const lats: Tuple = [
-        excludePoles(getLatFloor(lat, pad)),
-        excludePoles(getLatCeil(lat, pad)),
+        exclPoles(getFloor(lat, pad)),
+        exclPoles(getCeil(lat, pad)),
       ];
-      const lngs: Tuple = [getLngFloor(lng, adjPad), getLngCeil(lng, adjPad)];
+      const lngs: Tuple = [getFloor(lng, adjPad), getCeil(lng, adjPad)];
       handleSetMarker(lats, lngs);
       updatePos({
         lat,

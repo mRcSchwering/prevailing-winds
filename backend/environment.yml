@@ -6,6 +6,8 @@ dependencies:
   - black
   - mypy
   - types-pytz
+  - uvicorn
   - pip:
+      - aws-sam-cli
       - -r src/requirements.txt
       - -r tests/requirements.txt

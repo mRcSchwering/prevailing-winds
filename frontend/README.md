@@ -1,5 +1,6 @@
 # Frontend
 
+
 Bootstrapped with [create-react-app](https://www.npmjs.com/package/create-react-app).
 A [leaflet](https://leafletjs.com/) app with a [plotly](https://plotly.com/) windrose and [grommet](https://v2.grommet.io/) components.
 
@@ -14,6 +15,12 @@ At the equator the smallest rectangle is 3600M^2 big and is layed out
 at -0.5° to +0.5° lat-lng from where the user clicked.
 Further away from the equator meridians move closer together.
 I compensate for that when drawing the rectangle with factor _cos(lat)_.
+
+Currently got [this problem](https://stackoverflow.com/questions/69394632/webpack-build-failing-with-err-ossl-evp-unsupported), so:
+
+```
+NODE_OPTIONS=--openssl-legacy-provider yarn start
+```
 
 ## Deploy
 

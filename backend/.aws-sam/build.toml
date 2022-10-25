@@ -4,8 +4,9 @@
 [function_build_definitions.780ea555-88d6-4cbe-9c03-8edddd00f832]
 codeuri = "/home/marc/prevailing-winds/backend/src"
 runtime = "python3.8"
-source_md5 = ""
 architecture = "x86_64"
+handler = ""
+manifest_hash = ""
 packagetype = "Zip"
 functions = ["GqlGetFunction", "GqlPostFunction"]
 
