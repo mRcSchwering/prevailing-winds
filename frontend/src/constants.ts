@@ -1,17 +1,12 @@
+export type Tuple = [number, number];
+
 export const INIT_ZOOM = 6;
-export const EXCLUSION_ZONES: [number, number] = [-70, 70];
-export const INIT_POS: [number, number] = [46.0, -6.0];
+export const EXCLUSION_ZONES: Tuple = [-70, 70];
+export const INIT_POS: Tuple = [46.0, -6.0];
 
 export const donateSrc = "https://www.buymeacoffee.com/mRcSchwering";
 
 export const COLORS = {
-  boneWhite: "#ffffe0",
-  grayBlue: "#80a1bf",
-  darkBlue: "#00429d",
-  purpleBlue: "#54479f",
-  purplePink: "#a84da0",
-  pinkRed: "#b92650",
-  red: "#ca0000",
   transparent: "rgba(0,0,0,0)",
   purpleGreen1: "#a19eed",
   purpleGreen2: "#9aaeeb",
@@ -25,12 +20,9 @@ export const COLORS = {
   redYellow4: "#ffe799",
   redYellow5: "#fff699",
   lightPurpleBlue: "#da8eed",
-  lightGray: "#f4f3f3",
   darkGray: "#666666",
   primary: "#6aa6d7",
 };
-
-export type Tuple = [number, number];
 
 export type DirBinType = {
   idx: number;
@@ -196,8 +188,6 @@ export const waveBins: WaveBinType[] = [
 
 export type RainBinType = {
   idx: number;
-  name: string;
-  color: string;
   avgMm: number;
 };
 
@@ -205,51 +195,22 @@ export type RainBinType = {
 export const rainBins: RainBinType[] = [
   {
     idx: 1,
-    name: "Dry<br>< 0.1 mm<br>< 0.004 in",
-    color: COLORS.transparent,
     avgMm: 0,
   },
   {
     idx: 2,
-    name: "Light rain<br>0.1-2.5 mm<br>0.004-0.098 in",
-    color: COLORS.grayBlue,
     avgMm: 1.3,
   },
   {
     idx: 3,
-    name: "Moderate rain<br>2.5-7.6 mm<br>0.098-0.30 in",
-    color: COLORS.darkBlue,
     avgMm: 5,
   },
   {
     idx: 4,
-    name: "Heavy rain<br>7.6-50 mm<br>0.30-2.0 in",
-    color: COLORS.purplePink,
     avgMm: 28,
   },
   {
     idx: 5,
-    name: "Violent rain<br>> 50 mm<br>> 2.0 in",
-    color: COLORS.pinkRed,
     avgMm: 50,
   },
-];
-
-export type TmpBinsType = {
-  minC: number;
-  maxC: number;
-  color: string;
-};
-
-export const tmpBins: TmpBinsType[] = [
-  { minC: 35, maxC: Infinity, color: COLORS.pinkRed },
-  { minC: 15, maxC: 35, color: COLORS.purplePink },
-  { minC: -5, maxC: 15, color: COLORS.purpleBlue },
-  { minC: -Infinity, maxC: -5, color: COLORS.darkBlue },
-];
-
-export const seatmpBins: TmpBinsType[] = [
-  { minC: 15, maxC: Infinity, color: COLORS.purplePink },
-  { minC: 5, maxC: 15, color: COLORS.purpleBlue },
-  { minC: -Infinity, maxC: 5, color: COLORS.darkBlue },
 ];

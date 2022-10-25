@@ -1,8 +1,15 @@
 import Plot from "react-plotly.js";
 import { Box } from "grommet";
-import { waveBins, COLORS } from "./constants";
-import { getWaveName, fmtFreq } from "./util";
+import { waveBins, COLORS, WaveBinType } from "./constants";
+import { fmtNumRange, fmtNumCats, fmtFreq } from "./util";
 import { WeatherResult } from "./types";
+import { TooltipIcon } from "./components";
+
+function getWaveName(waveBin: WaveBinType): string {
+  let m = fmtNumRange(waveBin.minM, waveBin.maxM);
+  const dgs = fmtNumCats(waveBin.dgs);
+  return `${waveBin.label}<br>Douglas degree ${dgs}<br>${m}m wave height`;
+}
 
 const config = {
   displaylogo: false,
@@ -35,9 +42,9 @@ export default function WaveChart(props: WaveChartProps): JSX.Element {
       showline: true,
       showticklabels: true,
       fixedrange: true,
-      tickvals: [0, 50, 100],
+      tickvals: [0, 0.5, 1],
       ticktext: ["0%", "50%", "100%"],
-      range: [0, 100],
+      range: [0, 1],
     },
   };
 
@@ -51,21 +58,28 @@ export default function WaveChart(props: WaveChartProps): JSX.Element {
         .filter((d) => bin.dgs.includes(props.height2dgs[d.height]))
         .map((d) => d.count);
       const freq = cnts.length > 0 ? cnts.reduce((a, b) => a + b) / total : 0;
-      const pct = Math.round(freq * 100);
       const name = getWaveName(bin);
       return {
         marker: { color: bin.color },
         name: name,
         type: "bar",
         x: ["sea state"],
-        y: [pct],
-        hovertemplate: `${pct}% ${name}<extra></extra>`,
+        y: [freq],
+        hovertemplate: `${fmtFreq(freq)} ${name}<extra></extra>`,
       };
     })
     .filter((d) => d.y[0] > 0);
 
   return (
     <Box margin={{ vertical: "medium" }}>
+      <Box margin="small" align="end">
+        <TooltipIcon
+          text={
+            "Relative amount certain sea conditions are experienced during this month. " +
+            "Hover over the bars to see details."
+          }
+        />
+      </Box>
       <Plot data={[...traces.reverse()]} layout={layout} config={config} />
     </Box>
   );

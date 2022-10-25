@@ -1,10 +1,17 @@
 import React from "react";
 import Plot from "react-plotly.js";
 import { Box, ResponsiveContext } from "grommet";
-import { getWindName } from "./util";
-import { COLORS, windBins, dirBins } from "./constants";
-import { TooltipIcon } from "./Tooltip";
+import { fmtNumRange, fmtNumCats } from "./util";
+import { COLORS, windBins, dirBins, WindBinType } from "./constants";
+import { TooltipIcon } from "./components";
 import { WeatherResult, WindRecord } from "./types";
+
+function getWindName(windBin: WindBinType): string {
+  const kt = fmtNumRange(windBin.minKt, windBin.maxKt);
+  const kmh = fmtNumRange(windBin.minKmh, windBin.maxKmh);
+  const bft = fmtNumCats(windBin.bfts);
+  return `BFT ${bft}<br>${kt}kt or ${kmh}km/h`;
+}
 
 const config = {
   displaylogo: false,
@@ -83,17 +90,20 @@ type WindChartProps = {
 export default function WindChart(props: WindChartProps): JSX.Element {
   const size = React.useContext(ResponsiveContext);
   return (
-    <Box margin={{ vertical: "small" }} align="end">
+    <Box margin={{ vertical: "small" }}>
       <Box margin="small" align="end">
-        <TooltipIcon text="Hours of all winds during that month. Angle represents wind direction (from which the wind is blowing), colour reqpresents wind strength, radius represents frequency." />
-      </Box>
-      <Box>
-        <WindRose
-          winds={props.weather.windRecords}
-          size={size}
-          vel2bft={props.vel2bft}
+        <TooltipIcon
+          text={
+            "Relative amount certain winds are experienced during this month. " +
+            "Angle represents wind direction (from which the wind is blowing), colour reqpresents wind strength, radius represents frequency."
+          }
         />
       </Box>
+      <WindRose
+        winds={props.weather.windRecords}
+        size={size}
+        vel2bft={props.vel2bft}
+      />
     </Box>
   );
 }

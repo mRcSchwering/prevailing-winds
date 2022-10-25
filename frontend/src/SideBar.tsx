@@ -1,16 +1,12 @@
 import React from "react";
 import { Box, Select, Heading, Tabs, Tab, Text } from "grommet";
-import Spinner from "./SpinnerBrand";
+import { Spinner } from "./components";
 import SummaryChart from "./SummaryChart";
 import WaveChart from "./WaveChart";
 import WindsChart from "./WindsChart";
 import { convertDMS } from "./util";
 import { useWeather, MetaRespType } from "./queries";
 import { SelectionContext } from "./SelectionContext";
-
-// TODO: refactor formatting functions
-
-// TODO: rm unused stuff
 
 interface TimeRangeInputsProps {
   metaResp: MetaRespType;

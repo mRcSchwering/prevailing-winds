@@ -30,7 +30,7 @@ import {
   fmtM,
   m2ft,
 } from "./util";
-import Tooltip from "./Tooltip";
+import { Tooltip } from "./components";
 
 const iconContainerConfig: any = {
   gap: "small",
