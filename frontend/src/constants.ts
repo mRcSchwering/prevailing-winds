@@ -147,7 +147,7 @@ export const waveBins: WaveBinType[] = [
     dgs: [0, 1, 2],
     minM: null,
     maxM: 0.5,
-    label: "Calm to Smooth",
+    label: "Calm",
     color: COLORS.transparent,
   },
   {
@@ -189,7 +189,7 @@ export const waveBins: WaveBinType[] = [
     dgs: [8, 9],
     minM: 9,
     maxM: null,
-    label: "Very High to Phenomenal",
+    label: "Very High",
     color: COLORS.lightPurpleBlue,
   },
 ];
