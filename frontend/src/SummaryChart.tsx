@@ -236,7 +236,10 @@ export default function SummaryChart(props: {
   vel2bft: { [key: number]: number };
 }): JSX.Element {
   return (
-    <Box direction="column" margin="medium">
+    <Box
+      direction="column"
+      margin={{ horizontal: "medium", vertical: "large" }}
+    >
       <Box direction="row" justify="around">
         <AirTmps tmps={props.weather.tmpRecords} />
         <Rain rains={props.weather.precRecords} />

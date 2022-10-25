@@ -2,13 +2,11 @@ import React from "react";
 import { Box, Select, Heading, Tabs, Tab, Text } from "grommet";
 import Spinner from "./SpinnerBrand";
 import SummaryChart from "./SummaryChart";
-import WaveChart, { WaveChart2 } from "./WaveChart";
+import WaveChart from "./WaveChart";
 import WindsChart from "./WindsChart";
 import { convertDMS } from "./util";
 import { useWeather, MetaRespType } from "./queries";
 import { SelectionContext } from "./SelectionContext";
-
-// TODO: rm water chart?
 
 // TODO: refactor formatting functions
 
@@ -90,7 +88,7 @@ type SideBarProps = {
 };
 
 export default function SideBar(props: SideBarProps): JSX.Element {
-  /*const { pos, rect } = React.useContext(SelectionContext);
+  const { pos, rect } = React.useContext(SelectionContext);
   const [loadWeather, weatherResp] = useWeather();
 
   React.useEffect(() => {
@@ -106,15 +104,9 @@ export default function SideBar(props: SideBarProps): JSX.Element {
         },
       });
     }
-  }, [rect, props.timeRange, props.month, loadWeather]);*/
+  }, [rect, props.timeRange, props.month, loadWeather]);
 
-  return (
-    <Box align="center">
-      <WaveChart2 />
-    </Box>
-  );
-
-  /*if (!props.metaResp.data) {
+  if (!props.metaResp.data) {
     return (
       <>
         <Box pad="medium">
@@ -203,5 +195,5 @@ export default function SideBar(props: SideBarProps): JSX.Element {
         </Tabs>
       </Box>
     </>
-  );*/
+  );
 }
