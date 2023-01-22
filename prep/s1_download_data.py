@@ -7,12 +7,13 @@ This can run for really long because each file needs to get approved first
 (which can take several hours).
 Add pos arg `test` for a test run.
 
-    DATA_DIR=my/data/dir python s1_download_data.py test
+    DATA_DIR=my/data/dir IS_TEST python s1_download_data.py
     DATA_DIR=my/data/dir python s1_download_data.py
+    DATA_DIR=my/data/dir python s1_download_data.py 2022 2021
 
 """
 import src.cds as cds
-from src.config import DATA_DIR, IS_TEST, ALL_YEARS
+from src.config import DATA_DIR, IS_TEST, ALL_YEARS, ARGS
 
 
 if __name__ == "__main__":
@@ -21,6 +22,8 @@ if __name__ == "__main__":
         print("testrun")
 
     variables = [
+        "u_component_stokes_drift",
+        "v_component_stokes_drift",
         "10m_u_component_of_wind",
         "10m_v_component_of_wind",
         "2m_temperature",
@@ -29,7 +32,13 @@ if __name__ == "__main__":
         "total_precipitation",
     ]
 
-    for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
+    years = ALL_YEARS
+    if len(ARGS) > 0:
+        years = [int(d) for d in ARGS]
+    if IS_TEST:
+        years = years[:1]
+
+    for year in years:
         for var in variables:
             print(f"downloading {var} for {year}...")
             cds.download_reanalysis(

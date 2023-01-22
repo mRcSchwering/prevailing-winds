@@ -23,20 +23,6 @@ _SPARSE_TIMES = [
     "21:00",
 ]
 
-_POPULAR_VARIABLES = [
-    "10m_u_component_of_wind",
-    "10m_v_component_of_wind",
-    "2m_dewpoint_temperature",
-    "2m_temperature",
-    "mean_sea_level_pressure",
-    "mean_wave_direction",
-    "mean_wave_period",
-    "sea_surface_temperature",
-    "significant_height_of_combined_wind_waves_and_swell",
-    "surface_pressure",
-    "total_precipitation",
-]
-
 _ALL_MONTHS = [
     "01",
     "02",
@@ -96,7 +82,6 @@ def download_reanalysis(
     """
     this_year = dt.date.today().year
     assert year in [str(d) for d in range(this_year - 20, this_year)]
-    assert variable in _POPULAR_VARIABLES
     client.retrieve(
         "reanalysis-era5-single-levels",
         {

@@ -8,8 +8,9 @@ Waves: bin height, value counts for bins
 Sea surface temperatures: calculate daily max and min, calculate means and SDs of these
 Set `DATA_DIR` and `test` to try out.
     
-    DATA_DIR=my/data/dir python s3_aggregate_data.py test
+    DATA_DIR=my/data/dir IS_TEST python s3_aggregate_data.py
     DATA_DIR=my/data/dir python s3_aggregate_data.py
+    DATA_DIR=my/data/dir python s3_aggregate_data.py winds tmps
 
 """
 # TODO: this one needs slightly more than 16GB RAM for wind calculations
@@ -19,7 +20,7 @@ from typing import List
 from itertools import product
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
-from src.config import IS_TEST, DATA_DIR, TIME_RANGES, ALL_MONTHS
+from src.config import IS_TEST, DATA_DIR, TIME_RANGES, ALL_MONTHS, THIS_YEAR, ARGS
 from src.util import read_parquet, write_parquet, WIND_DIRS, WIND_VELS, RAINS, WAVES
 
 WINDS = list(product((d["i"] for d in WIND_DIRS[:-1]), (d["i"] for d in WIND_VELS)))
@@ -43,8 +44,8 @@ def _bin_waves(arr: np.array) -> np.array:
     return binned
 
 
-def _calc_tmps(years: List[int], label: str):
-    for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
+def _calc_tmps(years: List[int], months: List[int], label: str):
+    for month in months:
         df = read_parquet(DATA_DIR / f"s2_tmps_{years[0]}-{month}.pq")
         index = df.index.copy()
 
@@ -75,11 +76,14 @@ def _calc_tmps(years: List[int], label: str):
         write_parquet(data=df, file=DATA_DIR / f"s3_tmps_{label}_{month}.pq")
 
 
-def _calc_prec(years: List[int], label: str):
+def _calc_prec(years: List[int], months: List[int], label: str):
     max_i = max(d["i"] for d in RAINS)
-    for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
+    for month in months:
         df = read_parquet(DATA_DIR / f"s2_prec_{years[0]}-{month}.pq")
         index = df.index.copy()
+
+        # TODO: just sum up precipitation
+        #       eventually I just want the average daily and average monthly rain
 
         bins = []
         for year in years:
@@ -99,11 +103,13 @@ def _calc_prec(years: List[int], label: str):
         write_parquet(data=df, file=DATA_DIR / f"s3_prec_{label}_{month}.pq")
 
 
-def _calc_winds(years: List[int], label: str):
-    for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
+def _calc_winds(years: List[int], months: List[int], label: str):
+    for month in months:
         dirs = read_parquet(DATA_DIR / f"s2_wind_dirs_{years[0]}-{month}.pq")
         index = dirs.index.copy()
 
+        # TODO: maybe with np instead to reduce memory?
+        #       or list[list[]] or dict[list[]]
         counts = pd.DataFrame(0, index=index, columns=[f"{d}|{v}" for d, v in WINDS])
         for year in years:
             print(f"Year {year}-{month}...")
@@ -133,9 +139,9 @@ def _calc_winds(years: List[int], label: str):
         write_parquet(data=counts, file=DATA_DIR / f"s3_winds_{label}_{month}.pq")
 
 
-def _calc_waves(years: List[int], label: str):
+def _calc_waves(years: List[int], months: List[int], label: str):
     max_i = max(d["i"] for d in WAVES)
-    for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
+    for month in months:
         df = read_parquet(DATA_DIR / f"s2_waves_{years[0]}-{month}.pq")
         index = df.index.copy()
 
@@ -157,8 +163,8 @@ def _calc_waves(years: List[int], label: str):
         write_parquet(data=df, file=DATA_DIR / f"s3_waves_{label}_{month}.pq")
 
 
-def _calc_seatmps(years: List[int], label: str):
-    for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
+def _calc_seatmps(years: List[int], months: List[int], label: str):
+    for month in months:
         df = read_parquet(DATA_DIR / f"s2_seatmps_{years[0]}-{month}.pq")
         index = df.index.copy()
 
@@ -190,24 +196,44 @@ def _calc_seatmps(years: List[int], label: str):
 
 
 if __name__ == "__main__":
-    for label_, years_ in TIME_RANGES.items():
-        print(f"\nCreating temperatures {label_}...")
-        _calc_tmps(years=years_, label=label_)
+    all_months = ALL_MONTHS
+    time_ranges = TIME_RANGES
+    if IS_TEST:
+        all_months = ALL_MONTHS[:1]
+        time_ranges = {str(THIS_YEAR): time_ranges[str(THIS_YEAR)]}
 
-    for label_, years_ in TIME_RANGES.items():
-        print(f"\nCreating precipitation {label_}...")
-        _calc_prec(years=years_, label=label_)
+    vars = ["rains", "tmps", "seatmps", "winds", "drifts", "waves"]
+    if len(ARGS) > 0:
+        vars = [d for d in ARGS if d in vars]
 
-    for label_, years_ in TIME_RANGES.items():
-        print(f"\nCreating winds {label_}...")
-        _calc_winds(years=years_, label=label_)
+    if "tmps" in vars:
+        for label_, years_ in time_ranges.items():
+            print(f"\nCreating tmps {label_}...")
+            _calc_tmps(years=years_, months=all_months, label=label_)
 
-    for label_, years_ in TIME_RANGES.items():
-        print(f"\nCreating sea temperatures {label_}...")
-        _calc_seatmps(years=years_, label=label_)
+    if "rains" in vars:
+        for label_, years_ in time_ranges.items():
+            print(f"\nCreating rains {label_}...")
+            _calc_prec(years=years_, months=all_months, label=label_)
 
-    for label_, years_ in TIME_RANGES.items():
-        print(f"\nCreating waves {label_}...")
-        _calc_waves(years=years_, label=label_)
+    if "winds" in vars:
+        for label_, years_ in time_ranges.items():
+            print(f"\nCreating winds {label_}...")
+            _calc_winds(years=years_, months=all_months, label=label_)
+
+    if "seatmps" in vars:
+        for label_, years_ in time_ranges.items():
+            print(f"\nCreating seatmps {label_}...")
+            _calc_seatmps(years=years_, months=all_months, label=label_)
+
+    if "waves" in vars:
+        for label_, years_ in time_ranges.items():
+            print(f"\nCreating waves {label_}...")
+            _calc_waves(years=years_, months=all_months, label=label_)
+
+    if "drifts" in vars:
+        for label_, years_ in time_ranges.items():
+            print(f"\nCreating drifts {label_}...")
+            # TODO: implement
 
     print("\ndone")

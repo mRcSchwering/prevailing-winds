@@ -9,7 +9,7 @@ That's 1.2M objects.
 Vanilla 2 time ranges, 1 month, 100 records: 18s => 30h
 Subroutines 2 time ranges, 1 month, 100 records: 7s => 12h
 
-    DATA_DIR=my/data/dir python s4_upload_objs.py test
+    DATA_DIR=my/data/dir IS_TEST python s4_upload_objs.py
     DATA_DIR=my/data/dir python s4_upload_objs.py
 
 """
@@ -19,7 +19,7 @@ import pandas as pd
 import eventlet  # type: ignore
 
 eventlet.monkey_patch()
-from src.config import IS_TEST, DATA_DIR, TIME_RANGES, ALL_MONTHS, VERSION_PREFIX
+from src.config import IS_TEST, DATA_DIR, TIME_RANGES, ALL_MONTHS, VERSION_PREFIX, THIS_YEAR
 from src.util import read_parquet
 import src.s3 as s3
 
@@ -44,8 +44,14 @@ def _qrtr_mile_grid() -> Iterable:
 
 
 if __name__ == "__main__":
-    for time_range in TIME_RANGES:
-        for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
+    months = ALL_MONTHS
+    time_ranges = TIME_RANGES
+    if IS_TEST:
+        months = months[:1]
+        time_ranges = {str(THIS_YEAR): time_ranges[str(THIS_YEAR)]}
+
+    for time_range in time_ranges:
+        for month in months:
             print(f"Processing {time_range}/{month}...")
             pool = eventlet.GreenPool(200)
 

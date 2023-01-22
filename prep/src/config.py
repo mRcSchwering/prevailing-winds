@@ -14,6 +14,7 @@ TIME_RANGES = {
     f"{ALL_YEARS[0]}-{ALL_YEARS[-1]}": ALL_YEARS,
 }
 
-IS_TEST = "test" in sys.argv[1:]
-VERSION_PREFIX = "v3"
+ARGS = sys.argv[1:]
+VERSION_PREFIX = "v4"
+IS_TEST = "IS_TEST" in os.environ
 DATA_DIR = Path(os.environ.get("DATA_DIR", "data/tmp"))

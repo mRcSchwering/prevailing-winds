@@ -9,8 +9,9 @@ Column names in that DataFrame contain the day of the month (<day>-<hash>).
 Set `DATA_DIR` and run directly.
 `test` only runs 1 year, 1 month.
 
-    DATA_DIR=my/data/dir python s2_collect_values.py test
+    DATA_DIR=my/data/dir IS_TEST python s2_collect_values.py
     DATA_DIR=my/data/dir python s2_collect_values.py
+    DATA_DIR=my/data/dir python s2_collect_values.py winds tmps
 
 - messages for each file start at year-01-01 00:00:00 and are ordered by time
 - lat-lon grid has 1/4 miles mesh
@@ -22,7 +23,7 @@ from typing import BinaryIO, Tuple
 import pupygrib
 import pandas as pd  # type: ignore
 from src.util import velocity, direction, randstr, write_parquet
-from src.config import IS_TEST, DATA_DIR, ALL_YEARS, ALL_MONTHS
+from src.config import IS_TEST, DATA_DIR, ALL_YEARS, ALL_MONTHS, ARGS
 
 
 def _collect_scalars(y: int, m: int, grib_file: BinaryIO) -> pd.DataFrame:
@@ -55,6 +56,9 @@ def _collect_scalars(y: int, m: int, grib_file: BinaryIO) -> pd.DataFrame:
         dfs.append(df.groupby(["lon", "lat"]).mean())
 
     return pd.concat(dfs, axis=1)
+
+
+# TODO: looks same for u/v components of stokes drift
 
 
 def _collect_winds(
@@ -101,73 +105,91 @@ def _collect_winds(
 
 
 if __name__ == "__main__":
+    years = ALL_YEARS
+    months = ALL_MONTHS
+    if IS_TEST:
+        years = years[:1]
+        months = months[:1]
 
-    print("\nProcessing prec...")
-    for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
-        infile = DATA_DIR / f"total_precipitation_{year}.grib"
-        for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
-            outfile = DATA_DIR / f"s2_prec_{year}-{month}.pq"
+    vars = ["rains", "tmps", "seatmps", "winds", "drifts", "waves"]
+    if len(ARGS) > 0:
+        vars = [d for d in ARGS if d in vars]
 
-            with open(infile, "rb") as fh:
-                prec = _collect_scalars(y=year, m=month, grib_file=fh)
+    if "rains" in vars:
+        print("\nProcessing rains...")
+        for year in years:
+            infile = DATA_DIR / f"total_precipitation_{year}.grib"
+            for month in months:
+                outfile = DATA_DIR / f"s2_prec_{year}-{month}.pq"
 
-            write_parquet(data=prec, file=outfile)
-    del prec
+                with open(infile, "rb") as fh:
+                    df = _collect_scalars(y=year, m=month, grib_file=fh)
 
-    print("\nProcessing tmps...")
-    for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
-        infile = DATA_DIR / f"2m_temperature_{year}.grib"
-        for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
-            outfile = DATA_DIR / f"s2_tmps_{year}-{month}.pq"
+                write_parquet(data=df, file=outfile)
+        del df
 
-            with open(infile, "rb") as fh:
-                tmps = _collect_scalars(y=year, m=month, grib_file=fh)
+    if "tmps" in vars:
+        print("\nProcessing tmps...")
+        for year in years:
+            infile = DATA_DIR / f"2m_temperature_{year}.grib"
+            for month in months:
+                outfile = DATA_DIR / f"s2_tmps_{year}-{month}.pq"
 
-            write_parquet(data=tmps, file=outfile)
-    del tmps
+                with open(infile, "rb") as fh:
+                    df = _collect_scalars(y=year, m=month, grib_file=fh)
 
-    print("\nProcessing winds...")
-    for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
-        u_file = DATA_DIR / f"10m_u_component_of_wind_{year}.grib"
-        v_file = DATA_DIR / f"10m_v_component_of_wind_{year}.grib"
-        for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
-            dirs_outfile = DATA_DIR / f"s2_wind_dirs_{year}-{month}.pq"
-            vels_outfile = DATA_DIR / f"s2_wind_vels_{year}-{month}.pq"
+                write_parquet(data=df, file=outfile)
+        del df
 
-            with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
-                dirs, vels = _collect_winds(
-                    y=year, m=month, grib_file_u=fh_u, grib_file_v=fh_v
-                )
+    if "waves" in vars:
+        print("\nProcessing waves...")
+        for year in years:
+            infile = (
+                DATA_DIR
+                / f"significant_height_of_combined_wind_waves_and_swell_{year}.grib"
+            )
+            for month in months:
+                outfile = DATA_DIR / f"s2_waves_{year}-{month}.pq"
 
-            write_parquet(data=dirs, file=dirs_outfile)
-            write_parquet(data=vels, file=vels_outfile)
-    del dirs, vels
+                with open(infile, "rb") as fh:
+                    df = _collect_scalars(y=year, m=month, grib_file=fh)
 
-    print("\nProcessing waves...")
-    for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
-        infile = (
-            DATA_DIR
-            / f"significant_height_of_combined_wind_waves_and_swell_{year}.grib"
-        )
-        for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
-            outfile = DATA_DIR / f"s2_waves_{year}-{month}.pq"
+                write_parquet(data=df, file=outfile)
+        del df
 
-            with open(infile, "rb") as fh:
-                waves = _collect_scalars(y=year, m=month, grib_file=fh)
+    if "seatmps" in vars:
+        print("\nProcessing seatmps...")
+        for year in years:
+            infile = DATA_DIR / f"sea_surface_temperature_{year}.grib"
+            for month in months:
+                outfile = DATA_DIR / f"s2_seatmps_{year}-{month}.pq"
 
-            write_parquet(data=waves, file=outfile)
-    del waves
+                with open(infile, "rb") as fh:
+                    df = _collect_scalars(y=year, m=month, grib_file=fh)
 
-    print("\nProcessing seatmps...")
-    for year in ALL_YEARS[:1] if IS_TEST else ALL_YEARS:
-        infile = DATA_DIR / f"sea_surface_temperature_{year}.grib"
-        for month in ALL_MONTHS[:1] if IS_TEST else ALL_MONTHS:
-            outfile = DATA_DIR / f"s2_seatmps_{year}-{month}.pq"
+                write_parquet(data=df, file=outfile)
+        del df
 
-            with open(infile, "rb") as fh:
-                seatmps = _collect_scalars(y=year, m=month, grib_file=fh)
+    if "winds" in vars:
+        print("\nProcessing winds...")
+        for year in years:
+            u_file = DATA_DIR / f"10m_u_component_of_wind_{year}.grib"
+            v_file = DATA_DIR / f"10m_v_component_of_wind_{year}.grib"
+            for month in months:
+                dirs_outfile = DATA_DIR / f"s2_wind_dirs_{year}-{month}.pq"
+                vels_outfile = DATA_DIR / f"s2_wind_vels_{year}-{month}.pq"
 
-            write_parquet(data=seatmps, file=outfile)
-    del seatmps
+                with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
+                    dirs, vels = _collect_winds(
+                        y=year, m=month, grib_file_u=fh_u, grib_file_v=fh_v
+                    )
+
+                write_parquet(data=dirs, file=dirs_outfile)
+                write_parquet(data=vels, file=vels_outfile)
+        del dirs, vels
+
+    if "drifts" in vars:
+        print("\nProcessing drifts...")
+        # TODO: implement
 
     print("done")
