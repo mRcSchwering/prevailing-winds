@@ -12,9 +12,6 @@ Sea surface temperatures: calculate daily max and min, calculate means and SDs o
     DATA_DIR=my/data/dir python s3_aggregate_data.py winds tmps
 
 """
-# TODO: this one needs slightly more than 16GB RAM for wind calculations
-#       thus it must run on a 32GB machine
-#       but after winds it only runs with <4GB, I should use multiproc then
 from typing import List
 from itertools import product
 import numpy as np  # type: ignore
@@ -76,8 +73,6 @@ def _calc_prec(years: List[int], months: List[int], label: str):
         df = read_parquet(DATA_DIR / f"s2_prec_{years[0]}-{month}.pq")
         index = df.index.copy()
 
-        # TODO: doublecheck
-
         sums = []
         for year in years:
             print(f"Year {year}-{month}...")
@@ -104,9 +99,8 @@ def _calc_winds(years: List[int], months: List[int], label: str):
     for month in months:
         dirs = read_parquet(DATA_DIR / f"s2_wind_dirs_{years[0]}-{month}.pq")
         index = dirs.index.copy()
+        del dirs
 
-        # TODO: maybe with np instead to reduce memory?
-        #       or list[list[]] or dict[list[]]
         counts = pd.DataFrame(0, index=index, columns=[f"{d}|{v}" for d, v in WINDS])
         for year in years:
             print(f"Year {year}-{month}...")
@@ -202,7 +196,7 @@ if __name__ == "__main__":
         all_months = ALL_MONTHS[:1]
         time_ranges = {str(THIS_YEAR): time_ranges[str(THIS_YEAR)]}
 
-    vars = ["rains", "tmps", "seatmps", "winds", "drifts", "waves"]
+    vars = ["rains", "tmps", "seatmps", "winds", "waves"]
     if len(ARGS) > 0:
         vars = [d for d in ARGS if d in vars]
 
@@ -230,10 +224,5 @@ if __name__ == "__main__":
         for label_, years_ in time_ranges.items():
             print(f"\nCreating waves {label_}...")
             _calc_waves(years=years_, months=all_months, label=label_)
-
-    if "drifts" in vars:
-        for label_, years_ in time_ranges.items():
-            print(f"\nCreating drifts {label_}...")
-            # TODO: implement
 
     print("\ndone")
