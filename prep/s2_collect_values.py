@@ -52,7 +52,7 @@ def _collect_scalars(y: int, m: int, grib_file: BinaryIO) -> pd.DataFrame:
 
 
 def _collect_vectors(
-    y: int, m: int, grib_file_u: BinaryIO, grib_file_v: BinaryIO
+    y: int, m: int, grib_file_u: BinaryIO, grib_file_v: BinaryIO, is_wind=True
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Calculate directions and velocities and collect in 2 DataFrames
@@ -86,7 +86,7 @@ def _collect_vectors(
         )
         df = df.groupby(["lon", "lat"]).mean()
         key = f"{time.day}-{randstr()}"  # same key = important
-        dirs_df = pd.DataFrame({key: direction(u=df["u"], v=df["v"])}, index=df.index)
+        dirs_df = pd.DataFrame({key: direction(u=df["u"], v=df["v"], is_wind=is_wind)}, index=df.index)
         vels_df = pd.DataFrame({key: velocity(u=df["u"], v=df["v"])}, index=df.index)
         dirs_dfs.append(dirs_df)
         vels_dfs.append(vels_df)
@@ -171,7 +171,7 @@ if __name__ == "__main__":
 
                 with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
                     dirs, vels = _collect_vectors(
-                        y=year, m=month, grib_file_u=fh_u, grib_file_v=fh_v
+                        y=year, m=month, grib_file_u=fh_u, grib_file_v=fh_v, is_wind=True
                     )
 
                 write_parquet(data=dirs, file=dirs_outfile)
@@ -189,7 +189,7 @@ if __name__ == "__main__":
 
                 with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
                     dirs, vels = _collect_vectors(
-                        y=year, m=month, grib_file_u=fh_u, grib_file_v=fh_v
+                        y=year, m=month, grib_file_u=fh_u, grib_file_v=fh_v, is_wind=False
                     )
 
                 write_parquet(data=dirs, file=dirs_outfile)

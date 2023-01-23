@@ -68,22 +68,26 @@ WAVES: List[dict] = [
 ]
 
 
-def direction(u: np.array, v: np.array) -> np.array:
+def direction(u: np.ndarray, v: np.ndarray, is_wind=True) -> np.ndarray:
     """
-    Get wind angle in degrees (direction where wind is comming from).
+    Get angle in degrees from u/v
     
-    u: eastwards - horizontal speed of air moving towards east
-    v: northward - horizontal speed of air moving towards north
+    u: eastwards - horizontal speed moving towards east
+    v: northward - horizontal speed moving towards north
+    is_wind: turn direction by 180 degrees (where wind is comming from)
     """
-    return (u > 0) * 180 + 90 - np.degrees(np.arctan(v / u))
+    u_ = u.copy()
+    u_[u_ == 0.0] = 1e-3
+    flip = u_ > 0 if is_wind else u_ < 0
+    return flip * 180 + 90 - np.degrees(np.arctan(v / u_))
 
 
-def velocity(u: np.array, v: np.array) -> np.array:
+def velocity(u: np.ndarray, v: np.ndarray) -> np.ndarray:
     """
-    Get wind speed in kt from u/v in m/s
+    Get speed in kt from u/v in m/s
     
-    u: eastwards - horizontal speed of air moving towards east
-    v: northward - horizontal speed of air moving towards north
+    u: eastwards - horizontal speed moving towards east
+    v: northward - horizontal speed moving towards north
     """
     return np.sqrt(u ** 2 + v ** 2) * 1.94384
 

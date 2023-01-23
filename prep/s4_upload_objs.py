@@ -30,6 +30,7 @@ def _get_df(filename: str) -> pd.DataFrame:
     return df
 
 
+# TODO: explicitly give prec...
 def _lat_lng_grid() -> Iterable:
     lngs = prec.index.get_level_values("lon").astype(int)
     lngs = list(range(lngs.min(), lngs.max() + 1))

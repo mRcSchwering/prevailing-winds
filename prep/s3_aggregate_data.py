@@ -25,15 +25,15 @@ from src.util import read_parquet, write_parquet, WIND_DIRS, WIND_VELS, WAVES
 WINDS = list(product((d["i"] for d in WIND_DIRS[:-1]), (d["i"] for d in WIND_VELS)))
 
 
-def _bin_wind_dirs(arr: np.array) -> np.array:
+def _bin_wind_dirs(arr: np.ndarray) -> np.ndarray:
     return np.digitize(arr, bins=[d["s"] for d in WIND_DIRS])
 
 
-def _bin_wind_vels(arr: np.array) -> np.array:
+def _bin_wind_vels(arr: np.ndarray) -> np.ndarray:
     return np.digitize(arr, bins=[d["s"] for d in WIND_VELS])
 
 
-def _bin_waves(arr: np.array) -> np.array:
+def _bin_waves(arr: np.ndarray) -> np.ndarray:
     binned = np.digitize(arr, bins=[d["s"] for d in WAVES])
     binned[np.isnan(arr)] = -1
     return binned
@@ -110,22 +110,25 @@ def _calc_winds(years: List[int], months: List[int], label: str):
         counts = pd.DataFrame(0, index=index, columns=[f"{d}|{v}" for d, v in WINDS])
         for year in years:
             print(f"Year {year}-{month}...")
+            
             dirs = read_parquet(DATA_DIR / f"s2_wind_dirs_{year}-{month}.pq")
+            assert index.equals(dirs.index)
+            cols = dirs.columns.copy()
+
+            dir_idxs = pd.DataFrame(_bin_wind_dirs(dirs), index=index, columns=cols, dtype=int)
+            dir_idxs.replace(to_replace=17, value=1, inplace=True)  # 17 was helper
+            del dirs
+
             vels = read_parquet(DATA_DIR / f"s2_wind_vels_{year}-{month}.pq")
+            assert index.equals(vels.index)
+            assert all(dir_idxs.columns == vels.columns)
+
+            vel_idxs = pd.DataFrame(_bin_wind_vels(vels), index=index, columns=cols, dtype=int)
+            del vels
 
             if IS_TEST:
-                dirs = dirs.iloc[:, :10]
-                vels = vels.iloc[:, :10]
-
-            assert all(dirs.columns == vels.columns)
-            assert index.equals(dirs.index) and index.equals(vels.index)
-            cols = dirs.columns
-
-            dir_idxs = pd.DataFrame(_bin_wind_dirs(dirs), index=index, columns=cols)
-            dir_idxs.replace(to_replace=17, value=1, inplace=True)  # 17 was helper
-            vel_idxs = pd.DataFrame(_bin_wind_vels(vels), index=index, columns=cols)
-            del dirs
-            del vels
+                dir_idxs = dir_idxs.iloc[:, :10]
+                vel_idxs = vel_idxs.iloc[:, :10]
 
             for col in cols:
                 strs = dir_idxs[col].astype(str) + "|" + vel_idxs[col].astype(str)
