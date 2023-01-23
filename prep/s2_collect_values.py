@@ -52,7 +52,7 @@ def _collect_scalars(y: int, m: int, grib_file: BinaryIO) -> pd.DataFrame:
 
 
 def _collect_vectors(
-    y: int, m: int, grib_file_u: BinaryIO, grib_file_v: BinaryIO, is_wind=True
+    y: int, m: int, grib_file_u: BinaryIO, grib_file_v: BinaryIO
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Calculate directions and velocities and collect in 2 DataFrames
@@ -86,7 +86,7 @@ def _collect_vectors(
         )
         df = df.groupby(["lon", "lat"]).mean()
         key = f"{time.day}-{randstr()}"  # same key = important
-        dirs_df = pd.DataFrame({key: direction(u=df["u"], v=df["v"], is_wind=is_wind)}, index=df.index)
+        dirs_df = pd.DataFrame({key: direction(u=df["u"], v=df["v"])}, index=df.index)
         vels_df = pd.DataFrame({key: velocity(u=df["u"], v=df["v"])}, index=df.index)
         dirs_dfs.append(dirs_df)
         vels_dfs.append(vels_df)
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         years = years[:1]
         months = months[:1]
 
-    vars = ["rains", "tmps", "seatmps", "winds", "drifts", "waves"]
+    vars = ["rains", "tmps", "seatmps", "winds", "waves"]
     if len(ARGS) > 0:
         vars = [d for d in ARGS if d in vars]
 
@@ -171,25 +171,7 @@ if __name__ == "__main__":
 
                 with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
                     dirs, vels = _collect_vectors(
-                        y=year, m=month, grib_file_u=fh_u, grib_file_v=fh_v, is_wind=True
-                    )
-
-                write_parquet(data=dirs, file=dirs_outfile)
-                write_parquet(data=vels, file=vels_outfile)
-        del dirs, vels
-
-    if "drifts" in vars:
-        print("\nProcessing drifts...")
-        for year in years:
-            u_file = DATA_DIR / f"u_component_stokes_drift_{year}.grib"
-            v_file = DATA_DIR / f"v_component_stokes_drift_{year}.grib"
-            for month in months:
-                dirs_outfile = DATA_DIR / f"s2_drift_dirs_{year}-{month}.pq"
-                vels_outfile = DATA_DIR / f"s2_drift_vels_{year}-{month}.pq"
-
-                with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
-                    dirs, vels = _collect_vectors(
-                        y=year, m=month, grib_file_u=fh_u, grib_file_v=fh_v, is_wind=False
+                        y=year, m=month, grib_file_u=fh_u, grib_file_v=fh_v
                     )
 
                 write_parquet(data=dirs, file=dirs_outfile)

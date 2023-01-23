@@ -19,8 +19,6 @@ if __name__ == "__main__":
         print("testrun")
 
     variables = [
-        "u_component_stokes_drift",
-        "v_component_stokes_drift",
         "10m_u_component_of_wind",
         "10m_v_component_of_wind",
         "2m_temperature",
