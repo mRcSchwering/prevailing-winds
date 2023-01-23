@@ -51,17 +51,6 @@ WIND_VELS: List[dict] = [
 ]
 
 
-# precipitation classes
-# binning with index "i", lower boundary "s"
-# in mm rain per hour, key "k"
-RAINS: List[dict] = [
-    {"i": 1, "k": "Dry", "s": 0.0},
-    {"i": 2, "k": "Light rain", "s": 0.1},
-    {"i": 3, "k": "Moderate rain", "s": 2.5},
-    {"i": 4, "k": "Heavy rain", "s": 7.6},
-    {"i": 5, "k": "Violent rain", "s": 50.0},
-]
-
 # Douglas scale of sea state
 # binning with index "i", lower boundary "s"
 # in m wave height, key "k", Douglas degree "d"

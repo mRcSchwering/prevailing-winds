@@ -6,10 +6,8 @@ I have to be careful not to fill up my RAM.
 Data for each month-year for all coordinates is collected in a
 DataFrame which is written as a parquet file.
 Column names in that DataFrame contain the day of the month (<day>-<hash>).
-Set `DATA_DIR` and run directly.
-`test` only runs 1 year, 1 month.
 
-    DATA_DIR=my/data/dir IS_TEST python s2_collect_values.py
+    DATA_DIR=my/data/dir IS_TEST=1 python s2_collect_values.py
     DATA_DIR=my/data/dir python s2_collect_values.py
     DATA_DIR=my/data/dir python s2_collect_values.py winds tmps
 
@@ -37,11 +35,6 @@ def _collect_scalars(y: int, m: int, grib_file: BinaryIO) -> pd.DataFrame:
         if time.year != y or time.month != m:
             continue
 
-        # TODO: this hack should be unnecessary by now
-        # hack because issue: https://gitlab.com/gorilladev/pupygrib/-/issues/1
-        # bm = np.frombuffer(msg.bitmap.buf, dtype="u1", offset=6)  # type: ignore
-        # msg.bitmap.bitmap = np.unpackbits(bm)  # type: ignore
-
         lons, lats = msg.get_coordinates()
         values = msg.get_values()
         assert lats.shape == values.shape == lons.shape
@@ -58,10 +51,7 @@ def _collect_scalars(y: int, m: int, grib_file: BinaryIO) -> pd.DataFrame:
     return pd.concat(dfs, axis=1)
 
 
-# TODO: looks same for u/v components of stokes drift
-
-
-def _collect_winds(
+def _collect_vectors(
     y: int, m: int, grib_file_u: BinaryIO, grib_file_v: BinaryIO
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
@@ -180,7 +170,7 @@ if __name__ == "__main__":
                 vels_outfile = DATA_DIR / f"s2_wind_vels_{year}-{month}.pq"
 
                 with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
-                    dirs, vels = _collect_winds(
+                    dirs, vels = _collect_vectors(
                         y=year, m=month, grib_file_u=fh_u, grib_file_v=fh_v
                     )
 
@@ -190,6 +180,20 @@ if __name__ == "__main__":
 
     if "drifts" in vars:
         print("\nProcessing drifts...")
-        # TODO: implement
+        for year in years:
+            u_file = DATA_DIR / f"u_component_stokes_drift_{year}.grib"
+            v_file = DATA_DIR / f"v_component_stokes_drift_{year}.grib"
+            for month in months:
+                dirs_outfile = DATA_DIR / f"s2_drift_dirs_{year}-{month}.pq"
+                vels_outfile = DATA_DIR / f"s2_drift_vels_{year}-{month}.pq"
+
+                with open(u_file, "rb") as fh_u, open(v_file, "rb") as fh_v:
+                    dirs, vels = _collect_vectors(
+                        y=year, m=month, grib_file_u=fh_u, grib_file_v=fh_v
+                    )
+
+                write_parquet(data=dirs, file=dirs_outfile)
+                write_parquet(data=vels, file=vels_outfile)
+        del dirs, vels
 
     print("done")

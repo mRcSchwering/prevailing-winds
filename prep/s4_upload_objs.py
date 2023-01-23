@@ -9,7 +9,7 @@ That's 1.2M objects.
 Vanilla 2 time ranges, 1 month, 100 records: 18s => 30h
 Subroutines 2 time ranges, 1 month, 100 records: 7s => 12h
 
-    DATA_DIR=my/data/dir IS_TEST python s4_upload_objs.py
+    DATA_DIR=my/data/dir IS_TEST=1 python s4_upload_objs.py
     DATA_DIR=my/data/dir python s4_upload_objs.py
 
 """

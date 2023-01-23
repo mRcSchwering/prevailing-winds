@@ -1,13 +1,10 @@
 """
 Download hourly historic wind data from cds.climate.copernicus.eu
 
-Edit `DATA_DIR` and run directly.
 Need to have `.cdsapirc` configured with token.
-This can run for really long because each file needs to get approved first
-(which can take several hours).
-Add pos arg `test` for a test run.
+Careful, this can be > 100GB.
 
-    DATA_DIR=my/data/dir IS_TEST python s1_download_data.py
+    DATA_DIR=my/data/dir IS_TEST=1 python s1_download_data.py
     DATA_DIR=my/data/dir python s1_download_data.py
     DATA_DIR=my/data/dir python s1_download_data.py 2022 2021
 

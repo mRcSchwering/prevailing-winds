@@ -6,9 +6,8 @@ Precipitation: bin precipitation, value counts for bins
 Temperatures: calculate daily max and min, calculate means and SDs of these
 Waves: bin height, value counts for bins
 Sea surface temperatures: calculate daily max and min, calculate means and SDs of these
-Set `DATA_DIR` and `test` to try out.
     
-    DATA_DIR=my/data/dir IS_TEST python s3_aggregate_data.py
+    DATA_DIR=my/data/dir IS_TEST=1 python s3_aggregate_data.py
     DATA_DIR=my/data/dir python s3_aggregate_data.py
     DATA_DIR=my/data/dir python s3_aggregate_data.py winds tmps
 
@@ -21,7 +20,7 @@ from itertools import product
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 from src.config import IS_TEST, DATA_DIR, TIME_RANGES, ALL_MONTHS, THIS_YEAR, ARGS
-from src.util import read_parquet, write_parquet, WIND_DIRS, WIND_VELS, RAINS, WAVES
+from src.util import read_parquet, write_parquet, WIND_DIRS, WIND_VELS, WAVES
 
 WINDS = list(product((d["i"] for d in WIND_DIRS[:-1]), (d["i"] for d in WIND_VELS)))
 
@@ -32,10 +31,6 @@ def _bin_wind_dirs(arr: np.array) -> np.array:
 
 def _bin_wind_vels(arr: np.array) -> np.array:
     return np.digitize(arr, bins=[d["s"] for d in WIND_VELS])
-
-
-def _bin_rain(arr: np.array) -> np.array:
-    return np.digitize(arr, bins=[d["s"] for d in RAINS])
 
 
 def _bin_waves(arr: np.array) -> np.array:
@@ -77,29 +72,31 @@ def _calc_tmps(years: List[int], months: List[int], label: str):
 
 
 def _calc_prec(years: List[int], months: List[int], label: str):
-    max_i = max(d["i"] for d in RAINS)
     for month in months:
         df = read_parquet(DATA_DIR / f"s2_prec_{years[0]}-{month}.pq")
         index = df.index.copy()
 
-        # TODO: just sum up precipitation
-        #       eventually I just want the average daily and average monthly rain
+        # TODO: doublecheck
 
-        bins = []
+        sums = []
         for year in years:
             print(f"Year {year}-{month}...")
             df = read_parquet(DATA_DIR / f"s2_prec_{year}-{month}.pq")
             assert df.index.equals(index)
-            bins.append(_bin_rain(df * 1000))  # convert m to mm
+            
+            days = set(d.split("-")[0] for d in df.columns)
+            for day in days:
+                cols = [d for d in df.columns if d.split("-")[0] == day]
+                sums.append(df[cols].sum(axis=1).to_numpy() * 1000) # m to mm
 
-        counts = np.apply_along_axis(
-            lambda d: np.bincount(d, minlength=max_i + 1),
-            axis=1,
-            arr=np.concatenate(bins, axis=1),
+        sums_arr = np.stack(sums, axis=1)
+        df = pd.DataFrame(
+            {
+                "daily_mean": np.mean(sums_arr, axis=1),
+                "daily_std": np.std(sums_arr, axis=1),
+            },
+            index=df.index,
         )
-
-        df = pd.DataFrame(counts, index=index)
-        df.drop(columns=0, inplace=True)
         write_parquet(data=df, file=DATA_DIR / f"s3_prec_{label}_{month}.pq")
 
 
