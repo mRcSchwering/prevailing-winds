@@ -19,7 +19,7 @@ import pandas as pd
 import eventlet  # type: ignore
 
 eventlet.monkey_patch()
-from src.config import IS_TEST, DATA_DIR, TIME_RANGES, ALL_MONTHS, VERSION_PREFIX, THIS_YEAR
+from src.config import IS_TEST, DATA_DIR, TIME_RANGES, ALL_MONTHS, VERSION_PREFIX, THIS_YEAR, ARGS
 from src.util import read_parquet
 import src.s3 as s3
 
@@ -30,11 +30,10 @@ def _get_df(filename: str) -> pd.DataFrame:
     return df
 
 
-# TODO: explicitly give prec...
-def _lat_lng_grid() -> Iterable:
-    lngs = prec.index.get_level_values("lon").astype(int)
+def _lat_lng_grid(idx: pd.Index) -> Iterable:
+    lngs = idx.get_level_values("lon").astype(int)
     lngs = list(range(lngs.min(), lngs.max() + 1))
-    lats = prec.index.get_level_values("lat").astype(int)
+    lats = idx.get_level_values("lat").astype(int)
     lats = list(range(lats.min(), lats.max()))  # ignore lat=70.00
     return product(lngs, lats)
 
@@ -47,6 +46,9 @@ def _qrtr_mile_grid() -> Iterable:
 if __name__ == "__main__":
     months = ALL_MONTHS
     time_ranges = TIME_RANGES
+    if len(ARGS) > 0:
+        time_ranges = {d: time_ranges[d] for d in ARGS}
+
     if IS_TEST:
         months = months[:1]
         time_ranges = {str(THIS_YEAR): time_ranges[str(THIS_YEAR)]}
@@ -81,11 +83,19 @@ if __name__ == "__main__":
                 },
                 inplace=True,
             )
+            prec.rename(
+                columns={
+                    "daily_mean": "dailyMean",
+                    "daily_std": "dailyStd"
+                },
+                inplace=True
+            )
 
             assert prec.index.equals(tmps.index)
             assert tmps.index.equals(winds.index)
+            grid = _lat_lng_grid(idx=prec.index)
 
-            for i, (lng_base, lat_base) in enumerate(_lat_lng_grid()):
+            for i, (lng_base, lat_base) in enumerate(grid):
                 if IS_TEST and i > 100:
                     break
 

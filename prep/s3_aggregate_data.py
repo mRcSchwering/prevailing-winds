@@ -6,6 +6,7 @@ Precipitation: bin precipitation, value counts for bins
 Temperatures: calculate daily max and min, calculate means and SDs of these
 Waves: bin height, value counts for bins
 Sea surface temperatures: calculate daily max and min, calculate means and SDs of these
+Careful, this can take a few hours and uses >10GB RAM.
     
     DATA_DIR=my/data/dir IS_TEST=1 python s3_aggregate_data.py
     DATA_DIR=my/data/dir python s3_aggregate_data.py
@@ -96,12 +97,13 @@ def _calc_prec(years: List[int], months: List[int], label: str):
 
 
 def _calc_winds(years: List[int], months: List[int], label: str):
+    windstrs = [f"{d}|{v}" for d, v in WINDS]
     for month in months:
         dirs = read_parquet(DATA_DIR / f"s2_wind_dirs_{years[0]}-{month}.pq")
         index = dirs.index.copy()
         del dirs
 
-        counts = pd.DataFrame(0, index=index, columns=[f"{d}|{v}" for d, v in WINDS])
+        C = np.zeros((len(index), len(WINDS)), dtype=int)        
         for year in years:
             print(f"Year {year}-{month}...")
             
@@ -109,28 +111,23 @@ def _calc_winds(years: List[int], months: List[int], label: str):
             assert index.equals(dirs.index)
             cols = dirs.columns.copy()
 
-            dir_idxs = pd.DataFrame(_bin_wind_dirs(dirs), index=index, columns=cols, dtype=int)
-            dir_idxs.replace(to_replace=17, value=1, inplace=True)  # 17 was helper
+            D = _bin_wind_dirs(dirs)
+            D[D == 17] = 1  # 17 was helper
             del dirs
 
             vels = read_parquet(DATA_DIR / f"s2_wind_vels_{year}-{month}.pq")
             assert index.equals(vels.index)
-            assert all(dir_idxs.columns == vels.columns)
+            assert all(cols == vels.columns)
 
-            vel_idxs = pd.DataFrame(_bin_wind_vels(vels), index=index, columns=cols, dtype=int)
+            V = _bin_wind_vels(vels)
             del vels
 
-            if IS_TEST:
-                dir_idxs = dir_idxs.iloc[:, :10]
-                vel_idxs = vel_idxs.iloc[:, :10]
+            for ci, (dr, vl) in enumerate(WINDS):
+                C[:, ci] += np.sum((D == dr) & (V == vl), axis=1)
 
-            for col in cols:
-                strs = dir_idxs[col].astype(str) + "|" + vel_idxs[col].astype(str)
-                for wind in strs.unique():
-                    rows = strs.where(strs == wind).dropna().index
-                    counts.loc[rows, wind] += 1
-
+        counts = pd.DataFrame(C, index=index, columns=windstrs)
         write_parquet(data=counts, file=DATA_DIR / f"s3_winds_{label}_{month}.pq")
+        del counts, C
 
 
 def _calc_waves(years: List[int], months: List[int], label: str):
