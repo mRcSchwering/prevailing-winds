@@ -83,7 +83,7 @@ export default function AboutPage(): JSX.Element {
           dataset is a ECMWF reanalysis which holds hourly data of a lot of
           variables like wind, pressure, temperature. Winds were regridded to a
           regular lat-lon grid of 0.25 degrees. To reduce the download sizes I
-          only took every 3rd hour (00:00, 03:00, 06:00, ...) of years 2017-2021
+          only took every 3rd hour (00:00, 03:00, 06:00, ...) of years 2018-2022
           and exluded 20° from the poles (70°S to 70°N). For details about data
           preparation see {dataprepLink}. When you select an area on the map you
           always see aggregated data for this particular area, month, and years.
