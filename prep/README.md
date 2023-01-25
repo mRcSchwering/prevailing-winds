@@ -14,8 +14,8 @@ Last year's data would give a very recent reading.
 Last 10 year's data would give a more robust reading.
 Currently I have:
 
-- each month over year 2021
-- each month over years 2017-2021
+- each month over year 2022
+- each month over years 2018-2022
 
 **Winds**
 Winds are given in _u_ and _v_ vectors in m/s where _u_ describes the component blowing eastwards and _v_ describes the component blowing northwards.
@@ -33,8 +33,7 @@ For each time range I extracted daily high and low temperatures, then calculated
 Total precipitation is given in m (over the grid area if the water would spread evenly).
 This includes liquid and frozen water from large-scale and convective precipitation.
 "This parameter does not include fog, dew or the precipitation that evaporates in the atmosphere before it lands at the surface of the Earth."
-I used the [rain intensity scale on wikipedia](https://en.wikipedia.org/wiki/Rain#Intensity) to bin precipitations.
-Then, for each time range I counted all rain inensities.
+I sum up all precipitation over each day and report daily averages.
 
 **Sea surface temperature**
 This is the water temperature near sea surface given in Kelvin.

@@ -85,6 +85,10 @@ def _calc_prec(years: List[int], months: List[int], label: str):
                 cols = [d for d in df.columns if d.split("-")[0] == day]
                 sums.append(df[cols].sum(axis=1).to_numpy() * 1000) # m to mm
 
+        # TODO: this is actually only a 3rd of the daily mean, since in the download
+        #       only every 3rd hour was downloaded. This means I need to multiply
+        #       means by 3. Currently, this fix is done in the frontend (SummaryView)
+
         sums_arr = np.stack(sums, axis=1)
         df = pd.DataFrame(
             {
