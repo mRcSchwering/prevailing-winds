@@ -25,8 +25,8 @@ CORS_ALLOW_ORIGIN = "*"
 EMERGENCY_BREAK = 100
 
 # check which are already prepared
-VERSION_PREFIX = "v3"
-TIME_RANGES = ("2017-2021", "2021")
+VERSION_PREFIX = "v4"
+TIME_RANGES = ("2018-2022", "2022")
 
 MONTHS = {
     "Jan": 1,
@@ -155,16 +155,6 @@ WIND_VELS = [
     },
 ]
 WIND_VEL_IDXS = [str(d["idx"]) for d in WIND_VELS]
-
-
-# precipitation intensities
-RAINS = [
-    {"idx": 1, "name": "Dry", "fromMm": "0", "toMm": "0.1"},
-    {"idx": 2, "name": "Light rain", "fromMm": "0.1", "toMm": "2.5"},
-    {"idx": 3, "name": "Moderate rain", "fromMm": "2.5", "toMm": "7.6"},
-    {"idx": 4, "name": "Heavy rain", "fromMm": "7.6", "toMm": "50.0"},
-    {"idx": 5, "name": "Violent rain", "fromMm": "50.0"},
-]
 
 
 # Douglas scale of sea state

@@ -11,7 +11,6 @@ from src.config import (
     WIND_VELS,
     WIND_VEL_IDXS,
     EMERGENCY_BREAK,
-    RAINS,
     WAVES,
 )
 import src.s3 as s3
@@ -30,7 +29,6 @@ def resolve_meta(*_, **unused):
         "months": MONTH_NAMES,
         "windDirections": WIND_DIRS,
         "windVelocities": WIND_VELS,
-        "precIntensities": RAINS,
         "waveHeights": WAVES,
     }
 
@@ -58,8 +56,8 @@ def resolve_weather(*_, **kwargs):
         )
 
     winds = {(d, v): 0 for d, v in product(WIND_DIR_IDXS, WIND_VEL_IDXS)}
-    prec = {str(d["idx"]): 0 for d in RAINS}
     waves = {str(d["idx"]): 0 for d in WAVES}
+    prec = []
     tmps = []
     seatmps = []
     for lat, lng in product(lats_map, lngs_map):
@@ -67,10 +65,9 @@ def resolve_weather(*_, **kwargs):
         for pos in product(lats_map[lat], lngs_map[lng]):
             data = obj[pos]
             tmps.append(data["tmps"])
+            prec.append(data["prec"])
             for key, count in data["winds"].items():
                 winds[key] += count
-            for key, count in data["prec"].items():
-                prec[key] += count
             if "seatmps" in data:
                 seatmps.append(data["seatmps"])
             if "waves" in data:
@@ -81,7 +78,7 @@ def resolve_weather(*_, **kwargs):
         "windRecords": [
             {"dir": k[0], "vel": k[1], "count": d} for k, d in winds.items()
         ],
-        "precRecords": [{"amt": k, "count": d} for k, d in prec.items()],
+        "precRecords": prec,
         "tmpRecords": tmps,
         "seatmpRecords": seatmps,
         "waveRecords": [{"height": k, "count": d} for k, d in waves.items()],

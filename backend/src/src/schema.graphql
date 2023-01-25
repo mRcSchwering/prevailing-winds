@@ -13,7 +13,6 @@ type Meta {
   months: [String!]!
   windDirections: [WindDirection!]!
   windVelocities: [WindVelocity!]!
-  precIntensities: [PrecIntensity!]!
   waveHeights: [WaveHeight!]!
 }
 
@@ -51,18 +50,7 @@ type WindDirection {
 }
 
 """
-Precipitation intensity with name.
-From/to mm are half-closed intervals.
-"""
-type PrecIntensity {
-  idx: Int!
-  name: String!
-  fromMm: String
-  toMm: String
-}
-
-"""
-**timeRange** one of ("2020", "2016-2020")
+**timeRange** one of ("2022", "2018-2022")
 **month** in 3 letters (_e.g._ "Jan")
 **from/to lat/lng** considering only lats [-70;70)
 """
@@ -108,12 +96,11 @@ type WaveRecord {
 }
 
 """
-Describes how many times a certain precipitation
-was counted. See **Meta** for indexes.
+Describes total daily rain in mm.
 """
 type PrecRecord {
-  amt: Int!
-  count: Int!
+  dailyMean: Float!
+  dailyStd: Float!
 }
 
 """

@@ -18,12 +18,6 @@ const META_QUERY = gql`
         fromKt
         toKt
       }
-      precIntensities {
-        idx
-        name
-        fromMm
-        toMm
-      }
       waveHeights {
         idx
         douglasName
@@ -71,8 +65,8 @@ const WEATHER_QUERY = gql`
         count
       }
       precRecords {
-        amt
-        count
+        dailyMean
+        dailyStd
       }
       tmpRecords {
         highMean

@@ -1,5 +1,6 @@
 // added using https://www.graphql-code-generator.com/
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
 };
@@ -36,7 +37,6 @@ export type Meta = {
   months: Array<Scalars["String"]>;
   windDirections: Array<WindDirection>;
   windVelocities: Array<WindVelocity>;
-  precIntensities: Array<PrecIntensity>;
   waveHeights: Array<WaveHeight>;
 };
 
@@ -63,14 +63,6 @@ export type WindDirection = {
   idx: Scalars["Int"];
   name: Scalars["String"];
   angle: Scalars["Float"];
-};
-
-export type PrecIntensity = {
-  __typename?: "PrecIntensity";
-  idx: Scalars["Int"];
-  name: Scalars["String"];
-  fromMm?: Maybe<Scalars["String"]>;
-  toMm?: Maybe<Scalars["String"]>;
 };
 
 export type WeatherInput = {
@@ -106,8 +98,8 @@ export type WaveRecord = {
 
 export type PrecRecord = {
   __typename?: "PrecRecord";
-  amt: Scalars["Int"];
-  count: Scalars["Int"];
+  dailyMean: Scalars["Float"];
+  dailyStd: Scalars["Float"];
 };
 
 export type TmpRecord = {

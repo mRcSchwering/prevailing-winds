@@ -14,7 +14,7 @@ import {
   TmpRecord,
   WeatherResult,
 } from "./types";
-import { windBins, rainBins, waveBins } from "./constants";
+import { windBins, waveBins } from "./constants";
 import {
   getMean,
   getStdMean,
@@ -72,26 +72,19 @@ function AirTmps(props: { tmps: TmpRecord[] }): JSX.Element {
 }
 
 function Rain(props: { rains: PrecRecord[] }): JSX.Element {
-  const rainBinSums = rainBins.map((bin) => {
-    const cnts = props.rains
-      .filter((d) => d.amt === bin.idx)
-      .map((d) => d.count);
-    return cnts.length > 0 ? cnts.reduce((a, b) => a + b) : 0;
-  });
+  // TODO: data had only every 3rd hour, so every daily record
+  //       is actually only a 3rd of daily mm rain
+  //       I should do this correction during preparation!
+  const dailyRains = props.rains.map((d) => d.dailyMean * 3);
 
-  const totalRain = rainBinSums.reduce((a, b) => a + b);
-  const aveRainMm = rainBins.map((bin, i) => {
-    const freq = rainBinSums[i] > 0 ? rainBinSums[i] / totalRain : 0;
-    return freq * bin.avgMm;
-  });
+  const dailySum = dailyRains.reduce((a, b) => a + b);
+  const avgDailyRain = dailySum / dailyRains.length;
+  const avgMonthlyRain = avgDailyRain * 30;
 
-  const dailyRain = aveRainMm.reduce((a, b) => a + b) * 24;
-  const monthlyRain = dailyRain * 30;
-
-  const dailyRainMmFmtd = fmtMm(dailyRain);
-  const monthlyRainMmFmtd = fmtMm(monthlyRain);
-  const dailyRainInFmtd = fmtIn(mm2inch(dailyRain));
-  const monthlyRainInFmtd = fmtIn(mm2inch(monthlyRain));
+  const dailyRainMmFmtd = fmtMm(avgDailyRain);
+  const monthlyRainMmFmtd = fmtMm(avgMonthlyRain);
+  const dailyRainInFmtd = fmtIn(mm2inch(avgDailyRain));
+  const monthlyRainInFmtd = fmtIn(mm2inch(avgMonthlyRain));
 
   return (
     <Tooltip

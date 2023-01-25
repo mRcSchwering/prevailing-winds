@@ -185,32 +185,3 @@ export const waveBins: WaveBinType[] = [
     color: COLORS.lightPurpleBlue,
   },
 ];
-
-export type RainBinType = {
-  idx: number;
-  avgMm: number;
-};
-
-// pos 0 will be left out in summary (should be "no rain")
-export const rainBins: RainBinType[] = [
-  {
-    idx: 1,
-    avgMm: 0,
-  },
-  {
-    idx: 2,
-    avgMm: 1.3,
-  },
-  {
-    idx: 3,
-    avgMm: 5,
-  },
-  {
-    idx: 4,
-    avgMm: 28,
-  },
-  {
-    idx: 5,
-    avgMm: 50,
-  },
-];
