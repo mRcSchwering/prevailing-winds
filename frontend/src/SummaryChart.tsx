@@ -123,7 +123,9 @@ function Wind(props: {
     };
   });
 
-  const windsSrtd = winds.sort((a, b) => (a.freq > b.freq ? -1 : 1));
+  let windsSrtd = winds;
+  if (totalWind > 0)
+    windsSrtd = winds.sort((a, b) => (a.freq > b.freq ? -1 : 1));
 
   const wind1 = windsSrtd[0];
   const ktRange1 = fmtKtRange(wind1.minKt, wind1.maxKt);
@@ -182,14 +184,15 @@ function Water(props: {
       .map((d) => d.count);
     const cnt = cnts.length > 0 ? cnts.reduce((a, b) => a + b) : 0;
     return {
-      freq: cnt > 0 ? cnt / totalWaves : 0,
+      freq: totalWaves > 0 ? cnt / totalWaves : 0,
       dgs: bin.dgs,
       maxM: bin.maxM,
       minM: bin.minM,
     };
   });
 
-  const wavesSrtd = waves.sort((a, b) => (a.freq > b.freq ? -1 : 1));
+  let wavesSrtd = waves;
+  if (totalWaves > 0) waves.sort((a, b) => (a.freq > b.freq ? -1 : 1));
 
   const wave1 = wavesSrtd[0];
   const avgWave1Fmtd = fmtAvgWaveHeight(wave1.minM, wave1.maxM);
