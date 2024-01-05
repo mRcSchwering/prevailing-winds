@@ -6,7 +6,7 @@ This dataset is a ECMWF reanalysis which holds hourly data of a lot of variables
 Data points were regridded to a regular lat-lon grid of 0.25 degrees.
 To reduce the download sizes I only took every 3rd hour (00:00, 03:00, 06:00, ...) and exluded 20° from the poles (70°S to 70°N).
 
-> last download 23.01.2023
+> last download 03.01.2024
 
 I aggregated data into certain time ranges.
 Usually, I am interested in a certain month of a year.
