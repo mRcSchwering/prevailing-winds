@@ -1,7 +1,7 @@
 """
 Writing to S3
 """
-from typing import Any
+from typing import Any, List
 import pickle
 import boto3  # type: ignore
 
@@ -21,3 +21,15 @@ def put_obj(key: str, obj: Any):
         Bucket=_CONTENT_BUCKET_NAME, Key=key, Body=pickle.dumps(obj)
     )
     assert res["ResponseMetadata"]["HTTPStatusCode"] == 200
+
+
+def ls_obj_keys(prefix: str) -> List[str]:
+    s3_paginator = _CLIENT.get_paginator("list_objects_v2")
+    keys = []
+    for page in s3_paginator.paginate(
+        Bucket=_CONTENT_BUCKET_NAME, Prefix=prefix, StartAfter=prefix
+    ):
+        assert page["ResponseMetadata"]["HTTPStatusCode"] == 200
+        for content in page.get("Contents", ()):
+            keys.append(content["Key"])
+    return keys

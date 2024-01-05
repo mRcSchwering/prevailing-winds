@@ -79,20 +79,17 @@ def _calc_prec(years: List[int], months: List[int], label: str):
             print(f"Year {year}-{month}...")
             df = read_parquet(DATA_DIR / f"s2_prec_{year}-{month}.pq")
             assert df.index.equals(index)
-            
+
             days = set(d.split("-")[0] for d in df.columns)
             for day in days:
                 cols = [d for d in df.columns if d.split("-")[0] == day]
-                sums.append(df[cols].sum(axis=1).to_numpy() * 1000) # m to mm
+                sums.append(df[cols].sum(axis=1).to_numpy() * 1000)  # m to mm
 
-        # TODO: this is actually only a 3rd of the daily mean, since in the download
-        #       only every 3rd hour was downloaded. This means I need to multiply
-        #       means by 3. Currently, this fix is done in the frontend (SummaryView)
-
+        # the sums were only of every 3rd hour
         sums_arr = np.stack(sums, axis=1)
         df = pd.DataFrame(
             {
-                "daily_mean": np.mean(sums_arr, axis=1),
+                "daily_mean": np.mean(sums_arr, axis=1) * 3,
                 "daily_std": np.std(sums_arr, axis=1),
             },
             index=df.index,
@@ -107,10 +104,10 @@ def _calc_winds(years: List[int], months: List[int], label: str):
         index = dirs.index.copy()
         del dirs
 
-        C = np.zeros((len(index), len(WINDS)), dtype=int)        
+        C = np.zeros((len(index), len(WINDS)), dtype=int)
         for year in years:
             print(f"Year {year}-{month}...")
-            
+
             dirs = read_parquet(DATA_DIR / f"s2_wind_dirs_{year}-{month}.pq")
             assert index.equals(dirs.index)
             cols = dirs.columns.copy()
@@ -195,7 +192,7 @@ if __name__ == "__main__":
     time_ranges = TIME_RANGES
     if IS_TEST:
         all_months = ALL_MONTHS[:1]
-        time_ranges = {str(THIS_YEAR): time_ranges[str(THIS_YEAR)]}
+        time_ranges = {str(THIS_YEAR - 1): time_ranges[str(THIS_YEAR - 1)]}
 
     vars = ["rains", "tmps", "seatmps", "winds", "waves"]
     if len(ARGS) > 0:

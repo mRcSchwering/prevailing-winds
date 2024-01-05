@@ -50,4 +50,5 @@ For each time range I counted wave heights.
 - [s1_download_data.py](./s1_download_data.py) download all necessary grib files
 - [s2_collect_values.py](./s2_collect_values.py) collect relevant records from grib files
 - [s3_aggregate_data.py](./s3_aggregate_data.py) aggregate data over time ranges
-- [s4_upload_objs.py](./s4_upload_objs.py) upload objects to s3 bucket
+- [s4_upload_objs.py](./s4_upload_objs.py) upload objects to s3 bucket (set API prefix first)
+- [s5_check_upload.py](./s5_check_upload.py) to check if everything was uploaded

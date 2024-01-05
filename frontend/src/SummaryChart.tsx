@@ -72,10 +72,7 @@ function AirTmps(props: { tmps: TmpRecord[] }): JSX.Element {
 }
 
 function Rain(props: { rains: PrecRecord[] }): JSX.Element {
-  // TODO: data had only every 3rd hour, so every daily record
-  //       is actually only a 3rd of daily mm rain
-  //       I should do this correction during preparation!
-  const dailyRains = props.rains.map((d) => d.dailyMean * 3);
+  const dailyRains = props.rains.map((d) => d.dailyMean);
 
   const dailySum = dailyRains.reduce((a, b) => a + b);
   const avgDailyRain = dailySum / dailyRains.length;

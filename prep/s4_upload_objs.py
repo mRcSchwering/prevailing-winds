@@ -8,18 +8,30 @@ I reduce the amount of objects by binning them to full lat-lng minutes.
 That's 1.2M objects.
 Vanilla 2 time ranges, 1 month, 100 records: 18s => 30h
 Subroutines 2 time ranges, 1 month, 100 records: 7s => 12h
+with 2 processes in 6h
 
     DATA_DIR=my/data/dir IS_TEST=1 python s4_upload_objs.py
     DATA_DIR=my/data/dir python s4_upload_objs.py
+    DATA_DIR=my/data/dir python s4_upload_objs.py 'v5/2023/7/17/-32/data.pkl' 'v5/2019-2023/5/-65/-16/data.pkl'
 
+Single keys can be given to only upload single objects
 """
 from typing import Iterable
 from itertools import product
+import multiprocessing as ms
 import pandas as pd
 import eventlet  # type: ignore
 
-eventlet.monkey_patch()
-from src.config import IS_TEST, DATA_DIR, TIME_RANGES, ALL_MONTHS, VERSION_PREFIX, THIS_YEAR, ARGS
+eventlet.monkey_patch(thread=False, socket=False)
+from src.config import (
+    IS_TEST,
+    DATA_DIR,
+    TIME_RANGES,
+    ALL_MONTHS,
+    VERSION_PREFIX,
+    THIS_YEAR,
+    ARGS,
+)
 from src.util import read_parquet
 import src.s3 as s3
 
@@ -44,19 +56,22 @@ def _qrtr_mile_grid() -> Iterable:
 
 
 if __name__ == "__main__":
+    keys = []
     months = ALL_MONTHS
     time_ranges = TIME_RANGES
+
     if len(ARGS) > 0:
-        time_ranges = {d: time_ranges[d] for d in ARGS}
+        keys = list(ARGS)
 
     if IS_TEST:
         months = months[:1]
-        time_ranges = {str(THIS_YEAR): time_ranges[str(THIS_YEAR)]}
+        time_ranges = {str(THIS_YEAR - 1): time_ranges[str(THIS_YEAR - 1)]}
 
     for time_range in time_ranges:
-        for month in months:
+
+        def process_month(month: int):
             print(f"Processing {time_range}/{month}...")
-            pool = eventlet.GreenPool(200)
+            green_pool = eventlet.GreenPool(200)
 
             prec = _get_df(filename=f"s3_prec_{time_range}_{month}.pq")
             tmps = _get_df(filename=f"s3_tmps_{time_range}_{month}.pq")
@@ -84,11 +99,8 @@ if __name__ == "__main__":
                 inplace=True,
             )
             prec.rename(
-                columns={
-                    "daily_mean": "dailyMean",
-                    "daily_std": "dailyStd"
-                },
-                inplace=True
+                columns={"daily_mean": "dailyMean", "daily_std": "dailyStd"},
+                inplace=True,
             )
 
             assert prec.index.equals(tmps.index)
@@ -96,8 +108,11 @@ if __name__ == "__main__":
             grid = _lat_lng_grid(idx=prec.index)
 
             for i, (lng_base, lat_base) in enumerate(grid):
+                key = f"{VERSION_PREFIX}/{time_range}/{month}/{lat_base:d}/{lng_base:d}/data.pkl"
                 if IS_TEST and i > 100:
                     break
+                if len(keys) > 0 and key not in keys:
+                    continue
 
                 data = {}
                 for lat_add, lng_add in _qrtr_mile_grid():
@@ -120,8 +135,10 @@ if __name__ == "__main__":
 
                     data[(lat, lng)] = values
 
-                key = f"{VERSION_PREFIX}/{time_range}/{month}/{lat_base:d}/{lng_base:d}/data.pkl"
-                pool.spawn_n(s3.put_obj, key, data)
-            pool.waitall()
+                green_pool.spawn_n(s3.put_obj, key, data)
+            green_pool.waitall()
+
+        with ms.Pool(2) as mp_pool:
+            mp_pool.map(process_month, months)
 
     print("\ndone")

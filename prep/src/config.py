@@ -15,6 +15,6 @@ TIME_RANGES = {
 }
 
 ARGS = sys.argv[1:]
-VERSION_PREFIX = "v4"
+VERSION_PREFIX = "v5"
 IS_TEST = "IS_TEST" in os.environ
 DATA_DIR = Path(os.environ.get("DATA_DIR", "data/tmp"))

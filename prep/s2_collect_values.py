@@ -18,6 +18,7 @@ Column names in that DataFrame contain the day of the month (<day>-<hash>).
 - there are missing values
 """
 from typing import BinaryIO, Tuple
+import multiprocessing as mp
 import pupygrib
 import pandas as pd  # type: ignore
 from src.util import velocity, direction, randstr, write_parquet
@@ -109,27 +110,32 @@ if __name__ == "__main__":
         print("\nProcessing rains...")
         for year in years:
             infile = DATA_DIR / f"total_precipitation_{year}.grib"
-            for month in months:
-                outfile = DATA_DIR / f"s2_prec_{year}-{month}.pq"
 
+            def process_rains(month: int):
+                outfile = DATA_DIR / f"s2_prec_{year}-{month}.pq"
                 with open(infile, "rb") as fh:
                     df = _collect_scalars(y=year, m=month, grib_file=fh)
 
                 write_parquet(data=df, file=outfile)
-        del df
+
+            with mp.Pool(processes=3) as pool:
+                pool.map(process_rains, months)
 
     if "tmps" in vars:
         print("\nProcessing tmps...")
         for year in years:
             infile = DATA_DIR / f"2m_temperature_{year}.grib"
-            for month in months:
+
+            def process_tmps(month: int):
                 outfile = DATA_DIR / f"s2_tmps_{year}-{month}.pq"
 
                 with open(infile, "rb") as fh:
                     df = _collect_scalars(y=year, m=month, grib_file=fh)
 
                 write_parquet(data=df, file=outfile)
-        del df
+
+            with mp.Pool(processes=3) as pool:
+                pool.map(process_tmps, months)
 
     if "waves" in vars:
         print("\nProcessing waves...")
@@ -138,34 +144,41 @@ if __name__ == "__main__":
                 DATA_DIR
                 / f"significant_height_of_combined_wind_waves_and_swell_{year}.grib"
             )
-            for month in months:
+
+            def process_waves(month: int):
                 outfile = DATA_DIR / f"s2_waves_{year}-{month}.pq"
 
                 with open(infile, "rb") as fh:
                     df = _collect_scalars(y=year, m=month, grib_file=fh)
 
                 write_parquet(data=df, file=outfile)
-        del df
+
+            with mp.Pool(processes=3) as pool:
+                pool.map(process_waves, months)
 
     if "seatmps" in vars:
         print("\nProcessing seatmps...")
         for year in years:
             infile = DATA_DIR / f"sea_surface_temperature_{year}.grib"
-            for month in months:
+
+            def process_seatmps(month: int):
                 outfile = DATA_DIR / f"s2_seatmps_{year}-{month}.pq"
 
                 with open(infile, "rb") as fh:
                     df = _collect_scalars(y=year, m=month, grib_file=fh)
 
                 write_parquet(data=df, file=outfile)
-        del df
+
+            with mp.Pool(processes=3) as pool:
+                pool.map(process_seatmps, months)
 
     if "winds" in vars:
         print("\nProcessing winds...")
         for year in years:
             u_file = DATA_DIR / f"10m_u_component_of_wind_{year}.grib"
             v_file = DATA_DIR / f"10m_v_component_of_wind_{year}.grib"
-            for month in months:
+
+            def process_winds(month: int):
                 dirs_outfile = DATA_DIR / f"s2_wind_dirs_{year}-{month}.pq"
                 vels_outfile = DATA_DIR / f"s2_wind_vels_{year}-{month}.pq"
 
@@ -176,6 +189,8 @@ if __name__ == "__main__":
 
                 write_parquet(data=dirs, file=dirs_outfile)
                 write_parquet(data=vels, file=vels_outfile)
-        del dirs, vels
+
+            with mp.Pool(processes=2) as pool:
+                pool.map(process_winds, months)
 
     print("done")
