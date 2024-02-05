@@ -6,20 +6,17 @@ This dataset is a ECMWF reanalysis which holds hourly data of a lot of variables
 Data points were regridded to a regular lat-lon grid of 0.25 degrees.
 To reduce the download sizes I only took every 3rd hour (00:00, 03:00, 06:00, ...) and exluded 20° from the poles (70°S to 70°N).
 For ocean currents I am using [ORAS5 global ocean reanalysis monthly data from 1958 to present (cds.climate.copernicus.eu)](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-oras5?tab=overview).
-It is ......
-It's horizontal resolution is also roughly 0.25 degrees in both direction.
-
-
-> last download 03.01.2024
+It provides data in a 3D ocean model with a lat-lon grid of approximately 0.25 degrees.
+It includes variables for zonal and meridional water velocity.
+However, this model only has monthly means.
 
 I aggregated data into certain time ranges.
 Usually, I am interested in a certain month of a year.
 Last year's data would give a very recent reading.
 Last 10 year's data would give a more robust reading.
-Currently I have:
 
-- each month over year 2022
-- each month over years 2018-2022
+> last download 05.02.2024,
+> v6, each month over year 2023 and over years 2019-2023
 
 **Winds**
 Winds are given in _u_ and _v_ vectors in m/s where _u_ describes the component blowing eastwards and _v_ describes the component blowing northwards.
@@ -49,10 +46,32 @@ It represents the vertical distance in m between wave crest and wave trough.
 I used the [Douglas scale](https://en.wikipedia.org/wiki/Douglas_sea_scale) to bin wave heights into 10 bins.
 For each time range I counted wave heights.
 
+**Currents**
+Currents are given in rotated zonal and meridional velocity in m/s.
+This is similar to u- and v-vectors where zonal describes eastwards velocity and meridional describes northwards velocity.
+The actual directions and velocities have to be calculated from these vectors.
+Like with the winds, all directions are binned into the 16 traditional compass rose bearings (N, NNE, NE, ...).
+There is no obvious scale for current strength, so I created a binning with increasingly larger current intervals.
+
 ## Steps to Reproduce
 
-- [s1_download_data.py](./s1_download_data.py) download all necessary grib files
-- [s2_collect_values.py](./s2_collect_values.py) collect relevant records from grib files
-- [s3_aggregate_data.py](./s3_aggregate_data.py) aggregate data over time ranges
-- [s4_upload_objs.py](./s4_upload_objs.py) upload objects to s3 bucket (set API prefix first)
-- [s5_check_upload.py](./s5_check_upload.py) to check if everything was uploaded
+
+Install and activate [environment.yml](./environment.yml) (`conda env create -f environment.yml && conda activate prevwinds_prep).
+There is a python CLI for the different steps.
+See the description with `python -m main --help`.
+A data directory (`--datadir`) is used for temporarly storing all files.
+Its default is [data/](./data/) (in gitignore here).
+Raw variables are first downloaded, then extracted into parquet files.
+Target variables are then derived by aggregation, and finally uploaded.
+Files for extracted varaible (`data/extracted_*.pq`) can be reused.
+But it makes sense to download everything from scratch after some time because datasets are sometimes updated in retrospect.
+
+```bash
+python -m main --datadir ./data download
+python -m main --datadir ./data extract
+python -m main --datadir ./data aggregate
+```
+
+All raw downloaded files (for 5 years) are arbout 130GB, the extracted files about 100GB.
+So, it makes sense to do one variable at a time (using `--variables`).
+The aggregated files are 2.5GB.

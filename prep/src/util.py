@@ -28,26 +28,6 @@ def velocity(u: np.ndarray, v: np.ndarray) -> np.ndarray:
     return np.sqrt(u**2 + v**2) * 1.94384
 
 
-def chunk(l: list, n: int):
-    """Split list into chunks of max-size n"""
-    for i in range(0, len(l), n):
-        yield l[i : i + n]
-
-
-def fix_lng_degrees(lng: float) -> float:
-    """
-    For a lng degree outside [-180;180] return the appropriate
-    degree assuming -180 = 180°W and 180 = 180°E.
-    """
-    sign = 1 if lng > 0 else -1
-    lng_adj = (abs(lng) % 360) * sign
-    if lng_adj > 180:
-        return (lng_adj % 180) - 180
-    elif lng_adj < -180:
-        return lng_adj % 180
-    return lng_adj
-
-
 def get_tar_members(archive: Path, mode="r:gz") -> list[str]:
     """Get names of files that are members of a tar archive"""
     with tarfile.open(archive, mode) as fh:

@@ -37,16 +37,7 @@ def _add_if_not_zero(data: dict, key: str, df: pd.DataFrame, pos: tuple[float, f
             data[key] = row.to_dict()
 
 
-def monthly_data(
-    month: int,
-    keys: list[str] | None,
-    label: str,
-    version: str,
-    datadir: Path,
-    lon_range: tuple[int, int],
-    lat_range: tuple[int, int],
-):
-    print(f"Processing {label} {month}...")
+def _load_dfs(datadir: Path, label: str, month: int) -> tuple[pd.DataFrame, ...]:
     df_rain = pq.read_table(file=datadir / f"aggregated_rain_{label}_{month}.pq")
     df_temp = pq.read_table(file=datadir / f"aggregated_temp_{label}_{month}.pq")
     df_wind = pq.read_table(file=datadir / f"aggregated_wind_{label}_{month}.pq")
@@ -78,14 +69,25 @@ def monthly_data(
         columns={"daily_mean": "dailyMean", "daily_std": "dailyStd"},
         inplace=True,
     )
+    return df_rain, df_temp, df_wind, df_wave, df_seatemp, df_current
+
+
+def all_data(
+    month: int,
+    label: str,
+    version: str,
+    datadir: Path,
+    lon_range: tuple[int, int],
+    lat_range: tuple[int, int],
+):
+    print(f"Processing {label} {month}...")
+    df_rain, df_temp, df_wind, df_wave, df_seatemp, df_current = _load_dfs(
+        datadir=datadir, label=label, month=month
+    )
 
     pool = eventlet.GreenPool(200)
     for lng_base, lat_base in _world_grid(lat_range=lat_range, lon_range=lon_range):
         key = f"{version}/{label}/{month}/{lat_base:d}/{lng_base:d}/data.pkl"
-        # TODO: different function for when keys are None vs not None
-        if keys is not None and key not in keys:
-            continue
-
         record = {}
         for lat_add, lng_add in _qrtr_mile_grid():
             pos = (lng_base + lng_add, lat_base + lat_add)
@@ -101,3 +103,49 @@ def monthly_data(
 
         pool.spawn_n(s3.put_obj, key, record)
     pool.waitall()
+
+
+def s3_keys(keys: list[str], datadir: Path):
+    pool = eventlet.GreenPool(200)
+    for key in keys:
+        _, label, month, lat_base, lng_base, *_ = key.split("/")
+        df_rain, df_temp, df_wind, df_wave, df_seatemp, df_current = _load_dfs(
+            datadir=datadir, label=label, month=int(month)
+        )
+
+        record = {}
+        for lat_add, lng_add in _qrtr_mile_grid():
+            pos = (lng_base + lng_add, lat_base + lat_add)
+            # TODO: changed names: prec->rains,tmps->temps,seatmps->seatemps
+            data: dict = {}
+            _add_if_exists(data=data, key="rains", df=df_rain, pos=pos)
+            _add_if_exists(data=data, key="temps", df=df_temp, pos=pos)
+            _add_if_exists(data=data, key="winds", df=df_wind, pos=pos)
+            _add_if_no_nan(data=data, key="seatemps", df=df_seatemp, pos=pos)
+            _add_if_not_zero(data=data, key="waves", df=df_wave, pos=pos)
+            _add_if_not_zero(data=data, key="currents", df=df_current, pos=pos)
+            record[pos] = data
+
+        pool.spawn_n(s3.put_obj, key, record)
+
+
+def check(
+    version: str,
+    labels: list[str],
+    months: list[int],
+    lon_range: tuple[int, int],
+    lat_range: tuple[int, int],
+):
+    lons_lats = _world_grid(lon_range=lon_range, lat_range=lat_range)
+    req_keys = set(
+        f"{version}/{y}/{m}/{lat}/{lon}/data.pkl"
+        for y, m, (lon, lat) in product(labels, months, lons_lats)
+    )
+    act_keys = set(s3.ls_obj_keys(prefix=version))
+
+    msg_keys = req_keys - act_keys
+    msg_keys_str = " ".join([f"'{d}'" for d in msg_keys])
+    print(f"\n{len(msg_keys):,} objects are missing.They are:\n\n{msg_keys_str}")
+    wrng_keys = act_keys - req_keys
+    wrng_keys_str = " ".join([f"'{d}'" for d in wrng_keys])
+    print(f"\n{len(wrng_keys):,} objects are wrong. They are:\n\n{wrng_keys_str}")

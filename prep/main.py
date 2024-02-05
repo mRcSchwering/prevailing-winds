@@ -46,19 +46,29 @@ def _aggregate_cmd(cnfg: Config):
 
 
 def _upload_cmd(cnfg: Config, kwargs: dict):
-    for timerange in cnfg.time_ranges:
-        print(f"Uploading {timerange}...")
-        _worker = partial(
-            upload.monthly_data,
-            keys=kwargs["keys"],
-            version=kwargs["version"],
-            label=timerange,
-            datadir=cnfg.datadir,
-            lat_range=cnfg.lat_range,
-            lon_range=cnfg.lon_range,
-        )
-        with mp.Pool(cnfg.nproc) as pool:
-            pool.map(_worker, cnfg.months)
+    if kwargs["keys"] is None:
+        for timerange in cnfg.time_ranges:
+            for month in cnfg.months:
+                upload.all_data(
+                    month=month,
+                    version=kwargs["version"],
+                    label=timerange,
+                    datadir=cnfg.datadir,
+                    lat_range=cnfg.lat_range,
+                    lon_range=cnfg.lon_range,
+                )
+    else:
+        upload.s3_keys(keys=kwargs["keys"], datadir=cnfg.datadir)
+
+
+def _check_cmd(cnfg: Config, kwargs: dict):
+    upload.check(
+        version=kwargs["version"],
+        labels=list(cnfg.time_ranges),
+        months=cnfg.months,
+        lon_range=cnfg.lon_range,
+        lat_range=cnfg.lat_range,
+    )
 
 
 def main(kwargs: dict):
@@ -66,6 +76,8 @@ def main(kwargs: dict):
     cnfg = Config.pop_from_kwargs(kwargs)
     if cmd == "upload":
         _upload_cmd(cnfg, kwargs)
+    if cmd == "check":
+        _check_cmd(cnfg, kwargs)
     else:
         cmdmap = {
             "download": _download_cmd,
@@ -130,5 +142,7 @@ if __name__ == "__main__":
         nargs="+",
         help="Optionally only upload data for these S3 specific keys.",
     )
+    check_parser = subparsers.add_parser("check", help="Check uploaded files")
+    check_parser.add_argument("version", type=str, help="API version prefix")
     args = parser.parse_args()
     main(vars(args))

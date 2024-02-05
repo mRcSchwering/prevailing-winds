@@ -1,6 +1,7 @@
 """
 Writing to S3
 """
+
 from typing import Any, List
 import pickle
 import boto3  # type: ignore
