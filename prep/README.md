@@ -1,10 +1,14 @@
 # Data Preparation
 
-The data is from [cds.climate.copernicus.eu](https://cds.climate.copernicus.eu/).
-I'm using a few years of the [ERA5 hourly data on single levels from 1979 to present (cds.climate.copernicus.eu)](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview) dataset.
+All data is from [cds.climate.copernicus.eu](https://cds.climate.copernicus.eu/).
+I'm using a few years of the [ERA5 hourly data on single levels from 1979 to present (cds.climate.copernicus.eu)](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview) dataset for all values but ocean currents.
 This dataset is a ECMWF reanalysis which holds hourly data of a lot of variables like wind, pressure, temperature.
 Data points were regridded to a regular lat-lon grid of 0.25 degrees.
 To reduce the download sizes I only took every 3rd hour (00:00, 03:00, 06:00, ...) and exluded 20° from the poles (70°S to 70°N).
+For ocean currents I am using [ORAS5 global ocean reanalysis monthly data from 1958 to present (cds.climate.copernicus.eu)](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-oras5?tab=overview).
+It is ......
+It's horizontal resolution is also roughly 0.25 degrees in both direction.
+
 
 > last download 03.01.2024
 

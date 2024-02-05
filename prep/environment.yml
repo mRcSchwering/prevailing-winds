@@ -1,11 +1,14 @@
 name: prevwinds_prep
 
 dependencies:
-  - python=3.8
-  - eventlet
-  - boto3
-  - pandas
-  - pyarrow
+  - python=3.10
+  - mypy
+  - pytest
   - pip:
-      - pupygrib
+      - eventlet
+      - boto3
+      - pandas
+      - pyarrow
       - cdsapi
+      - pupygrib
+      - netCDF4
