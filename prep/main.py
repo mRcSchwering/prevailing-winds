@@ -53,6 +53,7 @@ def _upload_cmd(cnfg: Config, kwargs: dict):
                     month=month,
                     version=kwargs["version"],
                     label=timerange,
+                    nthreads=cnfg.nproc,
                     datadir=cnfg.datadir,
                     lat_range=cnfg.lat_range,
                     lon_range=cnfg.lon_range,
