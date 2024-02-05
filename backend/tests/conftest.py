@@ -3,8 +3,8 @@ Pytest config and test cli tool
 
     PYTHONPATH=./src python -m tests.conftest
 """
+
 import json
-from typing import Optional
 
 
 DEFAULT_EVENT = {
@@ -60,11 +60,10 @@ DEFAULT_EVENT = {
 }
 
 
-def event_fact(query: str, headers: Optional[dict] = None) -> dict:
+def event_fact(query: str, headers: dict | None = None) -> dict:
     """Get event dict with desired query in body"""
     event: dict = DEFAULT_EVENT.copy()
     if headers is not None:
         event["headers"].update(headers)
     event["body"] = json.dumps({"query": query})
     return event
-

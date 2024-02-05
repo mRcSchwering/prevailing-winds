@@ -1,5 +1,11 @@
 import pytest
-from src.utils import natural_series, fix_lng_degrees, full_minutes, get_lngs_map, get_lats_map  # type: ignore
+from src.utils import (
+    natural_series,
+    fix_lng_degrees,
+    full_minutes,
+    get_lngs_map,
+    get_lats_map,
+)
 
 
 @pytest.mark.parametrize(

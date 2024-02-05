@@ -1,11 +1,12 @@
 """
 Smoke tests for lambda function and handler itself.
 """
+
 import json
 from unittest.mock import patch
-from ariadne.types import GraphQLResolveInfo  # type: ignore
-from ariadne import make_executable_schema, QueryType  # type: ignore
-from graphql_post import lambda_handler  # type: ignore
+from ariadne.types import GraphQLResolveInfo
+from ariadne import make_executable_schema, QueryType
+from graphql_post import lambda_handler
 from tests.conftest import event_fact
 
 query = QueryType()
