@@ -77,7 +77,6 @@ def all_data(
     label: str,
     version: str,
     datadir: Path,
-    nthreads: int,
     lon_range: tuple[int, int],
     lat_range: tuple[int, int],
 ):
@@ -86,7 +85,7 @@ def all_data(
         datadir=datadir, label=label, month=month
     )
 
-    pool = eventlet.GreenPool(nthreads)
+    pool = eventlet.GreenPool()
     for lng_base, lat_base in _world_grid(lat_range=lat_range, lon_range=lon_range):
         key = f"{version}/{label}/{month}/{lat_base:d}/{lng_base:d}/data.pkl"
         record = {}

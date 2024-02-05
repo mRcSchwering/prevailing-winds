@@ -1,9 +1,7 @@
 name: prevwinds_backend
 
 dependencies:
-  - python=3.8
-  - pylint
-  - black
+  - python=3.10
   - mypy
   - types-pytz
   - uvicorn

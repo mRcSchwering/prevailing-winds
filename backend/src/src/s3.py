@@ -1,8 +1,9 @@
 """
 S3 client/resource requests
 """
+
 import pickle
-import boto3  # type: ignore
+import boto3
 from src.config import CONTENT_BUCKET_NAME, AWS_REGION, VERSION_PREFIX
 
 resource = boto3.resource("s3", region_name=AWS_REGION)

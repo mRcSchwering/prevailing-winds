@@ -1,9 +1,9 @@
-from ariadne.constants import PLAYGROUND_HTML  # type: ignore
+from ariadne.explorer import ExplorerGraphiQL
 
 
 def lambda_handler(*_):
     return {
         "statusCode": 200,
-        "body": PLAYGROUND_HTML,
+        "body": ExplorerGraphiQL().html(None),
         "headers": {"Content-Type": "text/html"},
     }

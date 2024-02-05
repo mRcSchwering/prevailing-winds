@@ -48,16 +48,17 @@ def _aggregate_cmd(cnfg: Config):
 def _upload_cmd(cnfg: Config, kwargs: dict):
     if kwargs["keys"] is None:
         for timerange in cnfg.time_ranges:
-            for month in cnfg.months:
-                upload.all_data(
-                    month=month,
-                    version=kwargs["version"],
-                    label=timerange,
-                    nthreads=cnfg.nproc,
-                    datadir=cnfg.datadir,
-                    lat_range=cnfg.lat_range,
-                    lon_range=cnfg.lon_range,
-                )
+            worker = partial(
+                upload.all_data,
+                version=kwargs["version"],
+                label=timerange,
+                nthreads=cnfg.nproc,
+                datadir=cnfg.datadir,
+                lat_range=cnfg.lat_range,
+                lon_range=cnfg.lon_range,
+            )
+            with mp.Pool(cnfg.nproc) as pool:
+                pool.map(worker, cnfg.months)
     else:
         upload.s3_keys(keys=kwargs["keys"], datadir=cnfg.datadir)
 

@@ -1,4 +1,4 @@
 requests
 ariadne
 pytz
-boto3==1.16
+boto3>=1.34

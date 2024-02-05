@@ -33,7 +33,7 @@ Resources:
     Properties:
       CodeUri: src/
       Handler: graphql_get.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.10
       Events:
         Gql:
           Type: Api
@@ -47,7 +47,7 @@ Resources:
     Properties:
       CodeUri: src/
       Handler: graphql_post.lambda_handler
-      Runtime: python3.8
+      Runtime: python3.10
       Policies:
         - S3ReadPolicy:
             BucketName: !Ref ContentBucket

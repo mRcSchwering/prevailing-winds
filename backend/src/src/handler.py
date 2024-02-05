@@ -1,7 +1,7 @@
 """
 Handler Lambda functions triggered by API Gateway events
 """
-from typing import Optional
+
 import json
 from src.config import CORS_ALLOW_ORIGIN
 
@@ -9,7 +9,7 @@ from src.config import CORS_ALLOW_ORIGIN
 class Event:
     """
     Class for AWS Lambda handler's event dict from API Gateway event.
-    
+
     API Gateway Lambda Proxy Input Format
     Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
     """
@@ -20,17 +20,17 @@ class Event:
         path: str,
         httpMethod: str,
         headers: dict,
-        isBase64Encoded: Optional[bool] = None,
-        apiId: Optional[str] = None,
-        protocol: Optional[str] = None,
-        body: Optional[str] = None,
-        resourcePath: Optional[str] = None,
-        queryStringParameters: Optional[dict] = None,
-        pathParameters: Optional[dict] = None,
-        stageVariables: Optional[dict] = None,
-        requestContext: Optional[dict] = None,
-        multiValueHeaders: Optional[dict] = None,
-        multiValueQueryStringParameters: Optional[dict] = None,
+        isBase64Encoded: bool | None = None,
+        apiId: str | None = None,
+        protocol: str | None = None,
+        body: str | None = None,
+        resourcePath: str | None = None,
+        queryStringParameters: dict | None = None,
+        pathParameters: dict | None = None,
+        stageVariables: dict | None = None,
+        requestContext: dict | None = None,
+        multiValueHeaders: dict | None = None,
+        multiValueQueryStringParameters: dict | None = None,
         **_,
     ):
         self.resource = resource
@@ -43,7 +43,7 @@ class Event:
         self.api_id = apiId
         self.protocol = protocol
 
-        self.body: Optional[dict] = None
+        self.body: dict | None = None
         if body is not None:
             try:
                 self.body = json.loads(body)
@@ -80,7 +80,9 @@ class Context:
 
     class Identity:
         cognito_identity_id: str = "The authenticated Amazon Cognito identity."
-        cognito_identity_pool_id: str = "The Amazon Cognito identity pool that authorized the invocation."
+        cognito_identity_pool_id: str = (
+            "The Amazon Cognito identity pool that authorized the invocation."
+        )
 
     class ClientContext:
         custom: str = "A dict of custom values set by the mobile client application."
@@ -95,7 +97,9 @@ class Context:
 
     function_name: str = "The name of the Lambda function"
     function_version: str = "The version of the function"
-    invoked_function_arn: str = "The Amazon Resource Name (ARN) that's used to invoke the function. Indicates if the invoker specified a version number or alias"
+    invoked_function_arn: str = (
+        "The Amazon Resource Name (ARN) that's used to invoke the function. Indicates if the invoker specified a version number or alias"
+    )
     memory_limit_in_mb: str = "The amount of memory that's allocated for the function"
     aws_request_id: str = "The identifier of the invocation request"
     log_group_name: str = "The log group for the function"

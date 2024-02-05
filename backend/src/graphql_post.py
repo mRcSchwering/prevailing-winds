@@ -1,7 +1,8 @@
 """
 GraphQL POST entrypoint
 """
-from ariadne import graphql_sync  # type: ignore
+
+from ariadne import graphql_sync
 from src.handler import Event, Context, form_output
 from src.schema import schema
 

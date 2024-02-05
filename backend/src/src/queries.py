@@ -1,6 +1,7 @@
 """GraphQL Query resolvers"""
+
 from itertools import product
-from ariadne import QueryType  # type: ignore
+from ariadne import QueryType
 from src.__version__ import CI_PIPELINE_ID, BUILD_DATE
 from src.config import (
     TIME_RANGES,
