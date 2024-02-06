@@ -52,16 +52,17 @@ def _upload_cmd(cnfg: Config, kwargs: dict):
                 k: d for k, d in cnfg.time_ranges.items() if k == kwargs["timerange"]
             }
         for timerange in cnfg.time_ranges:
-            worker = partial(
-                upload.all_data,
-                version=kwargs["version"],
-                label=timerange,
-                datadir=cnfg.datadir,
-                lat_range=cnfg.lat_range,
-                lon_range=cnfg.lon_range,
-            )
-            with mp.Pool(cnfg.nproc) as pool:
-                pool.map(worker, cnfg.months)
+            for month in cnfg.months:
+                upload.all_data(
+                    month=month,
+                    version=kwargs["version"],
+                    label=timerange,
+                    datadir=cnfg.datadir,
+                    lat_range=cnfg.lat_range,
+                    lon_range=cnfg.lon_range,
+                )
+            # with mp.Pool(cnfg.nproc) as pool:
+            #     pool.map(worker, cnfg.months)
     else:
         upload.s3_keys(keys=kwargs["keys"], datadir=cnfg.datadir)
 
