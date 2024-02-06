@@ -49,6 +49,9 @@ def resolve_weather(*_, **kwargs):
     if month not in MONTH_NAMES:
         raise ValueError(f"Month must be one of {MONTH_NAMES}")
 
+    # TODO: new variables:
+    # wind, rain, current, temp, seatemp, wave
+
     lats_map = get_lats_map(floor=from_lat, ceil=to_lat)
     lngs_map = get_lngs_map(floor=from_lng, ceil=to_lng)
     if len(lats_map) * len(lngs_map) > EMERGENCY_BREAK:

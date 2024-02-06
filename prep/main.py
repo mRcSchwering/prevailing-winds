@@ -47,12 +47,15 @@ def _aggregate_cmd(cnfg: Config):
 
 def _upload_cmd(cnfg: Config, kwargs: dict):
     if kwargs["keys"] is None:
+        if "timerange" in kwargs:
+            cnfg.time_ranges = {
+                k: d for k, d in cnfg.time_ranges.items() if k == kwargs["timerange"]
+            }
         for timerange in cnfg.time_ranges:
             worker = partial(
                 upload.all_data,
                 version=kwargs["version"],
                 label=timerange,
-                nthreads=cnfg.nproc,
                 datadir=cnfg.datadir,
                 lat_range=cnfg.lat_range,
                 lon_range=cnfg.lon_range,
@@ -143,6 +146,11 @@ if __name__ == "__main__":
         type=str,
         nargs="+",
         help="Optionally only upload data for these S3 specific keys.",
+    )
+    upload_parser.add_argument(
+        "--timerange",
+        type=str,
+        help="Optionally only upload one timerange.",
     )
     check_parser = subparsers.add_parser("check", help="Check uploaded files")
     check_parser.add_argument("version", type=str, help="API version prefix")

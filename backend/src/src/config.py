@@ -4,6 +4,7 @@ Global config env vars > defaults
 Environment variables have to be defined in template.yaml
 as environment variables for Lambda functions.
 """
+
 import datetime as dt
 import pytz
 
@@ -44,7 +45,7 @@ MONTHS = {
 }
 MONTH_NAMES = list(MONTHS)
 
-
+# TODO: are just "DIRECTIONS" now
 # wind directions (see schema documentation)
 WIND_DIRS = [
     {"idx": 1, "name": "N", "angle": 0.0},
@@ -66,6 +67,7 @@ WIND_DIRS = [
 ]
 WIND_DIR_IDXS = [str(d["idx"]) for d in WIND_DIRS]
 
+# TODO: add current velocities
 
 # wind velocities (see schema documentation)
 WIND_VELS = [
