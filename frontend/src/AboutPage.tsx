@@ -47,6 +47,14 @@ const era5Link = (
   />
 );
 
+const oras5Link = (
+  <Anchor
+    href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-oras5?tab=overview"
+    label="ORAS5 global ocean reanalysis monthly data from 1958 to present (cds.climate.copernicus.eu)"
+    target="_blank"
+  />
+);
+
 const dataprepLink = (
   <Anchor
     href="https://github.com/mRcSchwering/prevailing-winds/tree/main/prep"
@@ -83,11 +91,17 @@ export default function AboutPage(): JSX.Element {
           dataset is a ECMWF reanalysis which holds hourly data of a lot of
           variables like wind, pressure, temperature. Winds were regridded to a
           regular lat-lon grid of 0.25 degrees. To reduce the download sizes I
-          only took every 3rd hour (00:00, 03:00, 06:00, ...) of years 2018-2022
-          and exluded 20° from the poles (70°S to 70°N). For details about data
+          only took every 3rd hour (00:00, 03:00, 06:00, ...) of the previous 5
+          years and exluded 20° from the poles (70°S to 70°N). Additionally,{" "}
+          {oras5Link} is used to calculate ocean currents. This dataset is also
+          a ECMWF reanalysis, but on a monthly basis. Among other variables it
+          provides the average movement of water by month. It is a 3D model with
+          a resolution of approximately 0.25 degrees. For details about data
           preparation see {dataprepLink}. When you select an area on the map you
-          always see aggregated data for this particular area, month, and years.
+          always see aggregated data for this particular area, month, over the
+          selected years.
         </Paragraph>
+        <Paragraph></Paragraph>
         <Heading level="3">Cookie Policy</Heading>
         <Paragraph>
           You might have noticed there was no <b>cookie banner</b> you had to
