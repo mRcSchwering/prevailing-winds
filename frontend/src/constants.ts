@@ -125,6 +125,75 @@ export const windBins: WindBinType[] = [
   },
 ];
 
+export type CurrentBinType = {
+  idx: number;
+  minKt: null | number;
+  maxKt: null | number;
+  minKmh: null | number;
+  maxKmh: null | number;
+  color: string;
+};
+
+// pos 0 will be left out in summary (should be "no current")
+export const currentBins: CurrentBinType[] = [
+  {
+    idx: 1,
+    minKt: null,
+    maxKt: 0.5,
+    minKmh: null,
+    maxKmh: 1.9,
+    color: COLORS.purpleGreen5,
+  },
+  {
+    idx: 2,
+    minKt: 0.5,
+    maxKt: 1,
+    minKmh: 1,
+    maxKmh: 1.8,
+    color: COLORS.purpleGreen4,
+  },
+  {
+    idx: 3,
+    minKt: 1,
+    maxKt: 1.5,
+    minKmh: 1.8,
+    maxKmh: 2.8,
+    color: COLORS.purpleGreen3,
+  },
+  {
+    idx: 4,
+    minKt: 1.5,
+    maxKt: 2,
+    minKmh: 2.8,
+    maxKmh: 3.7,
+    color: COLORS.purpleGreen2,
+  },
+  {
+    idx: 5,
+    minKt: 2,
+    maxKt: 2.5,
+    minKmh: 3.7,
+    maxKmh: 4.6,
+    color: COLORS.purpleGreen1,
+  },
+  {
+    idx: 6,
+    minKt: 2.5,
+    maxKt: 3,
+    minKmh: 4.6,
+    maxKmh: 5.5,
+    color: COLORS.lightPinkRed,
+  },
+  {
+    idx: 7,
+    minKt: 3,
+    maxKt: null,
+    minKmh: 5.6,
+    maxKmh: null,
+    color: COLORS.lightPinkRed,
+  },
+];
+
 export type WaveBinType = {
   dgs: number[];
   label: string;

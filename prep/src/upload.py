@@ -1,8 +1,8 @@
 from typing import Iterable
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 from itertools import product
 import pandas as pd
-import eventlet
 from . import pq
 from . import s3
 
@@ -72,9 +72,38 @@ def _load_dfs(datadir: Path, label: str, month: int) -> tuple[pd.DataFrame, ...]
     return df_rain, df_temp, df_wind, df_wave, df_seatemp, df_current
 
 
+def _put_record(
+    lon: int,
+    lat: int,
+    version: str,
+    label: str,
+    month: int,
+    df_rain: pd.DataFrame,
+    df_temp: pd.DataFrame,
+    df_wind: pd.DataFrame,
+    df_seatemp: pd.DataFrame,
+    df_wave: pd.DataFrame,
+    df_current: pd.DataFrame,
+):
+    key = f"{version}/{label}/{month}/{lat:d}/{lon:d}/data.pkl"
+    record = {}
+    for lat_add, lng_add in _qrtr_mile_grid():
+        pos = (lon + lng_add, lat + lat_add)
+        data: dict = {}
+        _add_if_exists(data=data, key="rains", df=df_rain, pos=pos)
+        _add_if_exists(data=data, key="temps", df=df_temp, pos=pos)
+        _add_if_exists(data=data, key="winds", df=df_wind, pos=pos)
+        _add_if_no_nan(data=data, key="seatemps", df=df_seatemp, pos=pos)
+        _add_if_not_zero(data=data, key="waves", df=df_wave, pos=pos)
+        _add_if_not_zero(data=data, key="currents", df=df_current, pos=pos)
+        record[pos] = data
+    s3.put_obj(key=key, obj=record)
+
+
 def all_data(
     month: int,
     label: str,
+    nthreads: int,
     version: str,
     datadir: Path,
     lon_range: tuple[int, int],
@@ -85,48 +114,50 @@ def all_data(
         datadir=datadir, label=label, month=month
     )
 
-    pool = eventlet.GreenPool()
-    for lng_base, lat_base in _world_grid(lat_range=lat_range, lon_range=lon_range):
-        key = f"{version}/{label}/{month}/{lat_base:d}/{lng_base:d}/data.pkl"
-        record = {}
-        for lat_add, lng_add in _qrtr_mile_grid():
-            pos = (lng_base + lng_add, lat_base + lat_add)
-            # TODO: changed names: prec->rains,tmps->temps,seatmps->seatemps
-            data: dict = {}
-            _add_if_exists(data=data, key="rains", df=df_rain, pos=pos)
-            _add_if_exists(data=data, key="temps", df=df_temp, pos=pos)
-            _add_if_exists(data=data, key="winds", df=df_wind, pos=pos)
-            _add_if_no_nan(data=data, key="seatemps", df=df_seatemp, pos=pos)
-            _add_if_not_zero(data=data, key="waves", df=df_wave, pos=pos)
-            _add_if_not_zero(data=data, key="currents", df=df_current, pos=pos)
-            record[pos] = data
+    positions = _world_grid(lat_range=lat_range, lon_range=lon_range)
+    with ThreadPoolExecutor(max_workers=nthreads) as executor:
+        res = [
+            executor.submit(
+                _put_record,
+                lon=lon,
+                lat=lat,
+                label=label,
+                version=version,
+                month=month,
+                df_rain=df_rain,
+                df_temp=df_temp,
+                df_wind=df_wind,
+                df_seatemp=df_seatemp,
+                df_wave=df_wave,
+                df_current=df_current,
+            )
+            for lon, lat in positions
+        ]
 
-        pool.spawn_n(s3.put_obj, key, record)
-    pool.waitall()
+    failed = [p for p, r in zip(positions, res) if not r]
+    if len(failed) > 0:
+        print(f"Uploading these positions failed: {','.join(failed)}")
 
 
 def s3_keys(keys: list[str], datadir: Path):
-    pool = eventlet.GreenPool(200)
     for key in keys:
-        _, label, month, lat_base, lng_base, *_ = key.split("/")
+        version, label, month, lat, lon, *_ = key.split("/")
         df_rain, df_temp, df_wind, df_wave, df_seatemp, df_current = _load_dfs(
             datadir=datadir, label=label, month=int(month)
         )
-
-        record = {}
-        for lat_add, lng_add in _qrtr_mile_grid():
-            pos = (lng_base + lng_add, lat_base + lat_add)
-            # TODO: changed names: prec->rains,tmps->temps,seatmps->seatemps
-            data: dict = {}
-            _add_if_exists(data=data, key="rains", df=df_rain, pos=pos)
-            _add_if_exists(data=data, key="temps", df=df_temp, pos=pos)
-            _add_if_exists(data=data, key="winds", df=df_wind, pos=pos)
-            _add_if_no_nan(data=data, key="seatemps", df=df_seatemp, pos=pos)
-            _add_if_not_zero(data=data, key="waves", df=df_wave, pos=pos)
-            _add_if_not_zero(data=data, key="currents", df=df_current, pos=pos)
-            record[pos] = data
-
-        pool.spawn_n(s3.put_obj, key, record)
+        _put_record(
+            lon=int(lon),
+            lat=int(lat),
+            label=label,
+            version=version,
+            month=int(month),
+            df_rain=df_rain,
+            df_temp=df_temp,
+            df_wind=df_wind,
+            df_seatemp=df_seatemp,
+            df_wave=df_wave,
+            df_current=df_current,
+        )
 
 
 def check(

@@ -75,3 +75,8 @@ python -m main --datadir ./data aggregate
 All raw downloaded files (for 5 years) are arbout 130GB, the extracted files about 100GB.
 So, it makes sense to do one variable at a time (using `--variables`).
 The aggregated files are 2.5GB.
+
+Upload to S3 will take about 9h.
+Do it overnight when fewer people are using the network.
+If everything was uploaded correctly can be checked with `python -m main check ...`.
+If the upload for some keys failed they can be uploaded separately with `python -m main --datadir ./data upload --keys <mykey>`.

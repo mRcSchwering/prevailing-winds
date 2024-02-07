@@ -26,7 +26,7 @@ CORS_ALLOW_ORIGIN = "*"
 EMERGENCY_BREAK = 100
 
 # check which are already prepared
-VERSION_PREFIX = "v5"
+VERSION_PREFIX = "v6"
 TIME_RANGES = ("2019-2023", "2023")
 
 MONTHS = {
@@ -45,9 +45,8 @@ MONTHS = {
 }
 MONTH_NAMES = list(MONTHS)
 
-# TODO: are just "DIRECTIONS" now
-# wind directions (see schema documentation)
-WIND_DIRS = [
+# directions (see schema documentation)
+DIRECTIONS = [
     {"idx": 1, "name": "N", "angle": 0.0},
     {"idx": 2, "name": "NNE", "angle": 22.5},
     {"idx": 3, "name": "NE", "angle": 45.0},
@@ -65,12 +64,10 @@ WIND_DIRS = [
     {"idx": 15, "name": "NW", "angle": 315.0},
     {"idx": 16, "name": "NNW", "angle": 337.5},
 ]
-WIND_DIR_IDXS = [str(d["idx"]) for d in WIND_DIRS]
-
-# TODO: add current velocities
+DIR_IDXS = [str(d["idx"]) for d in DIRECTIONS]
 
 # wind velocities (see schema documentation)
-WIND_VELS = [
+WINDS = [
     {"idx": 1, "beaufortName": "Calm", "beaufortNumber": 0, "fromKt": "0", "toKt": "1"},
     {
         "idx": 2,
@@ -156,7 +153,19 @@ WIND_VELS = [
         "fromKt": "64",
     },
 ]
-WIND_VEL_IDXS = [str(d["idx"]) for d in WIND_VELS]
+WIND_IDXS = [str(d["idx"]) for d in WINDS]
+
+# current velocities
+CURRENTS = [
+    {"idx": 1, "fromKt": "0", "toKt": "0.5"},
+    {"idx": 2, "fromKt": "0.5", "toKt": "1.0"},
+    {"idx": 3, "fromKt": "1.0", "toKt": "1.5"},
+    {"idx": 4, "fromKt": "1.5", "toKt": "2.0"},
+    {"idx": 5, "fromKt": "2.0", "toKt": "2.5"},
+    {"idx": 6, "fromKt": "2.5", "toKt": "3.0"},
+    {"idx": 7, "fromKt": "3.0"},
+]
+CURRENT_IDXS = [str(d["idx"]) for d in CURRENTS]
 
 
 # Douglas scale of sea state

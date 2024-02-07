@@ -6,7 +6,7 @@ const META_QUERY = gql`
     meta {
       timeRanges
       months
-      windDirections {
+      directions {
         idx
         name
         angle
@@ -24,6 +24,11 @@ const META_QUERY = gql`
         douglasDegree
         fromM
         toM
+      }
+      currentVelocities {
+        idx
+        fromKt
+        toKt
       }
     }
   }
@@ -64,17 +69,22 @@ const WEATHER_QUERY = gql`
         vel
         count
       }
-      precRecords {
+      currentRecords {
+        dir
+        vel
+        count
+      }
+      rainRecords {
         dailyMean
         dailyStd
       }
-      tmpRecords {
+      tempRecords {
         highMean
         lowMean
         highStd
         lowStd
       }
-      seatmpRecords {
+      seatempRecords {
         highMean
         lowMean
         highStd

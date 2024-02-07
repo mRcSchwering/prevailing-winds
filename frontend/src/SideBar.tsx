@@ -4,6 +4,7 @@ import { Spinner } from "./components";
 import SummaryChart from "./SummaryChart";
 import WaveChart from "./WaveChart";
 import WindsChart from "./WindsChart";
+import CurrentsChart from "./CurrentsChart";
 import { convertDMS } from "./util";
 import { useWeather, MetaRespType } from "./queries";
 import { SelectionContext } from "./SelectionContext";
@@ -59,7 +60,9 @@ function ChartContainer(props: {
   if (props.hasError) {
     return (
       <Box margin="medium">
-        <Text color="status-critical">Failed to load weather data :(</Text>
+        <Text color="status-critical" textAlign="center">
+          Failed to load weather data :(
+        </Text>
       </Box>
     );
   }
@@ -67,7 +70,7 @@ function ChartContainer(props: {
   if (!props.hasData) {
     return (
       <Box margin="medium">
-        <Text>click somewhere on the chart</Text>
+        <Text textAlign="center">click somewhere on the chart</Text>
       </Box>
     );
   }
@@ -151,7 +154,7 @@ export default function SideBar(props: SideBarProps): JSX.Element {
           {pos ? convertDMS(pos.lat, pos.lng) : "-"}
         </Heading>
         <Tabs>
-          <Tab title="Summary">
+          <Tab title="Brief">
             <ChartContainer
               isLoading={weatherResp.loading}
               hasError={!!weatherResp.error}
@@ -166,7 +169,7 @@ export default function SideBar(props: SideBarProps): JSX.Element {
               )}
             </ChartContainer>
           </Tab>
-          <Tab title="Winds">
+          <Tab title="Wind">
             <ChartContainer
               isLoading={weatherResp.loading}
               hasError={!!weatherResp.error}
@@ -177,7 +180,7 @@ export default function SideBar(props: SideBarProps): JSX.Element {
               )}
             </ChartContainer>
           </Tab>
-          <Tab title="Waves">
+          <Tab title="Wave">
             <ChartContainer
               isLoading={weatherResp.loading}
               hasError={!!weatherResp.error}
@@ -186,6 +189,15 @@ export default function SideBar(props: SideBarProps): JSX.Element {
               {weatherResp.data && (
                 <WaveChart weather={weatherResp.data} height2dgs={height2dgs} />
               )}
+            </ChartContainer>
+          </Tab>
+          <Tab title="Current">
+            <ChartContainer
+              isLoading={weatherResp.loading}
+              hasError={!!weatherResp.error}
+              hasData={!!weatherResp.data}
+            >
+              {weatherResp.data && <CurrentsChart weather={weatherResp.data} />}
             </ChartContainer>
           </Tab>
         </Tabs>

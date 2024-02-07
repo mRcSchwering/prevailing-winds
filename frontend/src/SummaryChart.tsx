@@ -9,9 +9,9 @@ import {
 import {
   WindRecord,
   WaveRecord,
-  SeatmpRecord,
-  PrecRecord,
-  TmpRecord,
+  SeatempRecord,
+  RainRecord,
+  TempRecord,
   WeatherResult,
 } from "./types";
 import { windBins, waveBins } from "./constants";
@@ -41,7 +41,7 @@ const iconContainerConfig: any = {
   height: "50px",
 };
 
-function AirTmps(props: { tmps: TmpRecord[] }): JSX.Element {
+function AirTmps(props: { tmps: TempRecord[] }): JSX.Element {
   const aveHiM = getMean(props.tmps.map((d) => d.highMean));
   const aveLoM = getMean(props.tmps.map((d) => d.lowMean));
   const aveHiS = getStdMean(props.tmps.map((d) => d.highStd));
@@ -71,7 +71,7 @@ function AirTmps(props: { tmps: TmpRecord[] }): JSX.Element {
   );
 }
 
-function Rain(props: { rains: PrecRecord[] }): JSX.Element {
+function Rain(props: { rains: RainRecord[] }): JSX.Element {
   const dailyRains = props.rains.map((d) => d.dailyMean);
 
   const dailySum = dailyRains.reduce((a, b) => a + b);
@@ -170,7 +170,7 @@ function fmtWaveRangeFt(lo: number | null, hi: number | null): string {
 }
 
 function Water(props: {
-  tmps: SeatmpRecord[];
+  tmps: SeatempRecord[];
   waves: WaveRecord[];
   height2dgs: { [key: number]: number };
 }): JSX.Element {
@@ -234,13 +234,13 @@ export default function SummaryChart(props: {
       margin={{ horizontal: "medium", vertical: "large" }}
     >
       <Box direction="row" justify="around">
-        <AirTmps tmps={props.weather.tmpRecords} />
-        <Rain rains={props.weather.precRecords} />
+        <AirTmps tmps={props.weather.tempRecords} />
+        <Rain rains={props.weather.rainRecords} />
       </Box>
       <Box direction="row" justify="around">
         <Wind winds={props.weather.windRecords} vel2bft={props.vel2bft} />
         <Water
-          tmps={props.weather.seatmpRecords}
+          tmps={props.weather.seatempRecords}
           waves={props.weather.waveRecords}
           height2dgs={props.height2dgs}
         />

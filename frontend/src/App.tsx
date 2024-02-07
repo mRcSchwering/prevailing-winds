@@ -31,6 +31,9 @@ const myTheme = deepMerge(grommet, {
     },
     focus: { outline: { size: "none" } },
   },
+  tab: {
+    active: { color: "black" },
+  },
 });
 
 function App() {

@@ -7,12 +7,14 @@ from src.config import (
     TIME_RANGES,
     MONTHS,
     MONTH_NAMES,
-    WIND_DIRS,
-    WIND_DIR_IDXS,
-    WIND_VELS,
-    WIND_VEL_IDXS,
+    DIRECTIONS,
+    DIR_IDXS,
+    WINDS,
+    WIND_IDXS,
     EMERGENCY_BREAK,
     WAVES,
+    CURRENTS,
+    CURRENT_IDXS,
 )
 import src.s3 as s3
 from src.utils import get_lngs_map, get_lats_map
@@ -28,9 +30,10 @@ def resolve_meta(*_, **unused):
         "buildDate": BUILD_DATE,
         "timeRanges": TIME_RANGES,
         "months": MONTH_NAMES,
-        "windDirections": WIND_DIRS,
-        "windVelocities": WIND_VELS,
+        "directions": DIRECTIONS,
+        "windVelocities": WINDS,
         "waveHeights": WAVES,
+        "currentVelocities": CURRENTS,
     }
 
 
@@ -59,21 +62,28 @@ def resolve_weather(*_, **kwargs):
             f"Stop: tried to download {len(lats_map) * len(lngs_map):,} objs"
         )
 
-    winds = {(d, v): 0 for d, v in product(WIND_DIR_IDXS, WIND_VEL_IDXS)}
+    winds = {(d, v): 0 for d, v in product(DIR_IDXS, WIND_IDXS)}
+    currents = {(d, v): 0 for d, v in product(DIR_IDXS, CURRENT_IDXS)}
     waves = {str(d["idx"]): 0 for d in WAVES}
-    prec = []
-    tmps = []
-    seatmps = []
+    rains = []
+    temps = []
+    seatemps = []
     for lat, lng in product(lats_map, lngs_map):
         obj = s3.get_obj(years=time_range, month=MONTHS[month], lat=lat, lng=lng)
-        for pos in product(lats_map[lat], lngs_map[lng]):
+        for pos in product(lngs_map[lng], lats_map[lat]):
             data = obj[pos]
-            tmps.append(data["tmps"])
-            prec.append(data["prec"])
-            for key, count in data["winds"].items():
-                winds[key] += count
-            if "seatmps" in data:
-                seatmps.append(data["seatmps"])
+            if "temps" in data:
+                temps.append(data["temps"])
+            if "rains" in data:
+                rains.append(data["rains"])
+            if "winds" in data:
+                for key, count in data["winds"].items():
+                    winds[key] += count
+            if "currents" in data:
+                for key, count in data["currents"].items():
+                    currents[key] += count
+            if "seatemps" in data:
+                seatemps.append(data["seatemps"])
             if "waves" in data:
                 for key, count in data["waves"].items():
                     waves[key] += count
@@ -82,9 +92,12 @@ def resolve_weather(*_, **kwargs):
         "windRecords": [
             {"dir": k[0], "vel": k[1], "count": d} for k, d in winds.items()
         ],
-        "precRecords": prec,
-        "tmpRecords": tmps,
-        "seatmpRecords": seatmps,
+        "currentRecords": [
+            {"dir": k[0], "vel": k[1], "count": d} for k, d in currents.items()
+        ],
+        "rainRecords": rains,
+        "tempRecords": temps,
+        "seatempRecords": seatemps,
         "waveRecords": [{"height": k, "count": d} for k, d in waves.items()],
     }
 

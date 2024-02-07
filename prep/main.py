@@ -47,13 +47,10 @@ def _aggregate_cmd(cnfg: Config):
 
 def _upload_cmd(cnfg: Config, kwargs: dict):
     if kwargs["keys"] is None:
-        if "timerange" in kwargs:
-            cnfg.time_ranges = {
-                k: d for k, d in cnfg.time_ranges.items() if k == kwargs["timerange"]
-            }
         for timerange in cnfg.time_ranges:
             for month in cnfg.months:
                 upload.all_data(
+                    nthreads=cnfg.nproc * 5,
                     month=month,
                     version=kwargs["version"],
                     label=timerange,
@@ -61,8 +58,6 @@ def _upload_cmd(cnfg: Config, kwargs: dict):
                     lat_range=cnfg.lat_range,
                     lon_range=cnfg.lon_range,
                 )
-            # with mp.Pool(cnfg.nproc) as pool:
-            #     pool.map(worker, cnfg.months)
     else:
         upload.s3_keys(keys=kwargs["keys"], datadir=cnfg.datadir)
 
@@ -80,9 +75,13 @@ def _check_cmd(cnfg: Config, kwargs: dict):
 def main(kwargs: dict):
     cmd = kwargs.pop("cmd")
     cnfg = Config.pop_from_kwargs(kwargs)
+    if kwargs["timerange"] is not None:
+        cnfg.time_ranges = {
+            k: d for k, d in cnfg.time_ranges.items() if k == kwargs["timerange"]
+        }
     if cmd == "upload":
         _upload_cmd(cnfg, kwargs)
-    if cmd == "check":
+    elif cmd == "check":
         _check_cmd(cnfg, kwargs)
     else:
         cmdmap = {
@@ -126,6 +125,11 @@ if __name__ == "__main__":
         help="Download or process these months (default %(default)s)",
     )
     parser.add_argument(
+        "--timerange",
+        type=str,
+        help="Subset years to a specific timerange",
+    )
+    parser.add_argument(
         "--nproc",
         default=4,
         type=int,
@@ -147,11 +151,6 @@ if __name__ == "__main__":
         type=str,
         nargs="+",
         help="Optionally only upload data for these S3 specific keys.",
-    )
-    upload_parser.add_argument(
-        "--timerange",
-        type=str,
-        help="Optionally only upload one timerange.",
     )
     check_parser = subparsers.add_parser("check", help="Check uploaded files")
     check_parser.add_argument("version", type=str, help="API version prefix")

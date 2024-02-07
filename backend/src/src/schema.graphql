@@ -11,8 +11,9 @@ type Meta {
   buildDate: String!
   timeRanges: [String!]!
   months: [String!]!
-  windDirections: [WindDirection!]!
+  directions: [Direction!]!
   windVelocities: [WindVelocity!]!
+  currentVelocities: [CurrentVelocity!]!
   waveHeights: [WaveHeight!]!
 }
 
@@ -41,9 +42,19 @@ type WaveHeight {
 }
 
 """
-Wind direction with name and bearing.
+Current velocity of ocean currents averaged over months.
+From/to knots are half closed intervals.
 """
-type WindDirection {
+type CurrentVelocity {
+  idx: Int!
+  fromKt: String
+  toKt: String
+}
+
+"""
+Direction with name and bearing.
+"""
+type Direction {
   idx: Int!
   name: String!
   angle: Float!
@@ -69,9 +80,10 @@ time and place/area.
 """
 type WeatherResult {
   windRecords: [WindRecord!]!
-  precRecords: [PrecRecord!]!
-  tmpRecords: [TmpRecord!]!
-  seatmpRecords: [SeatmpRecord!]!
+  currentRecords: [CurrentRecord!]!
+  rainRecords: [RainRecord!]!
+  tempRecords: [TempRecord!]!
+  seatempRecords: [SeatempRecord!]!
   waveRecords: [WaveRecord!]!
 }
 
@@ -81,6 +93,17 @@ and wind strength was counted.
 See **Meta** for indexes.
 """
 type WindRecord {
+  dir: Int!
+  vel: Int!
+  count: Int!
+}
+
+"""
+Describes how many times a certain current direction
+and current velocity was counted.
+See **Meta** for indexes.
+"""
+type CurrentRecord {
   dir: Int!
   vel: Int!
   count: Int!
@@ -98,7 +121,7 @@ type WaveRecord {
 """
 Describes total daily rain in mm.
 """
-type PrecRecord {
+type RainRecord {
   dailyMean: Float!
   dailyStd: Float!
 }
@@ -107,7 +130,7 @@ type PrecRecord {
 Describes the days' high and low
 temperatures in C.
 """
-type TmpRecord {
+type TempRecord {
   highMean: Float!
   lowMean: Float!
   highStd: Float!
@@ -118,7 +141,7 @@ type TmpRecord {
 Describes the days' high and low sea surface
 temperatures in C.
 """
-type SeatmpRecord {
+type SeatempRecord {
   highMean: Float!
   lowMean: Float!
   highStd: Float!

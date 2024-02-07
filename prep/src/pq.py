@@ -4,6 +4,8 @@ import pyarrow as pa
 from pyarrow import parquet
 
 
+# TODO: downcast floats and ints to reduce size of files
+#       also when reading table, will help with keeping memory low
 def write_table(df: pd.DataFrame, file: str | Path):
     """Write DataFrame to parquet file"""
     parquet.write_table(pa.Table.from_pandas(df), file)
