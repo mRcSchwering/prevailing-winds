@@ -15,7 +15,7 @@ Usually, I am interested in a certain month of a year.
 Last year's data would give a very recent reading.
 Last 10 year's data would give a more robust reading.
 
-> last download 05.02.2024,
+> last download 20.01.2025,
 > v6, each month over year 2023 and over years 2019-2023
 
 **Winds**

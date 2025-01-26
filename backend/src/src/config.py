@@ -26,8 +26,8 @@ CORS_ALLOW_ORIGIN = "*"
 EMERGENCY_BREAK = 100
 
 # check which are already prepared
-VERSION_PREFIX = "v6"
-TIME_RANGES = ("2019-2023", "2023")
+VERSION_PREFIX = "v7"
+TIME_RANGES = ("2020-2024", "2024")
 
 MONTHS = {
     "Jan": 1,
