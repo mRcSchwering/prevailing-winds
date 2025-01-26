@@ -67,9 +67,12 @@ Files for extracted varaible (`data/extracted_*.pq`) can be reused.
 But it makes sense to download everything from scratch after some time because datasets are sometimes updated in retrospect.
 
 ```bash
-python -m main --datadir ./data download
-python -m main --datadir ./data extract
-python -m main --datadir ./data aggregate
+python -m main --help
+python -m main download --help
+python -m main extract --help
+python -m main aggregate --help
+python -m main upload --help
+python -m main check --help
 ```
 
 All raw downloaded files (for 5 years) are arbout 130GB, the extracted files about 100GB.

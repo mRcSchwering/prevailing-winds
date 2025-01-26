@@ -108,6 +108,7 @@ def all_data(
     datadir: Path,
     lon_range: tuple[int, int],
     lat_range: tuple[int, int],
+    only_keys: list[str] | None = None,
 ):
     print(f"Processing {label} {month}...")
     df_rain, df_temp, df_wind, df_wave, df_seatemp, df_current = _load_dfs(
@@ -116,8 +117,12 @@ def all_data(
 
     positions = _world_grid(lat_range=lat_range, lon_range=lon_range)
     with ThreadPoolExecutor(max_workers=nthreads) as executor:
-        res = [
-            executor.submit(
+        results = []
+        for lon, lat in positions:
+            key = f"{version}/{label}/{month}/{lat:d}/{lon:d}/data.pkl"
+            if only_keys is not None and key not in only_keys:
+                continue
+            res = executor.submit(
                 _put_record,
                 lon=lon,
                 lat=lat,
@@ -131,33 +136,11 @@ def all_data(
                 df_wave=df_wave,
                 df_current=df_current,
             )
-            for lon, lat in positions
-        ]
+            results.append(res)
 
-    failed = [p for p, r in zip(positions, res) if not r]
+    failed = [p for p, r in zip(positions, results) if not r]
     if len(failed) > 0:
         print(f"Uploading these positions failed: {','.join(failed)}")
-
-
-def s3_keys(keys: list[str], datadir: Path):
-    for key in keys:
-        version, label, month, lat, lon, *_ = key.split("/")
-        df_rain, df_temp, df_wind, df_wave, df_seatemp, df_current = _load_dfs(
-            datadir=datadir, label=label, month=int(month)
-        )
-        _put_record(
-            lon=int(lon),
-            lat=int(lat),
-            label=label,
-            version=version,
-            month=int(month),
-            df_rain=df_rain,
-            df_temp=df_temp,
-            df_wind=df_wind,
-            df_seatemp=df_seatemp,
-            df_wave=df_wave,
-            df_current=df_current,
-        )
 
 
 def check(

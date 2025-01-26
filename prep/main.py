@@ -6,8 +6,6 @@ CLI entrypoint.
 """
 
 import datetime as dt
-from functools import partial
-import multiprocessing as mp
 from argparse import ArgumentParser
 from src import oras5
 from src import era5
@@ -16,17 +14,17 @@ from src import upload
 from src.config import Config, VARMAP
 
 
-def _download_cmd(cnfg: Config):
+def _download_cmd(cnfg: Config, _: dict):
     oras5.download(cnfg=cnfg)
     era5.download(cnfg=cnfg)
 
 
-def _extract_cmd(cnfg: Config):
+def _extract_cmd(cnfg: Config, _: dict):
     oras5.extract(cnfg=cnfg)
     era5.extract(cnfg=cnfg)
 
 
-def _aggregate_cmd(cnfg: Config):
+def _aggregate_cmd(cnfg: Config, _: dict):
     funmap = {
         "wind": aggregate.winds,
         "temp": aggregate.temps,
@@ -38,28 +36,25 @@ def _aggregate_cmd(cnfg: Config):
     for label, years in cnfg.time_ranges.items():
         print(f"Aggregating {label}...")
         for variable in cnfg.variables:
-            _worker = partial(
-                funmap[variable], years=years, label=label, datadir=cnfg.datadir
-            )
-            with mp.Pool(cnfg.nproc) as pool:
-                pool.map(_worker, cnfg.months)
+            for month in cnfg.months:
+                funmap[variable](
+                    month=month, years=years, label=label, datadir=cnfg.datadir
+                )
 
 
 def _upload_cmd(cnfg: Config, kwargs: dict):
-    if kwargs["keys"] is None:
-        for timerange in cnfg.time_ranges:
-            for month in cnfg.months:
-                upload.all_data(
-                    nthreads=cnfg.nproc * 5,
-                    month=month,
-                    version=kwargs["version"],
-                    label=timerange,
-                    datadir=cnfg.datadir,
-                    lat_range=cnfg.lat_range,
-                    lon_range=cnfg.lon_range,
-                )
-    else:
-        upload.s3_keys(keys=kwargs["keys"], datadir=cnfg.datadir)
+    for timerange in cnfg.time_ranges:
+        for month in cnfg.months:
+            upload.all_data(
+                nthreads=cnfg.nproc * 5,
+                month=month,
+                version=kwargs["version"],
+                label=timerange,
+                datadir=cnfg.datadir,
+                lat_range=cnfg.lat_range,
+                lon_range=cnfg.lon_range,
+                only_keys=kwargs["keys"],
+            )
 
 
 def _check_cmd(cnfg: Config, kwargs: dict):
@@ -79,17 +74,15 @@ def main(kwargs: dict):
         cnfg.time_ranges = {
             k: d for k, d in cnfg.time_ranges.items() if k == kwargs["timerange"]
         }
-    if cmd == "upload":
-        _upload_cmd(cnfg, kwargs)
-    elif cmd == "check":
-        _check_cmd(cnfg, kwargs)
-    else:
-        cmdmap = {
-            "download": _download_cmd,
-            "extract": _extract_cmd,
-            "aggregate": _aggregate_cmd,
-        }
-        cmdmap[cmd](cnfg)
+
+    cmdmap = {
+        "download": _download_cmd,
+        "extract": _extract_cmd,
+        "aggregate": _aggregate_cmd,
+        "upload": _upload_cmd,
+        "check": _check_cmd,
+    }
+    cmdmap[cmd](cnfg, kwargs)
     print("done")
 
 
@@ -97,10 +90,16 @@ if __name__ == "__main__":
     this_year = dt.date.today().year
     parser = ArgumentParser()
     parser.add_argument(
-        "--datadir",
+        "--inputdir",
         default="data/tmp",
         type=str,
-        help="Path to data directory (default %(default)s)",
+        help="Path to directory with input data (default %(default)s)",
+    )
+    parser.add_argument(
+        "--outputdir",
+        default="data/tmp",
+        type=str,
+        help="Path to directory for output data (default %(default)s)",
     )
     parser.add_argument(
         "--variables",

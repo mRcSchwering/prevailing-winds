@@ -1,5 +1,6 @@
 from pathlib import Path
 import tarfile
+import zipfile
 import shutil
 import numpy as np
 
@@ -28,19 +29,28 @@ def velocity(u: np.ndarray, v: np.ndarray) -> np.ndarray:
     return np.sqrt(u**2 + v**2) * 1.94384
 
 
-def get_tar_members(archive: Path, mode="r:gz") -> list[str]:
+def get_tar_members(archive: Path) -> list[str]:
     """Get names of files that are members of a tar archive"""
-    with tarfile.open(archive, mode) as fh:
-        return fh.getnames()
+    try:
+        with tarfile.open(archive, "r:gz") as fh:
+            return fh.getnames()
+    except tarfile.ReadError:
+        with zipfile.ZipFile(archive, "r") as zfh:
+            return zfh.namelist()
 
 
-def extract_tar_member(archive: Path, name: str, outfile: Path, mode="r:gz"):
+def extract_tar_member(archive: Path, name: str, outfile: Path):
     """
     Extract single file from archive and write to outfile.
     """
-    with tarfile.open(archive, mode) as inf:
-        fo = inf.extractfile(member=name)
-        if fo is None:
-            return
-        with open(outfile, "wb") as output:
-            shutil.copyfileobj(fo, output)
+    try:
+        with tarfile.open(archive, "r:gz") as inf:
+            fo = inf.extractfile(member=name)
+            if fo is None:
+                return
+            with open(outfile, "wb") as output:
+                shutil.copyfileobj(fo, output)
+    except tarfile.ReadError:
+        with zipfile.ZipFile(archive, "r") as zfh:
+            zfh.extract(name, outfile.parent)
+        (outfile.parent / name).rename(outfile)

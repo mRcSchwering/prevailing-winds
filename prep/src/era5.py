@@ -1,8 +1,6 @@
 """Functions for ERA5 reanalysis"""
 
 from pathlib import Path
-import multiprocessing as mp
-from functools import partial
 import pandas as pd
 import cdsapi
 import pupygrib
@@ -20,37 +18,39 @@ VARS = [
 
 
 def _download_dataset(
-    datadir: Path,
+    outputdir: Path,
     variable: str,
     year: int,
     months: list[int],
     lat_range: tuple[int, int],
     lon_range: tuple[int, int],
 ):
-    outfile = datadir / f"raw_{variable}_{year}.grib"
+    outfile = outputdir / f"raw_{variable}_{year}.grib"
     sparse_times = [0, 3, 6, 9, 12, 15, 18, 21]
     days = list(range(1, 32))
     client = cdsapi.Client()
     client.retrieve(
         "reanalysis-era5-single-levels",
         {
-            "product_type": "reanalysis",
-            "variable": variable,
-            "year": str(year),
+            "product_type": ["reanalysis"],
+            "variable": [variable],
+            "year": [str(year)],
             "month": [f"{d:02d}" for d in months],
             "day": [f"{d:02d}" for d in days],
             "time": [f"{d:02d}:00" for d in sparse_times],
-            "format": "grib",
+            "data_format": "grib",
             "area": [max(lat_range), min(lon_range), min(lat_range), max(lon_range)],
         },
         str(outfile),
     )
 
 
-def _extract_and_write_values(month: int, variable: str, datadir: Path, year: int):
+def _extract_and_write_values(
+    month: int, variable: str, inputdir: Path, outputdir: Path, year: int
+):
     print(f"Processing {variable} {year}-{month}...")
-    infile = datadir / f"raw_{variable}_{year}.grib"
-    outfile = datadir / f"extracted_{variable}_{year}-{month}.pq"
+    infile = inputdir / f"raw_{variable}_{year}.grib"
+    outfile = outputdir / f"extracted_{variable}_{year}-{month}.pq"
     dfs = []
     with open(infile, "rb") as fh:
         for mi, msg in enumerate(pupygrib.read(fh)):
@@ -83,7 +83,7 @@ def download(cnfg: Config):
         for variable in variables:
             print(f"Downloading {variable} {year}...")
             _download_dataset(
-                datadir=cnfg.datadir,
+                outputdir=cnfg.outputdir,
                 variable=variable,
                 year=year,
                 months=cnfg.months,
@@ -97,11 +97,11 @@ def extract(cnfg: Config):
     for year in cnfg.years:
         for variable in variables:
             print(f"Extracting {variable} {year}...")
-            _extract = partial(
-                _extract_and_write_values,
-                datadir=cnfg.datadir,
-                year=year,
-                variable=variable,
-            )
-            with mp.Pool(cnfg.nproc) as pool:
-                pool.map(_extract, cnfg.months)
+            for month in cnfg.months:
+                _extract_and_write_values(
+                    month=month,
+                    inputdir=cnfg.inputdir,
+                    outputdir=cnfg.outputdir,
+                    year=year,
+                    variable=variable,
+                )

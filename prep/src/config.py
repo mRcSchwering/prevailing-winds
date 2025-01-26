@@ -1,6 +1,5 @@
 from pathlib import Path
 
-VERSION_PREFIX = "v5"
 
 # compass directions
 # binning with index "i", lower boundary "s"
@@ -102,7 +101,8 @@ class Config:
         variables: list[str],
         years: list[int],
         months: list[int],
-        datadir: Path,
+        inputdir: Path,
+        outputdir: Path,
         nproc: int,
         is_test: bool,
         lat_range=(-70, 70),
@@ -120,7 +120,8 @@ class Config:
         self.years = years
         self.months = months
         self.nproc = nproc
-        self.datadir = datadir
+        self.inputdir = inputdir
+        self.outputdir = outputdir
         self.lat_range = lat_range
         self.lon_range = lon_range
         self.resolution = resolution
@@ -140,7 +141,8 @@ class Config:
             variables=kwargs.pop("variables"),
             years=kwargs.pop("years"),
             months=kwargs.pop("months"),
-            datadir=Path(kwargs.pop("datadir")),
+            inputdir=Path(kwargs.pop("inputdir")),
+            outputdir=Path(kwargs.pop("outputdir")),
             nproc=kwargs.pop("nproc"),
             is_test=kwargs.pop("test"),
         )

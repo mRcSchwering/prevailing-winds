@@ -1,8 +1,6 @@
 """Functions for ORAS5 reanalysis"""
 
 from pathlib import Path
-import multiprocessing as mp
-from functools import partial
 import numpy as np
 import pandas as pd
 import cdsapi
@@ -21,17 +19,17 @@ def _digitize(df: pd.DataFrame, var: str, interval: tuple[float, float], res: fl
         df.loc[mask, var] = target
 
 
-def _download_dataset(datadir: Path, variable: str, year: int, months: list[int]):
-    outfile = datadir / f"raw_{variable}_{year}.tar.gz"
+def _download_dataset(outputdir: Path, variable: str, year: int, months: list[int]):
+    outfile = outputdir / f"raw_{variable}_{year}.tar.gz"
     client = cdsapi.Client()
     client.retrieve(
         "reanalysis-oras5",
         {
-            "product_type": "operational",
-            "format": "tgz",
+            "product_type": ["operational"],
+            # "format": "tgz",  # not available anymore?
             "vertical_resolution": "all_levels",
-            "variable": variable,
-            "year": str(year),
+            "variable": [variable],
+            "year": [str(year)],
             "month": [f"{d:02d}" for d in months],
         },
         str(outfile),
@@ -39,9 +37,9 @@ def _download_dataset(datadir: Path, variable: str, year: int, months: list[int]
 
 
 def _get_members_by_month(
-    datadir: Path, variable: str, year: int, req_months: list[int]
+    inputdir: Path, variable: str, year: int, req_months: list[int]
 ) -> dict[int, str]:
-    archive = datadir / f"raw_{variable}_{year}.tar.gz"
+    archive = inputdir / f"raw_{variable}_{year}.tar.gz"
     out = {}
     extng_months = set()
     for member in get_tar_members(archive):
@@ -65,7 +63,8 @@ def _extract_and_write_values(
     member: str,
     variable: str,
     year: int,
-    datadir: Path,
+    inputdir: Path,
+    outputdir: Path,
     resolution: float,
     lon_range: tuple[int, int],
     lat_range: tuple[int, int],
@@ -76,9 +75,9 @@ def _extract_and_write_values(
     velo_names=("vozocrte", "vomecrtn"),
 ):
     print(f"Processing {variable} {year}-{month}...")
-    infile = datadir / f"raw_{variable}_{year}.tar.gz"
-    outfile = datadir / f"extracted_{variable}_{year}-{month}.pq"
-    tmpfile = datadir / f"{variable}_{year}_{month}.nc"
+    infile = inputdir / f"raw_{variable}_{year}.tar.gz"
+    outfile = outputdir / f"extracted_{variable}_{year}-{month}.pq"
+    tmpfile = outputdir / f"{variable}_{year}_{month}.nc"
     extract_tar_member(archive=infile, name=member, outfile=tmpfile)
 
     ds = Dataset(tmpfile, "r", format="NETCDF4")
@@ -121,7 +120,7 @@ def download(cnfg: Config):
         for variable in variables:
             print(f"Downloading {variable} {year}...")
             _download_dataset(
-                datadir=cnfg.datadir,
+                outputdir=cnfg.outputdir,
                 variable=variable,
                 year=year,
                 months=cnfg.months,
@@ -134,20 +133,21 @@ def extract(cnfg: Config):
         for variable in variables:
             print(f"Extracting {variable} {year}...")
             member_map = _get_members_by_month(
-                datadir=cnfg.datadir,
+                inputdir=cnfg.inputdir,
                 variable=variable,
                 year=year,
                 req_months=cnfg.months,
             )
-            _extract = partial(
-                _extract_and_write_values,
-                datadir=cnfg.datadir,
-                year=year,
-                variable=variable,
-                resolution=cnfg.resolution,
-                lat_range=cnfg.lat_range,
-                lon_range=cnfg.lon_range,
-            )
-            args = [(k, d) for k, d in member_map.items()]
-            with mp.Pool(cnfg.nproc) as pool:
-                pool.starmap(_extract, args)
+
+            for month, member in member_map.items():
+                _extract_and_write_values(
+                    month=month,
+                    member=member,
+                    inputdir=cnfg.inputdir,
+                    outputdir=cnfg.outputdir,
+                    year=year,
+                    variable=variable,
+                    resolution=cnfg.resolution,
+                    lat_range=cnfg.lat_range,
+                    lon_range=cnfg.lon_range,
+                )
