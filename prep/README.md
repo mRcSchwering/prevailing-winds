@@ -55,10 +55,11 @@ There is no obvious scale for current strength, so I created a binning with incr
 
 ## Steps to Reproduce
 
-
-Install and activate [environment.yml](./environment.yml) (`conda env create -f environment.yml && conda activate prevwinds_prep).
-There is a python CLI for the different steps.
-See the description with `python -m main --help`.
+There are bash scripts in [scripts/](./scripts/) to help with running commands.
+[uv](https://docs.astral.sh/uv/) is used as python package manager.
+Run `bash scripts/install.sh` to install dependencies and `bash scripts/test.sh` to run tests.
+For preparing the data there is a python CLI that works in multiple steps.
+See the description with `bash scripts/cli.sh --help`.
 A data directory (`--datadir`) is used for temporarly storing all files.
 Its default is [data/](./data/) (in gitignore here).
 Raw variables are first downloaded, then extracted into parquet files.
@@ -67,12 +68,12 @@ Files for extracted varaible (`data/extracted_*.pq`) can be reused.
 But it makes sense to download everything from scratch after some time because datasets are sometimes updated in retrospect.
 
 ```bash
-python -m main --help
-python -m main download --help
-python -m main extract --help
-python -m main aggregate --help
-python -m main upload --help
-python -m main check --help
+bash scripts/cli.sh --help
+bash scripts/cli.sh download --help
+bash scripts/cli.sh extract --help
+bash scripts/cli.sh aggregate --help
+bash scripts/cli.sh upload --help
+bash scripts/cli.sh check --help
 ```
 
 All raw downloaded files (for 5 years) are arbout 130GB, the extracted files about 100GB.
@@ -81,5 +82,5 @@ The aggregated files are 2.5GB.
 
 Upload to S3 will take about 9h.
 Do it overnight when fewer people are using the network.
-If everything was uploaded correctly can be checked with `python -m main check ...`.
-If the upload for some keys failed they can be uploaded separately with `python -m main --datadir ./data upload --keys <mykey>`.
+Whether everything was uploaded correctly can be checked with `bash scripts/cli.sh check ...`.
+If the upload for some keys failed they can be uploaded separately with `bash scripts/cli.sh --datadir ./data upload --keys <mykey>`.
