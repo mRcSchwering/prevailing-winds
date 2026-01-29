@@ -2,4 +2,4 @@
 #
 # deploy the sam app from .aws-sam/
 #
-sam deploy "$@"
+uv run --locked sam deploy "$@"

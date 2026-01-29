@@ -4,6 +4,6 @@
 #
 set -e
 
-uv export --locked --no-editable -o src/requirements.txt
-sam build "$@"
-rm src/requirements.txt
+uv export --locked --no-dev --no-editable -o src/requirements.txt
+uv run --locked sam build "$@"
+#rm src/requirements.txt
