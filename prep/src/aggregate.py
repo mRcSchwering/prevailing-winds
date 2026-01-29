@@ -1,10 +1,12 @@
 from itertools import product
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
+
 from . import pq
+from .config import CURRENT_VELS, DIRECTIONS, WAVES, WIND_VELS
 from .util import direction, velocity
-from .config import WAVES, DIRECTIONS, WIND_VELS, CURRENT_VELS
 
 
 def _get_dirs(ufile: Path, vfile: Path, is_wind=True) -> pd.DataFrame:
@@ -35,16 +37,16 @@ def _bin(arr: np.ndarray, by: list[dict], nanval=-1) -> np.ndarray:
     return binned
 
 
-def temps(month: int, years: list[int], label: str, datadir: Path):
+def temps(month: int, years: list[int], label: str, inputdir: Path, outputdir: Path):
     invar = "2m_temperature"
-    df = pq.read_table(datadir / f"extracted_{invar}_{years[0]}-{month}.pq")
+    df = pq.read_table(inputdir / f"extracted_{invar}_{years[0]}-{month}.pq")
     index = df.index.copy()
 
     maxs = []
     mins = []
     for year in years:
         print(f"Year {invar} {year}-{month}...")
-        df = pq.read_table(datadir / f"extracted_{invar}_{year}-{month}.pq")
+        df = pq.read_table(inputdir / f"extracted_{invar}_{year}-{month}.pq")
         assert df.index.equals(index)
 
         days = set(d.split("-")[0] for d in df.columns)
@@ -64,18 +66,18 @@ def temps(month: int, years: list[int], label: str, datadir: Path):
         },
         index=df.index,
     )
-    pq.write_table(df=df, file=datadir / f"aggregated_temp_{label}_{month}.pq")
+    pq.write_table(df=df, file=outputdir / f"aggregated_temp_{label}_{month}.pq")
 
 
-def rains(month: int, years: list[int], label: str, datadir: Path):
+def rains(month: int, years: list[int], label: str, inputdir: Path, outputdir: Path):
     invar = "total_precipitation"
-    df = pq.read_table(datadir / f"extracted_{invar}_{years[0]}-{month}.pq")
+    df = pq.read_table(inputdir / f"extracted_{invar}_{years[0]}-{month}.pq")
     index = df.index.copy()
 
     sums = []
     for year in years:
         print(f"Year {invar} {year}-{month}...")
-        df = pq.read_table(datadir / f"extracted_{invar}_{year}-{month}.pq")
+        df = pq.read_table(inputdir / f"extracted_{invar}_{year}-{month}.pq")
         assert df.index.equals(index)
 
         days = set(d.split("-")[0] for d in df.columns)
@@ -92,19 +94,19 @@ def rains(month: int, years: list[int], label: str, datadir: Path):
         },
         index=df.index,
     )
-    pq.write_table(df=df, file=datadir / f"aggregated_rain_{label}_{month}.pq")
+    pq.write_table(df=df, file=outputdir / f"aggregated_rain_{label}_{month}.pq")
 
 
-def seatemps(month: int, years: list[int], label: str, datadir: Path):
+def seatemps(month: int, years: list[int], label: str, inputdir: Path, outputdir: Path):
     invar = "sea_surface_temperature"
-    df = pq.read_table(datadir / f"extracted_{invar}_{years[0]}-{month}.pq")
+    df = pq.read_table(inputdir / f"extracted_{invar}_{years[0]}-{month}.pq")
     index = df.index.copy()
 
     maxs = []
     mins = []
     for year in years:
         print(f"Year {invar} {year}-{month}...")
-        df = pq.read_table(datadir / f"extracted_{invar}_{year}-{month}.pq")
+        df = pq.read_table(inputdir / f"extracted_{invar}_{year}-{month}.pq")
         assert df.index.equals(index)
 
         days = set(d.split("-")[0] for d in df.columns)
@@ -124,19 +126,19 @@ def seatemps(month: int, years: list[int], label: str, datadir: Path):
         },
         index=df.index,
     )
-    pq.write_table(df=df, file=datadir / f"aggregated_seatemp_{label}_{month}.pq")
+    pq.write_table(df=df, file=outputdir / f"aggregated_seatemp_{label}_{month}.pq")
 
 
-def waves(month: int, years: list[int], label: str, datadir: Path):
+def waves(month: int, years: list[int], label: str, inputdir: Path, outputdir: Path):
     invar = "significant_height_of_combined_wind_waves_and_swell"
     max_i = max(d["i"] for d in WAVES)
-    df = pq.read_table(datadir / f"extracted_{invar}_{years[0]}-{month}.pq")
+    df = pq.read_table(inputdir / f"extracted_{invar}_{years[0]}-{month}.pq")
     index = df.index.copy()
 
     bins = []
     for year in years:
         print(f"Year {invar} {year}-{month}...")
-        df = pq.read_table(datadir / f"extracted_{invar}_{year}-{month}.pq")
+        df = pq.read_table(inputdir / f"extracted_{invar}_{year}-{month}.pq")
         assert df.index.equals(index)
         bins.append(_bin(df.to_numpy(), by=WAVES))
 
@@ -148,25 +150,25 @@ def waves(month: int, years: list[int], label: str, datadir: Path):
 
     df = pd.DataFrame(counts, index=index)
     df.drop(columns=0, inplace=True)
-    pq.write_table(df=df, file=datadir / f"aggregated_wave_{label}_{month}.pq")
+    pq.write_table(df=df, file=outputdir / f"aggregated_wave_{label}_{month}.pq")
 
 
-def winds(month: int, years: list[int], label: str, datadir: Path):
+def winds(month: int, years: list[int], label: str, inputdir: Path, outputdir: Path):
     uvar = "10m_u_component_of_wind"
     vvar = "10m_v_component_of_wind"
     dir_idxs = [d["i"] for d in DIRECTIONS[:-1]]  # last one (17) is helper
     vel_idxs = [d["i"] for d in WIND_VELS]
     dir_vel_idxs = list(product(dir_idxs, vel_idxs))
 
-    df = pq.read_table(datadir / f"extracted_{uvar}_{years[0]}-{month}.pq")
+    df = pq.read_table(inputdir / f"extracted_{uvar}_{years[0]}-{month}.pq")
     index = df.index.copy()
     del df
 
     C = np.zeros((len(index), len(dir_vel_idxs)), dtype=int)
     for year in years:
         print(f"Year wind components {year}-{month}...")
-        ufile = datadir / f"extracted_{uvar}_{year}-{month}.pq"
-        vfile = datadir / f"extracted_{vvar}_{year}-{month}.pq"
+        ufile = inputdir / f"extracted_{uvar}_{year}-{month}.pq"
+        vfile = inputdir / f"extracted_{vvar}_{year}-{month}.pq"
 
         df = _get_dirs(ufile=ufile, vfile=vfile, is_wind=True)
         assert index.equals(df.index)
@@ -183,26 +185,26 @@ def winds(month: int, years: list[int], label: str, datadir: Path):
             C[:, ci] += np.sum((D == dr) & (V == vl), axis=1)
 
     df = pd.DataFrame(C, index=index, columns=[f"{d}|{v}" for d, v in dir_vel_idxs])
-    pq.write_table(df=df, file=datadir / f"aggregated_wind_{label}_{month}.pq")
+    pq.write_table(df=df, file=outputdir / f"aggregated_wind_{label}_{month}.pq")
     del df, C
 
 
-def currents(month: int, years: list[int], label: str, datadir: Path):
+def currents(month: int, years: list[int], label: str, inputdir: Path, outputdir: Path):
     uvar = "rotated_zonal_velocity"
     vvar = "rotated_meridional_velocity"
     dir_idxs = [d["i"] for d in DIRECTIONS[:-1]]  # last one (17) is helper
     vel_idxs = [d["i"] for d in CURRENT_VELS]
     dir_vel_idxs = list(product(dir_idxs, vel_idxs))
 
-    df = pq.read_table(datadir / f"extracted_{uvar}_{years[0]}-{month}.pq")
+    df = pq.read_table(inputdir / f"extracted_{uvar}_{years[0]}-{month}.pq")
     index = df.index.copy()
     del df
 
     C = np.zeros((len(index), len(dir_vel_idxs)), dtype=int)
     for year in years:
         print(f"Year current components {year}-{month}...")
-        ufile = datadir / f"extracted_{uvar}_{year}-{month}.pq"
-        vfile = datadir / f"extracted_{vvar}_{year}-{month}.pq"
+        ufile = inputdir / f"extracted_{uvar}_{year}-{month}.pq"
+        vfile = inputdir / f"extracted_{vvar}_{year}-{month}.pq"
 
         df = _get_dirs(ufile=ufile, vfile=vfile, is_wind=False)
         assert index.equals(df.index)
@@ -219,5 +221,5 @@ def currents(month: int, years: list[int], label: str, datadir: Path):
             C[:, ci] += np.sum((D == dr) & (V == vl), axis=1)
 
     df = pd.DataFrame(C, index=index, columns=[f"{d}|{v}" for d, v in dir_vel_idxs])
-    pq.write_table(df=df, file=datadir / f"aggregated_current_{label}_{month}.pq")
+    pq.write_table(df=df, file=outputdir / f"aggregated_current_{label}_{month}.pq")
     del df, C

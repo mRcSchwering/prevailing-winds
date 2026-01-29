@@ -7,11 +7,9 @@ CLI entrypoint.
 
 import datetime as dt
 from argparse import ArgumentParser
-from src import oras5
-from src import era5
-from src import aggregate
-from src import upload
-from src.config import Config, VARMAP
+
+from src import aggregate, era5, oras5, upload
+from src.config import VARMAP, Config
 
 
 def _download_cmd(cnfg: Config, _: dict):
@@ -38,7 +36,11 @@ def _aggregate_cmd(cnfg: Config, _: dict):
         for variable in cnfg.variables:
             for month in cnfg.months:
                 funmap[variable](
-                    month=month, years=years, label=label, datadir=cnfg.datadir
+                    month=month,
+                    years=years,
+                    label=label,
+                    inputdir=cnfg.inputdir,
+                    outputdir=cnfg.outputdir,
                 )
 
 
@@ -50,7 +52,7 @@ def _upload_cmd(cnfg: Config, kwargs: dict):
                 month=month,
                 version=kwargs["version"],
                 label=timerange,
-                datadir=cnfg.datadir,
+                datadir=cnfg.inputdir,
                 lat_range=cnfg.lat_range,
                 lon_range=cnfg.lon_range,
                 only_keys=kwargs["keys"],
@@ -144,7 +146,12 @@ if __name__ == "__main__":
     subparsers.add_parser("extract", help="Extract values from raw data.")
     subparsers.add_parser("aggregate", help="Aggregate values and calculate metrics.")
     upload_parser = subparsers.add_parser("upload", help="Upload to S3")
-    upload_parser.add_argument("version", type=str, help="API version prefix")
+    upload_parser.add_argument(
+        "version",
+        type=str,
+        default=f"v{this_year}",
+        help="API version prefix (%(default)s)",
+    )
     upload_parser.add_argument(
         "--keys",
         type=str,
