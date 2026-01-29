@@ -1,0 +1,15 @@
+[project]
+name = "prevwinds_prep"
+version = "0.1.0"
+description = "Prewinds backend environment"
+requires-python = ">=3.12"
+dependencies = [
+  "mypy>=1,<2",
+  "eventlet>=0,<1",
+  "boto3>=1,<2",
+  "requests>=2,<3",
+  "ariadne>=0,<1",
+]
+
+[dependency-groups]
+dev = ["mypy>=1.19.1", "pytest>=9.0.2", "ruff>=0.14.14", "uvicorn>=0.40.0"]
